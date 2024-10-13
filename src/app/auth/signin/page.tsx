@@ -1,7 +1,8 @@
 import React from "react";
+import SigninPageClient from "./page-client";
 
 const Page = () => {
-  return <div>Page</div>;
+  return <SigninPageClient />;
 };
 
 export default Page;

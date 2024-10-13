@@ -5,10 +5,18 @@ import Logo from "./logo";
 const Navbar = () => {
   return (
     <div className="container mx-auto">
-      <div className="navbar bg-base-100 px-0 sm:px-1 flex items-center">
-        <div className="flex-1">
+      <div className="navbar bg-base-100 px-0 sm:px-1 justify-between flex items-center">
+        <div className="">
           <Link href="/" passHref>
             <Logo />
+          </Link>
+        </div>
+        <div className="hidden md:flex items-center gap-4">
+          <Link href="/" className="btn inline-block">
+            Home
+          </Link>
+          <Link href="/" className="btn inline-block">
+            Contact Us
           </Link>
         </div>
         <div className="flex-none">
@@ -26,7 +34,7 @@ const Navbar = () => {
             <li>
               <Link
                 href="/auth/signup"
-                className="btn bg-secondary btn-md py-3 px-2 sm:px-4"
+                className="btn btn-md py-3 px-2 sm:px-4 hidden md:inline-block"
               >
                 Become A Vendor
               </Link>
@@ -34,7 +42,7 @@ const Navbar = () => {
             <li>
               <Link
                 href="/auth/signup"
-                className="btn btn-secondary bg-secondary py-3 px-2 sm:px-4 btn-md"
+                className="btn btn-secondary rounded-xl bg-primary text-secondary py-3 px-2 sm:px-4 btn-md"
               >
                 Sign Up
               </Link>

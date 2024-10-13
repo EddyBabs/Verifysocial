@@ -5,13 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import * as z from "zod";
 import { signUpSchema } from "@/schemas/auth";
-import { useRouter } from "next/navigation";
 
 type SignUpProps = z.infer<typeof signUpSchema>;
 
-const SignUpEmail = () => {
-  const router = useRouter();
-
+const SignInEmail = () => {
   const {
     register,
     handleSubmit,
@@ -20,11 +17,9 @@ const SignUpEmail = () => {
   } = useForm<SignUpProps>({
     resolver: zodResolver(signUpSchema),
   });
-  const onSubmit = async (values: SignUpProps) => {
-    router.push("/dashboard");
-  };
+  const onSubmit = async (values: SignUpProps) => {};
   return (
-    <form noValidate onSubmit={handleSubmit((data) => onSubmit(data))}>
+    <form onSubmit={handleSubmit((data) => onSubmit(data))}>
       <div className="flex flex-col space-y-4">
         <Input
           type="text"
@@ -32,7 +27,7 @@ const SignUpEmail = () => {
           autoComplete="name"
           required
           {...register("fullname")}
-          error={errors.fullname?.message}
+          error={errors.email?.message}
         />
         <Input
           type="email"
@@ -49,10 +44,10 @@ const SignUpEmail = () => {
           {...register("password")}
           error={errors.password?.message}
         />
-        <Button type="submit">Sign Up</Button>
+        <Button type="submit">Sign In</Button>
       </div>
     </form>
   );
 };
 
-export default SignUpEmail;
+export default SignInEmail;

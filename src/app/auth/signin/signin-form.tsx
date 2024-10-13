@@ -1,17 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import React, { Dispatch, SetStateAction } from "react";
-import SignUpEmail from "./signup-email";
+import SignInEmail from "./signin-email";
 
 type SignUpFormProps = {
   setStep: Dispatch<SetStateAction<"signup" | "verify">>;
 };
 
-const SignUpForm: React.FC<SignUpFormProps> = ({ setStep }) => {
+const SignInForm: React.FC<SignUpFormProps> = ({ setStep }) => {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center">
-      <div className="w-full max-w-md px-1 overflow-hidden">
+      <div className="w-full max-w-md overflow-hidden">
         <div className="pb-6 pt-8 text-center">
           <h3 className="text-lg font-semibold">Create an A</h3>
           <h5>Welcome back! Select method to login</h5>
@@ -30,10 +29,10 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ setStep }) => {
           </div>
         </div>
 
-        <SignUpEmail />
+        <SignInEmail />
       </div>
     </div>
   );
 };
 
-export default SignUpForm;
+export default SignInForm;

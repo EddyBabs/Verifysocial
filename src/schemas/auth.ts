@@ -25,7 +25,9 @@ export const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
-export const fullNameSchema = z.string();
+export const fullNameSchema = z
+  .string()
+  .min(1, "Full Name is a required field");
 
 export const updatePasswordSchema = z
   .object({

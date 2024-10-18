@@ -45,6 +45,11 @@ export const signUpSchema = z.object({
   password: passwordSchema,
 });
 
+export const signInSchema = z.object({
+  email: emailSchema,
+  password: z.string().min(1, "Password is a required field"),
+});
+
 export const requestPasswordResetSchema = z.object({
   email: emailSchema,
 });

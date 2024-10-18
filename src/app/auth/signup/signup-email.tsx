@@ -21,11 +21,11 @@ const SignUpEmail = () => {
     register,
     handleSubmit,
     formState: { errors },
-    getValues,
   } = useForm<SignUpProps>({
     resolver: zodResolver(signUpSchema),
   });
   const onSubmit = async (values: SignUpProps) => {
+    console.log({ values });
     router.push("/dashboard");
   };
   return (

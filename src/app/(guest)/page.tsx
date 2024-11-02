@@ -58,10 +58,18 @@ export default function Home() {
             /> */}
           <div className="w-[650px] h-[612px] absolute -bottom-8 -left-1/4 xl:-left-40 translate-x-5  rounded-full bg-primary"></div>
           <div className="w-[650px] h-[612px] absolute -bottom-8 -left-1/4 xl:-left-40  rounded-full bg-[#CCD6EB]"></div>
+          {/* <video
+            className="z-50 absolute bottom-24 left-10 h-[300px] aspect-video"
+            autoPlay
+            muted
+            controls
+          >
+            <source src={"/video/sec[ure-images.mp4"} />
+          </video> */}
         </div>
 
         <div className="flex col-span-3 lg:col-span-2 flex-col gap-6 p-8 xl:pl-40  md:min-w-[500px] min-h-[650px] justify-center">
-          <h1 className="text-6xl sm:text-8xl font-medium">
+          <h1 className="text-6xl sm:text-8xl font-semibold">
             Online Shopping Reasured
           </h1>
           <p className="text-2xl">

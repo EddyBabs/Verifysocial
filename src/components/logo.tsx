@@ -1,9 +1,30 @@
 import Image from "next/image";
 import React from "react";
-import LogoText from "@/assets/logo_with_text.png";
+import LogoText from "@/assets/logo.jpeg";
+import { cn } from "@/lib/utils";
 
-const Logo = () => {
-  return <Image src={LogoText.src} width={250} height={200} alt="logo" />;
+const Logo = ({
+  className,
+  width,
+  height,
+}: {
+  className?: string;
+  width?: number;
+  height?: number;
+}) => {
+  return (
+    <div className="flex items-center">
+      <Image
+        src={LogoText.src}
+        width={width ?? 150}
+        height={height ?? 100}
+        alt="logo"
+      />
+      <h3 className={cn("-ml-10 font-semibold font-jakarta", className)}>
+        Verify Social
+      </h3>
+    </div>
+  );
 };
 
 export default Logo;

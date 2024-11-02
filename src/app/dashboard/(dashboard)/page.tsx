@@ -19,9 +19,11 @@ const Dashboard = () => {
       <div className="mb-8 space-y-4">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Vendors</h1>
-          <Button className="text-xl font-semibold px-8 py-6 rounded-xl">
-            View All Review
-          </Button>
+          <Link href="/dashboard/reviews">
+            <Button className="text-xl font-semibold px-8 py-6 rounded-xl">
+              View All Review
+            </Button>
+          </Link>
         </div>
         <div className="relative">
           <Search className="absolute w-6 h-6 top-1/2 left-2 -translate-y-3" />

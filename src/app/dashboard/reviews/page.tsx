@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import Ratings from "@/components/ui/ratings";
+import Link from "next/link";
 import React from "react";
 
 const Page = () => {
@@ -9,7 +10,9 @@ const Page = () => {
       <div className="space-y-4">
         <div className="flex justify-between">
           <h4 className="text-xl font-semibold">Reviews & Ratings</h4>
-          <Button>Generate Code</Button>
+          <Link href="/dashboard/generate-code">
+            <Button>Generate Code</Button>
+          </Link>
         </div>
         <div className="flex gap-4 items-center">
           <h1 className="font-extrabold text-6xl">4.8</h1>

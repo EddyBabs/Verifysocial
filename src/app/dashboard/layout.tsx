@@ -1,3 +1,4 @@
+import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { BellIcon, HomeIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
@@ -14,12 +15,12 @@ const DashboardLayout: React.FC<PropsWithChildren> = ({ children }) => {
               className="flex items-center gap-2 font-semibold"
               prefetch={false}
             >
-              <span className="">Verify Social</span>
+              <Logo width={110} height={60} className="-ml-8" />
             </Link>
-            <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
+            {/* <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
               <BellIcon className="h-4 w-4" />
               <span className="sr-only">Toggle notifications</span>
-            </Button>
+            </Button> */}
           </div>
           <div className="flex-1 overflow-auto py-2">
             <nav className="grid items-start px-4 text-sm font-medium ">

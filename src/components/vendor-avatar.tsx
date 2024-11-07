@@ -15,7 +15,7 @@ const VendorAvatar = () => {
         />
       </div>
       <div>
-        <h1>Glow by Banks</h1>
+        <h1 className="text-base">Glow by Banks</h1>
         <div className="flex items-center gap-1">
           <IoLocationOutline className="text-green-500" /> Lagos{" "}
           <div className="h-4 w-[1px] bg-black"></div>

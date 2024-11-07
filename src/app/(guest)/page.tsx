@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { MagnifyingGlassIcon, StarFilledIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import Link from "next/link";
+import VerifySocialVideo from "@/assets/verify social video.gif";
 
 const offers = [
   {
@@ -57,7 +58,13 @@ export default function Home() {
               className="z-20"
             /> */}
           <div className="w-[650px] h-[612px] absolute -bottom-8 -left-1/4 xl:-left-40 translate-x-5  rounded-full bg-primary"></div>
-          <div className="w-[650px] h-[612px] absolute -bottom-8 -left-1/4 xl:-left-40  rounded-full bg-[#CCD6EB]"></div>
+          <div className="w-[650px] h-[612px] absolute -bottom-8 -left-1/4 xl:-left-40 rounded-full bg-white flex justify-center items-center overflow-hidden shadow-[10px_-8px_5px_0px_rgba(0,0,0,0.6)]">
+            <Image
+              src={VerifySocialVideo}
+              alt=""
+              className="h-[calc(100%+100px)] object-cover"
+            />
+          </div>
           {/* <video
             className="z-50 absolute bottom-24 left-10 h-[300px] aspect-video"
             autoPlay
@@ -69,7 +76,7 @@ export default function Home() {
         </div>
 
         <div className="flex col-span-3 lg:col-span-2 flex-col gap-6 p-8 xl:pl-40  md:min-w-[500px] min-h-[650px] justify-center">
-          <h1 className="text-6xl sm:text-8xl font-semibold">
+          <h1 className="text-6xl sm:text-7xl font-semibold font-montserrat_alternates">
             Online Shopping Reasured
           </h1>
           <p className="text-2xl">

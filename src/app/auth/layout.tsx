@@ -1,6 +1,7 @@
+import Amico from "@/assets/amico.png";
+import AuthCart from "@/assets/AuthCart.png";
 import Image from "next/image";
 import React, { PropsWithChildren } from "react";
-import Amico from "@/assets/amico.png";
 
 const AuthLayout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -9,12 +10,18 @@ const AuthLayout: React.FC<PropsWithChildren> = ({ children }) => {
         <div className="col-span-1  min-h-screen flex flex-col items-center">
           {children}
         </div>
-        <div className="hidden text-primary-foreground col-span-1 md:flex flex-col relative  items-center justify-center h-full bg-primary w-full">
-          <div className="absolute top-20 text-center">
+        <div className="hidden text-primary col-span-1 md:flex flex-col relative  items-center justify-center h-full w-full">
+          <div className="absolute top-20 text-center z-20">
             <h2 className=" text-3xl font-semibold">Shop With Certainty</h2>
             <h5>All in one access to verified Business</h5>
           </div>
-          <Image src={Amico.src} alt="" width={300} height={300} />
+          <Image
+            src={AuthCart}
+            alt="cart logo"
+            className="absolute right-0 top-0 z-10 hidden xl:block"
+          />
+          <Image src={Amico} alt="" />
+          {/* <AmicoSvgIcon /> */}
         </div>
       </div>
     </div>

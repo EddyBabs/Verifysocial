@@ -1,3 +1,4 @@
+import { Montserrat_Alternates } from "next/font/google";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -11,6 +12,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         jakarta: ["var(--font-jakarta)"],
+        montserrat_alternates: ["var(--font-montserrat-alternates)"],
         mono: ["var(--font-geist-mono)"],
       },
       colors: {

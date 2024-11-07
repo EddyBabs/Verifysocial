@@ -9,39 +9,39 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
+// const geistSans = localFont({
+//   src: "./fonts/GeistVF.woff",
+//   variable: "--font-geist-sans",
+//   weight: "100 900",
+// });
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
 });
 
-const montserrat = Montserrat({
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  subsets: ["latin"],
-  display: "swap",
-  adjustFontFallback: false,
-  variable: "--font-montserrat",
-});
+// const montserrat = Montserrat({
+//   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+//   subsets: ["latin"],
+//   display: "swap",
+//   adjustFontFallback: false,
+//   variable: "--font-montserrat",
+// });
 
 const montserrat_alternates = Montserrat_Alternates({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],
   display: "swap",
   adjustFontFallback: false,
-  variable: "--font-montserrat",
+  variable: "--font-montserrat-alternates",
 });
 
 const jakarta = Plus_Jakarta_Sans({
   weight: ["200", "300", "400", "500", "600", "700", "800"],
   subsets: ["latin"],
-  display: "swap",
   adjustFontFallback: false,
   variable: "--font-jakarta",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -59,7 +59,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${jakarta.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${jakarta.variable} ${montserrat_alternates.variable} ${geistMono.variable} antialiased`}
+      >
         <ThemeProvider
           defaultTheme="light"
           attribute="class"

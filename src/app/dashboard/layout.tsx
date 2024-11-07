@@ -7,8 +7,8 @@ import React, { PropsWithChildren } from "react";
 const DashboardLayout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <div className="grid h-screen min-h-screen w-full gap-4 lg:gap-0 lg:grid-cols-[280px_1fr]">
-      <div className="hidden border-r bg-gray-100/40 lg:block dark:bg-gray-800/40 sticky top-0">
-        <div className="flex h-full max-h-screen flex-col gap-2">
+      <div className="hidden border-r lg:block relative">
+        <div className="flex h-full max-h-screen flex-col gap-2  bg-gray-100/40  dark:bg-gray-800/40 fixed left-0 top-0 w-[280px]">
           <div className="flex h-[60px] items-center border-b px-6">
             <Link
               href="/"

@@ -40,35 +40,35 @@ const Profile = () => {
           </div>
 
           <div>
-            <div className="grid grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
               <div>
                 <Image
                   src={AccessoryImage}
                   alt=""
-                  className="rounded-xl h-[345px] object-cover"
+                  className="rounded-xl w-full h-full aspect-video object-cover"
                 />
               </div>
               <div>
                 <Image
                   src={CaptionImage}
                   alt=""
-                  className="rounded-xl h-[345px] object-cover"
+                  className="rounded-xl w-full h-full aspect-video object-cover"
                 />
               </div>
               <div>
                 <Image
                   src={FacialsImage}
                   alt=""
-                  className="rounded-xl h-[345px] object-cover"
+                  className="rounded-xl w-full h-full aspect-video object-cover"
                 />
               </div>
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 pt-8">
             <h3 className="text-xl font-semibold">What Customers Saying</h3>
             <div>
-              <div className="grid grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
                 {Array.from({ length: 3 }, (_, index) => (
                   <ReviewCard key={index} />
                 ))}

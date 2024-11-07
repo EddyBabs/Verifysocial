@@ -20,7 +20,9 @@ const Logo = ({
         height={height ?? 100}
         alt="logo"
       />
-      <h3 className={cn("-ml-10 font-semibold font-jakarta", className)}>
+      <h3
+        className={cn("-ml-10 font-semibold text-xl font-jakarta", className)}
+      >
         Verify Social
       </h3>
     </div>

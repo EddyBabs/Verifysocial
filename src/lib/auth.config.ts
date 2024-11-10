@@ -1,10 +1,10 @@
-// import { LoginSchema } from "@/schemas";
-// import { getUserByEmail } from "@/data/user";
-// import bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs";
 import { AuthError, NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
+import { signInSchema } from "@/schemas/auth";
+import { getUserByEmail } from "@/data/user";
 // import { sendVerification } from "@/actions/send-verification";
 
 class InvalidLoginError extends AuthError {
@@ -38,17 +38,17 @@ export default {
     }),
     CredentialsProvider({
       async authorize(credentials) {
-        // const validatedFields = LoginSchema.safeParse(credentials);
-        // if (validatedFields.success) {
-        //   const { email, password } = validatedFields.data;
-        //   const user = await getUserByEmail(email);
-        //   if (!user || !user.password) throw new InvalidLoginError();
-        //   const passwordsMatch = await bcrypt.compare(password, user.password);
-        //   if (!user.emailVerified) {
-        //     throw new UnverifiedUserError();
-        //   }
-        //   if (passwordsMatch) return { ...user };
-        // }
+        const validatedFields = signInSchema.safeParse(credentials);
+        if (validatedFields.success) {
+          const { email, password } = validatedFields.data;
+          const user = await getUserByEmail(email);
+          if (!user || !user.password) throw new InvalidLoginError();
+          const passwordsMatch = await bcrypt.compare(password, user.password);
+          if (!user.emailVerified) {
+            throw new UnverifiedUserError();
+          }
+          if (passwordsMatch) return { ...user };
+        }
         throw new InvalidLoginError();
       },
     }),

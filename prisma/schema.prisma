@@ -69,3 +69,23 @@ model Session {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model VerificationToken {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier    String   @unique
+  token         String   @unique
+  expires       DateTime
+  expiresInDays Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PasswordResetToken {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String   @unique
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}

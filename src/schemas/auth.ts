@@ -53,3 +53,10 @@ export const signInSchema = z.object({
 export const requestPasswordResetSchema = z.object({
   email: emailSchema,
 });
+
+export const VerifyEmailSchema = z.object({
+  email: z.string().email(),
+  code: z.string().regex(/^\d{6}$/, {
+    message: "Token must be exactly 6 digits",
+  }),
+});

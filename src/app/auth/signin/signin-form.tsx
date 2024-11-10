@@ -22,7 +22,7 @@ const SignInForm: React.FC<SignUpFormProps> = ({ setStep }) => {
         </div>
         <div className="flex flex-col items-start">
           <div className="pb-6 pt-8 space-y-4">
-            <h3 className="text-2xl font-[510]">Log in to your Account.</h3>
+            <h3 className="text-2xl font-[550]">Log in to your Account.</h3>
             <h5 className="text-lg">Welcome back! Select method log in:</h5>
           </div>
         </div>
@@ -46,7 +46,7 @@ const SignInForm: React.FC<SignUpFormProps> = ({ setStep }) => {
           </div>
         </div>
 
-        <SignInEmail />
+        <SignInEmail setStep={setStep} />
       </div>
     </div>
   );

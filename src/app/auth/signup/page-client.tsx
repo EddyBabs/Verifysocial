@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import VerifyEmailForm from "./verify-email-form";
+import VerifyEmailForm from "../../../components/verify-email-form";
 import SignUpForm from "./signup-form";
 
 export default function SignupPageClient() {

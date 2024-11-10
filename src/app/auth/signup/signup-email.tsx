@@ -1,21 +1,45 @@
 "use client";
+import { signupAction } from "@/actions/signup";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
-import * as z from "zod";
-import { signUpSchema } from "@/schemas/auth";
-import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
-import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { signUpSchema } from "@/schemas/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeNoneIcon, EyeOpenIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
+import { Dispatch, SetStateAction, useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 type SignUpProps = z.infer<typeof signUpSchema>;
 
-const SignUpEmail = () => {
-  const router = useRouter();
+const SignUpEmail = ({
+  setStep,
+}: {
+  setStep: Dispatch<SetStateAction<"signup" | "verify">>;
+}) => {
+  const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
   const [passwordVisible, setPassworVisible] = useState(false);
+
+  const onSubmit = (values: SignUpProps) => {
+    startTransition(async () => {
+      await signupAction(values).then((response) => {
+        if (response.error) {
+          toast({
+            description: response.error,
+            variant: "destructive",
+          });
+        } else {
+          sessionStorage.setItem("email", values.email);
+          setStep("verify");
+        }
+      });
+    });
+
+    // router.push("/dashboard");
+  };
 
   const {
     register,
@@ -24,10 +48,6 @@ const SignUpEmail = () => {
   } = useForm<SignUpProps>({
     resolver: zodResolver(signUpSchema),
   });
-  const onSubmit = async (values: SignUpProps) => {
-    console.log({ values });
-    router.push("/dashboard");
-  };
   return (
     <form noValidate onSubmit={handleSubmit((data) => onSubmit(data))}>
       <div className="flex flex-col space-y-4">
@@ -84,7 +104,9 @@ const SignUpEmail = () => {
           </label>
         </div>
 
-        <Button type="submit">Sign Up</Button>
+        <Button type="submit" disabled={isPending}>
+          Sign Up
+        </Button>
         <div className="text-center">
           <p>
             Already have an account?{" "}

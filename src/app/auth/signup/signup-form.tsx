@@ -47,7 +47,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ setStep }) => {
           </div>
         </div>
 
-        <SignUpEmail />
+        <SignUpEmail setStep={setStep} />
       </div>
     </div>
   );

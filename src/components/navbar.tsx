@@ -1,8 +1,10 @@
 import Link from "next/link";
 import React from "react";
 import Logo from "./logo";
+import { getCurrentUser } from "@/data/user";
 
-const Navbar = () => {
+const Navbar = async () => {
+  const currentUser = await getCurrentUser();
   return (
     <div className="sticky top-0 inset-x-0 w-full transition-all bg-white z-50">
       <div className="container mx-auto ">
@@ -32,22 +34,35 @@ const Navbar = () => {
               </button>
             </li>
           )} */}
-              <li>
-                <Link
-                  href="/auth/signin"
-                  className="btn btn-md py-3 px-2 sm:px-4 hidden md:inline-block"
-                >
-                  Sign In
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/auth/signup"
-                  className="btn btn-secondary rounded-xl bg-primary text-secondary py-3 px-2 sm:px-4 btn-md"
-                >
-                  Sign Up
-                </Link>
-              </li>
+              {!currentUser ? (
+                <>
+                  <li>
+                    <Link
+                      href="/auth/signin"
+                      className="btn btn-md py-3 px-2 sm:px-4 hidden md:inline-block"
+                    >
+                      Sign In
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/auth/signup"
+                      className="btn btn-secondary rounded-xl bg-primary text-secondary py-3 px-2 sm:px-4 btn-md"
+                    >
+                      Sign Up
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <li>
+                  <Link
+                    href="/dashboard"
+                    className="btn btn-secondary rounded-xl bg-primary text-secondary py-3 px-2 sm:px-4 btn-md"
+                  >
+                    Dashboard
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
         </div>

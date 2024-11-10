@@ -1,0 +1,71 @@
+[33mcommit a69f8750ef7970436b15bec1331b2bb78e1f8e0e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: dhanzy <holuwadanzy@gmail.com>
+Date:   Sun Nov 10 10:18:53 2024 +0100
+
+    Added temp
+
+[33mcommit 4d885d48fd539f8aa3c5c20545bfd49fcc792b9b[m
+Author: dhanzy <holuwadanzy@gmail.com>
+Date:   Sun Nov 10 10:15:37 2024 +0100
+
+    Added Auth backend
+
+[33mcommit 6b4f00dd7041a89d7e473380eefdb885446be32a[m[33m ([m[1;31morigin/main[m[33m)[m
+Author: dhanzy <holuwadanzy@gmail.com>
+Date:   Thu Nov 7 14:42:46 2024 +0100
+
+    Changed Some Stuff
+
+[33mcommit fb190137c2083d920fad68391c0e7089cda933e4[m
+Author: dhanzy <holuwadanzy@gmail.com>
+Date:   Sat Nov 2 19:34:13 2024 +0100
+
+    Added generate code and image
+
+[33mcommit 260e07c228f68493f550546acd45738309db3682[m
+Author: dhanzy <holuwadanzy@gmail.com>
+Date:   Tue Oct 29 13:06:44 2024 +0100
+
+    Added to eslint
+
+[33mcommit 8129b935dafae8341a0e29631a25b2d44be0cb1e[m
+Author: dhanzy <holuwadanzy@gmail.com>
+Date:   Tue Oct 29 12:55:32 2024 +0100
+
+    Added Ratings and other stuff
+
+[33mcommit f1dbe56b0b6cf2f16b0d9b5145c988f556725532[m
+Author: dhanzy <holuwadanzy@gmail.com>
+Date:   Fri Oct 18 08:10:16 2024 +0100
+
+    Added Layout and Form
+
+[33mcommit 9b162329a0a0899391285d56fa8a39453b5970ae[m
+Author: dhanzy <holuwadanzy@gmail.com>
+Date:   Fri Oct 18 03:42:56 2024 +0100
+
+    Added Dashboard and Auth Pages
+
+[33mcommit d0caec93801c9a4e071647f21df152c319bfe8ab[m
+Author: dhanzy <holuwadanzy@gmail.com>
+Date:   Sun Oct 13 12:25:22 2024 +0100
+
+    Added
+
+[33mcommit fa72a697a2ff9247203610f00a6a695e54a5e0eb[m
+Author: dhanzy <holuwadanzy@gmail.com>
+Date:   Sat Oct 12 20:22:57 2024 +0100
+
+    Fixed Bug
+
+[33mcommit 06c38c981e2bc8a11c0c95cadd3806e650b74cd9[m
+Author: dhanzy <holuwadanzy@gmail.com>
+Date:   Mon Oct 7 02:02:36 2024 +0100
+
+    First Commit
+
+[33mcommit 7eff5dc72fddb0e8d76f5f6f3a3d8ceb4e543f63[m
+Author: dhanzy <holuwadanzy@gmail.com>
+Date:   Sun Oct 6 19:17:31 2024 +0100
+
+    Initial commit from Create Next App

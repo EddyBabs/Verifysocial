@@ -1,6 +1,6 @@
 import Logo from "@/components/logo";
 import Link from "next/link";
-import React from "react";
+import React, { Suspense } from "react";
 import ResetPasswordForm from "./reset-password-form";
 
 const ResetPassword = () => {
@@ -18,8 +18,9 @@ const ResetPassword = () => {
             <h5 className="text-lg">Input your new password.</h5>
           </div>
         </div>
-
-        <ResetPasswordForm />
+        <Suspense>
+          <ResetPasswordForm />
+        </Suspense>
       </div>
     </div>
   );

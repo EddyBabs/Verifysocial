@@ -1,5 +1,4 @@
 "use client";
-import { reset } from "@/actions/forgot-password";
 import { resetPassword } from "@/actions/reset-password";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,9 +6,8 @@ import { useToast } from "@/hooks/use-toast";
 import { resetPasswordSchema } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeNoneIcon, EyeOpenIcon } from "@radix-ui/react-icons";
-import { redirect, useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
-import React, { useState, useTransition } from "react";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 

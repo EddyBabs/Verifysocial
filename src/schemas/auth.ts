@@ -43,6 +43,7 @@ export const signUpSchema = z.object({
   fullname: fullNameSchema,
   email: emailSchema,
   password: passwordSchema,
+  terms: z.boolean(),
 });
 
 export const signInSchema = z.object({

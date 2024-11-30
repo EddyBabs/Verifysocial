@@ -44,11 +44,16 @@ const SignUpEmail = ({
 
   const {
     register,
+    getValues,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<SignUpProps>({
     resolver: zodResolver(signUpSchema),
   });
+
+  const terms = getValues("terms");
+
   return (
     <form noValidate onSubmit={handleSubmit((data) => onSubmit(data))}>
       <div className="flex flex-col space-y-4">
@@ -89,7 +94,11 @@ const SignUpEmail = ({
         </div>
 
         <div className="flex items-center space-x-2">
-          <Checkbox id="terms" />
+          <Checkbox
+            id="terms"
+            checked={terms}
+            onCheckedChange={(value) => setValue("terms", !!value)}
+          />
           <label
             htmlFor="terms"
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

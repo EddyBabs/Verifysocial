@@ -87,7 +87,7 @@ export default function Home() {
             <Link href="/auth/signup" className="w-full" passHref>
               <Button className="rounded-2xl w-full">Get Started</Button>
             </Link>
-            <Link href="/auth/signup" passHref>
+            <Link href="/vendor/auth/signup" passHref>
               <Button
                 className="rounded-2xl border-primary text-primary w-full"
                 variant={"outline"}

@@ -1,12 +1,19 @@
 import Accessories from "@/assets/images/accessories.jpeg";
+import BecomeAVendor from "@/components/become-a-vendor";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import VendorAvatar from "@/components/vendor-avatar";
+import { getCurrentUserDetails } from "@/data/user";
+import { UserRole } from "@prisma/client";
 import { Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const Dashboard = () => {
+const Dashboard = async () => {
+  const user = await getCurrentUserDetails();
+  if (user?.role === UserRole.VENDOR) {
+    return <BecomeAVendor />;
+  }
   return (
     <div>
       <div className="mb-8 space-y-4">

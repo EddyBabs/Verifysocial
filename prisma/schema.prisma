@@ -14,8 +14,9 @@ datasource db {
 }
 
 enum UserRole {
-  ADMIN
   USER
+  VENDOR
+  ADMIN
 }
 
 model User {
@@ -32,6 +33,17 @@ model User {
   role          UserRole  @default(USER)
   accounts      Account[]
   sessions      Session[]
+  vendor        Vendor?
+  vendorId      String?   @db.ObjectId
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Vendor {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @unique @db.ObjectId
+  User   User   @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

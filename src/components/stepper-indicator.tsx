@@ -34,7 +34,7 @@ const StepperIndicator = ({ activeStep }: StepperIndicatorProps) => {
           >
             {step >= activeStep ? step : <Check className="h-5 w-5" />}
           </div>
-          {step !== 5 && (
+          {step !== 3 && (
             <Separator
               orientation="horizontal"
               className={clsx(

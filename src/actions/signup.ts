@@ -1,14 +1,18 @@
 "use server";
 
 import { getUserByEmail } from "@/data/user";
-import { database } from "@/lib/database";
+import { database, UserRole } from "@/lib/database";
 import { signUpSchema, VerifyEmailSchema } from "@/schemas/auth";
 import bcrypt from "bcryptjs";
 
 import * as z from "zod";
 import { sendVerification } from "./send-verification";
+import { RoleType } from "@/types";
 
-export const signupAction = async (values: z.infer<typeof signUpSchema>) => {
+export const signupAction = async (
+  values: z.infer<typeof signUpSchema>,
+  role: RoleType = "user"
+) => {
   try {
     const validatedFields = signUpSchema.safeParse(values);
 
@@ -16,9 +20,7 @@ export const signupAction = async (values: z.infer<typeof signUpSchema>) => {
       return { error: "Invalid fields" };
     }
 
-    const user = await createUser(validatedFields.data);
-
-    console.log({ user });
+    const user = await createUser(validatedFields.data, role);
 
     if (!user) {
       return { error: "An error occured" };
@@ -39,19 +41,16 @@ export async function verifyEmail(values: z.infer<typeof VerifyEmailSchema>) {
       return { error: "Invalid fields" };
     }
     const { email, code } = validatedFields.data;
-    console.log({ email });
-    console.log({ code });
+
     const verificationToken = await database.verificationToken.findUnique({
       where: { identifier: email, token: code },
     });
     if (!verificationToken) {
-      console.log("Does not exist");
       return { error: "Verification code has expired or does not exist" };
     }
     const hasExpired = new Date(verificationToken.expires) < new Date();
 
     if (hasExpired) {
-      console.log("Has Expired");
       return { error: "Verification code has expired or does not exist" };
     }
     const user = await getUserByEmail(verificationToken.identifier);
@@ -75,7 +74,10 @@ export async function verifyEmail(values: z.infer<typeof VerifyEmailSchema>) {
   }
 }
 
-export async function createUser(values: z.infer<typeof signUpSchema>) {
+export async function createUser(
+  values: z.infer<typeof signUpSchema>,
+  role: RoleType
+) {
   const { fullname, email, password } = values;
 
   const existingUser = await getUserByEmail(email);
@@ -86,13 +88,12 @@ export async function createUser(values: z.infer<typeof signUpSchema>) {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  console.log({ hashedPassword });
-
   return await database.user.create({
     data: {
       fullname,
       email,
       password: hashedPassword,
+      role: role === "user" ? UserRole.USER : UserRole.VENDOR,
     },
   });
 }

@@ -1,18 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import Link from "next/link";
 import React, { Dispatch, SetStateAction } from "react";
-import SignUpEmail from "./signup-email";
 import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import Logo from "@/components/logo";
-import Link from "next/link";
+import SignUpEmail from "./signup-email";
+import { RoleType } from "@/types";
 
 type SignUpFormProps = {
   setStep: Dispatch<SetStateAction<"signup" | "verify">>;
+  role: RoleType;
 };
 
-const SignUpForm: React.FC<SignUpFormProps> = ({ setStep }) => {
+const SignUpForm: React.FC<SignUpFormProps> = ({ setStep, role }) => {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center">
       <div className="w-full max-w-md px-1 overflow-hidden">
@@ -47,7 +48,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ setStep }) => {
           </div>
         </div>
 
-        <SignUpEmail setStep={setStep} />
+        <SignUpEmail setStep={setStep} role={role} />
       </div>
     </div>
   );

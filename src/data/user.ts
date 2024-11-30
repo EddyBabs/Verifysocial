@@ -23,3 +23,11 @@ export const getCurrentUser = async () => {
   const session = await auth();
   return session?.user;
 };
+
+export const getCurrentUserDetails = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser?.id) {
+    throw new Error("Error getting user");
+  }
+  return getUserById(currentUser.id);
+};

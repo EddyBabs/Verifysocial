@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import Verification from "@/screens/verification";
 import { useState } from "react";
-import { Control, FieldValues, useForm } from "react-hook-form";
+import { Control, useForm } from "react-hook-form";
 
 function getStepContent(step: number, control: Control<any>) {
   switch (step) {
@@ -21,7 +21,7 @@ function getStepContent(step: number, control: Control<any>) {
   }
 }
 
-const Page = () => {
+const BecomeAVendor = () => {
   const [activeStep, setActiveStep] = useState(1);
 
   const methods = useForm({
@@ -106,4 +106,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default BecomeAVendor;

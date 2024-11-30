@@ -1,10 +1,14 @@
 import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
-import { BellIcon, HomeIcon } from "@radix-ui/react-icons";
+import { getCurrentUserDetails } from "@/data/user";
+import { UserRole } from "@prisma/client";
+import { HomeIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import React, { PropsWithChildren } from "react";
 
-const DashboardLayout: React.FC<PropsWithChildren> = ({ children }) => {
+const DashboardLayout: React.FC<PropsWithChildren> = async ({ children }) => {
+  const user = await getCurrentUserDetails();
+
   return (
     <div className="grid h-screen min-h-screen w-full gap-4 lg:gap-0 lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r lg:block relative">
@@ -32,22 +36,28 @@ const DashboardLayout: React.FC<PropsWithChildren> = ({ children }) => {
                 <HomeIcon className="h-4 w-4" />
                 Home
               </Link>
-              <Link
-                href="/dashboard/reviews"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                prefetch={false}
-              >
-                <HomeIcon className="h-4 w-4" />
-                Reviews
-              </Link>
-              <Link
-                href="/dashboard/become-a-vendor"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                prefetch={false}
-              >
-                <HomeIcon className="h-4 w-4" />
-                Become a vendor
-              </Link>
+
+              {user?.role === UserRole.VENDOR && (
+                <>
+                  <Link
+                    href="/dashboard/generate-code"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                    prefetch={false}
+                  >
+                    <HomeIcon className="h-4 w-4" />
+                    Generate Code
+                  </Link>
+                  <Link
+                    href="/dashboard/reviews"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                    prefetch={false}
+                  >
+                    <HomeIcon className="h-4 w-4" />
+                    Reviews
+                  </Link>
+                </>
+              )}
+
               <Link
                 href="/dashboard/profile"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
@@ -55,6 +65,15 @@ const DashboardLayout: React.FC<PropsWithChildren> = ({ children }) => {
               >
                 <HomeIcon className="h-4 w-4" />
                 Profile
+              </Link>
+
+              <Link
+                href="/dashboard/settings"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                prefetch={false}
+              >
+                <HomeIcon className="h-4 w-4" />
+                Settings
               </Link>
             </nav>
           </div>

@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { signUpSchema } from "@/schemas/auth";
+import { RoleType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeNoneIcon, EyeOpenIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
@@ -16,8 +17,10 @@ type SignUpProps = z.infer<typeof signUpSchema>;
 
 const SignUpEmail = ({
   setStep,
+  role,
 }: {
   setStep: Dispatch<SetStateAction<"signup" | "verify">>;
+  role: RoleType;
 }) => {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -25,7 +28,7 @@ const SignUpEmail = ({
 
   const onSubmit = (values: SignUpProps) => {
     startTransition(async () => {
-      await signupAction(values).then((response) => {
+      await signupAction(values, role).then((response) => {
         if (response.error) {
           toast({
             description: response.error,
@@ -37,8 +40,6 @@ const SignUpEmail = ({
         }
       });
     });
-
-    // router.push("/dashboard");
   };
 
   const {

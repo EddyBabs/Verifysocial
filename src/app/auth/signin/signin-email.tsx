@@ -27,8 +27,8 @@ const SignInEmail = ({
   } = useForm<SignInProps>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-      email: "johndoe@example.com",
-      password: "Password12345",
+      email: "",
+      password: "",
     },
   });
   const onSubmit = (values: SignInProps) => {

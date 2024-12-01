@@ -5,12 +5,13 @@ import { cn } from "@/lib/utils";
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
+  inputClassName?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
     return (
-      <div>
+      <div className={props.inputClassName}>
         <div className="relative flex">
           <input
             type={type}

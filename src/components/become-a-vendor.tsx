@@ -5,15 +5,21 @@ import StepperIndicator from "@/components/stepper-indicator";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import Verification from "@/screens/verification";
-import { useState } from "react";
+import { User } from "@prisma/client";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Control, useForm } from "react-hook-form";
 
-function getStepContent(step: number, control: Control<any>) {
+function getStepContent(
+  step: number,
+  control: Control<any>,
+  setActiveStep: Dispatch<SetStateAction<number>>,
+  user: User
+) {
   switch (step) {
     case 1:
-      return <PersonalDetalsForm />;
+      return <PersonalDetalsForm user={user} setActiveStep={setActiveStep} />;
     case 2:
-      return <BuisnessDetailsForm />;
+      return <BuisnessDetailsForm setActiveStep={setActiveStep} />;
     case 3:
       return <Verification control={control} />;
     default:
@@ -21,7 +27,11 @@ function getStepContent(step: number, control: Control<any>) {
   }
 }
 
-const BecomeAVendor = () => {
+interface BecomeAVendorProps {
+  user: User;
+}
+
+const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user }) => {
   const [activeStep, setActiveStep] = useState(1);
 
   const methods = useForm({
@@ -68,8 +78,8 @@ const BecomeAVendor = () => {
         <div className="mt-8">
           <Form {...methods}>
             <form>
-              {getStepContent(activeStep, control)}
-              <div className="flex justify-end space-x-[20px] mt-10">
+              {getStepContent(activeStep, control, setActiveStep, user)}
+              {/* <div className="flex justify-end space-x-[20px] mt-10">
                 <Button
                   type="button"
                   className="w-[100px]"
@@ -97,7 +107,7 @@ const BecomeAVendor = () => {
                     Next
                   </Button>
                 )}
-              </div>
+              </div> */}
             </form>
           </Form>
         </div>

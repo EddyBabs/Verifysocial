@@ -12,7 +12,7 @@ import Link from "next/link";
 const Dashboard = async () => {
   const user = await getCurrentUserDetails();
   if (user?.role === UserRole.VENDOR) {
-    return <BecomeAVendor />;
+    return <BecomeAVendor user={user} />;
   }
   return (
     <div>

@@ -41,12 +41,26 @@ model User {
 }
 
 model Vendor {
-  id     String @id @default(auto()) @map("_id") @db.ObjectId
-  userId String @unique @db.ObjectId
-  User   User   @relation(fields: [userId], references: [id])
+  id             String                 @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String                 @unique @db.ObjectId
+  User           User                   @relation(fields: [userId], references: [id])
+  nin            String?
+  buisnessName   String?
+  buisnessAbout  String?
+  socialPlatform VendorSocialPlatform[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+enum GenderType {
+  MALE
+  FEMALE
+}
+
+type VendorSocialPlatform {
+  url      String
+  platform String
 }
 
 model Account {
@@ -94,6 +108,15 @@ model VerificationToken {
 }
 
 model PasswordResetToken {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String   @unique
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model BuisnessVerificationToken {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   email   String   @unique
   token   String   @unique

@@ -21,11 +21,10 @@ const ForgotPasswordForm = () => {
   } = useForm<ForgotPasswordProps>({
     resolver: zodResolver(requestPasswordResetSchema),
     defaultValues: {
-      email: "johndoe@example.com",
+      email: "",
     },
   });
   const onSubmit = (values: ForgotPasswordProps) => {
-    console.log({ values });
     startTransition(async () => {
       await reset(values).then((response) => {
         if (response.success) {
@@ -36,7 +35,7 @@ const ForgotPasswordForm = () => {
       });
     });
   };
-  console.log({ errors });
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col space-y-6">

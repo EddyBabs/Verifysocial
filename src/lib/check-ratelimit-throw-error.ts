@@ -26,12 +26,9 @@ export async function checkRateLimitAndThrowError({
 }
 
 export async function customCheckRateLimitAndThrowError(identifier: string) {
-  console.log("Checking Rate Limiter");
   const { allowed, reset } = customRateLimiter(identifier, 1, 60 * 1000);
-  console.log({ allowed });
-  if (!allowed) {
-    console.log("Not success");
 
+  if (!allowed) {
     throw new Error(`Rate limit exceeded. Try again ${reset || 60} seconds`);
   }
 }

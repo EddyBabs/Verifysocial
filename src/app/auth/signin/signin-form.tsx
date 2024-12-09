@@ -6,6 +6,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import Link from "next/link";
 import Logo from "@/components/logo";
+import { signIn } from "next-auth/react";
 
 type SignUpFormProps = {
   setStep: Dispatch<SetStateAction<"signup" | "verify">>;
@@ -27,7 +28,12 @@ const SignInForm: React.FC<SignUpFormProps> = ({ setStep }) => {
           </div>
         </div>
         <div className="flex gap-4 items-center justify-center">
-          <Button variant={"outline"} className="w-full">
+          <Button
+            variant={"outline"}
+            className="w-full"
+            type="button"
+            onClick={() => signIn("google")}
+          >
             <FcGoogle size={18} className="mr-2" />
             Google
           </Button>

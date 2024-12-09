@@ -2,6 +2,7 @@ import nodemailer from "nodemailer";
 import * as handlebars from "handlebars";
 import { resetPasswordTemplate } from "./templates/reset-password";
 import { verifyEmailTemplate } from "./templates/verify-email";
+import { buisnessVerificationTemplate } from "./templates/buisness-verification";
 // import { welcomeTemplate } from "./templates/welcome";
 
 export async function sendMail({
@@ -31,7 +32,7 @@ export async function sendMail({
 
   try {
     await transport.sendMail({
-      from: SMTP_EMAIL,
+      from: `Verify Social <${SMTP_EMAIL}>`,
       to,
       subject,
       html: body,
@@ -56,5 +57,17 @@ export function compileForgotPasswordTemplate(name: string, resetLink: string) {
     resetLink,
   });
 
+  return htmlBody;
+}
+
+export function compileBuisnessVerificationTemplate(
+  name: string,
+  token: string
+) {
+  const template = handlebars.compile(buisnessVerificationTemplate);
+  const htmlBody = template({
+    name,
+    token,
+  });
   return htmlBody;
 }

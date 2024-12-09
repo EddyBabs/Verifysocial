@@ -1,7 +1,8 @@
-import React, { Dispatch, SetStateAction } from "react";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
+import { useFieldArray, useFormContext } from "react-hook-form";
+import { FormValues } from "./become-a-vendor";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import {
   Select,
   SelectContent,
@@ -9,10 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { becomeAVendorForm2 } from "@/schemas/become-a-vendor";
-import * as z from "zod";
 
 const PLATFORMS = [
   { value: "facebook", label: "Facebook" },
@@ -20,47 +17,21 @@ const PLATFORMS = [
   { value: "twitter", label: "Twitter" },
 ];
 
-type BecomeAVendorForm2Type = z.infer<typeof becomeAVendorForm2>;
-
-interface BuisnessDetailsFormProps {
-  setActiveStep: Dispatch<SetStateAction<number>>;
-}
-
-const BuisnessDetailsForm: React.FC<BuisnessDetailsFormProps> = ({
-  setActiveStep,
-}) => {
+const BuisnessDetailsForm = () => {
   const {
-    control,
-    handleSubmit,
     register,
+    control,
+    getValues,
+    setValue,
     formState: { errors },
-  } = useForm<BecomeAVendorForm2Type>({
-    resolver: zodResolver(becomeAVendorForm2),
-    defaultValues: {
-      buisnessName: "",
-      buisnessAbout: "",
-      socialPlatform: [{ platform: "", url: "" }],
-    },
-  });
+  } = useFormContext<FormValues>();
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "socialPlatform",
+    name: "step2.socialPlatform",
   });
 
-  const handleBack = () => {
-    setActiveStep(1);
-  };
-
-  const handleNext = handleSubmit(
-    () => {
-      setActiveStep(3);
-    },
-    (errors) => {
-      console.log({ errors });
-    }
-  );
-
+  console.log({ fields });
   return (
     <>
       <div className="grid grid-cols-2 gap-8">
@@ -68,8 +39,8 @@ const BuisnessDetailsForm: React.FC<BuisnessDetailsFormProps> = ({
           <Label>Buisness Name</Label>
           <Input
             placeholder=""
-            {...register("buisnessName")}
-            error={errors.buisnessName?.message}
+            {...register("step2.buisnessName")}
+            error={errors.step2?.buisnessName?.message}
           />
         </div>
 
@@ -77,8 +48,8 @@ const BuisnessDetailsForm: React.FC<BuisnessDetailsFormProps> = ({
           <Label>Whats your buisness about?</Label>
           <Input
             placeholder=""
-            {...register("buisnessAbout")}
-            error={errors.buisnessAbout?.message}
+            {...register("step2.buisnessAbout")}
+            error={errors.step2?.buisnessAbout?.message}
           />
         </div>
 
@@ -87,12 +58,26 @@ const BuisnessDetailsForm: React.FC<BuisnessDetailsFormProps> = ({
             <div className="col-span-1">
               <Label>Select social platform</Label>
               {/* <Input placeholder="" /> */}
-              <Select>
-                <SelectTrigger>
+              <Select
+                defaultValue={field.platform || ""}
+                value={getValues((field.platform || "") as any)}
+                onValueChange={(value) =>
+                  setValue(`step2.socialPlatform.${index}.platform`, value)
+                }
+              >
+                <SelectTrigger className="py-5">
                   <SelectValue placeholder="platform" />{" "}
                 </SelectTrigger>
                 <SelectContent>
-                  {PLATFORMS.map((platform) => (
+                  {PLATFORMS.filter((platform) => {
+                    // Ensure the platform is not in the fields array or matches the currently selected value
+                    const isAlreadySelected = fields.some(
+                      (field) => field.platform === platform.value
+                    );
+                    const isCurrentlySelected =
+                      field.platform === platform.value; // Replace 'selectedPlatform' with your actual state or logic for the current selection
+                    return !isAlreadySelected || isCurrentlySelected;
+                  }).map((platform) => (
                     <SelectItem value={platform.value} key={platform.value}>
                       {platform.label}
                     </SelectItem>
@@ -107,12 +92,14 @@ const BuisnessDetailsForm: React.FC<BuisnessDetailsFormProps> = ({
                 <Input
                   placeholder=""
                   inputClassName="w-full flex-1"
-                  error={errors?.socialPlatform?.[index]?.url?.message}
+                  {...register(`step2.socialPlatform.${index}.url`)}
+                  error={errors.step2?.socialPlatform?.[index]?.url?.message}
                 />
                 {index > 0 && (
                   <Button
                     type="button"
                     variant={"destructive"}
+                    className="self-start"
                     onClick={() => remove(index)}
                   >
                     Remove
@@ -132,20 +119,6 @@ const BuisnessDetailsForm: React.FC<BuisnessDetailsFormProps> = ({
             Add New Social Profile
           </Button>
         </div>
-      </div>
-      <div className="flex justify-end space-x-[20px] mt-10">
-        <Button
-          type="button"
-          className="w-[100px]"
-          variant="secondary"
-          onClick={handleBack}
-        >
-          Prev
-        </Button>
-
-        <Button type="button" className="w-[100px]" onClick={handleNext}>
-          Next
-        </Button>
       </div>
     </>
   );

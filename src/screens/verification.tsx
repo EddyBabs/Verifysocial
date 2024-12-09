@@ -1,3 +1,4 @@
+import { FormValues } from "@/components/become-a-vendor";
 import {
   FormControl,
   FormDescription,
@@ -11,29 +12,38 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import React from "react";
-import { Control } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
-const Verification = ({ control }: { control: Control<any> }) => {
+const Verification = () => {
+  const { control, getValues } = useFormContext<FormValues>();
   return (
     <div className="container">
       <div className="flex flex-col items-center justify-center text-center">
-        <h2>Enter the code sent to **********@gmail.com</h2>
+        <h2>
+          Enter the code sent to **********@
+          {getValues("step1.email").split("@")[1]}
+        </h2>
 
         <div className="">
           <FormField
             control={control}
-            name="pin"
+            name="step3.otp"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>One-Time Password</FormLabel>
-                <FormControl className="text-center">
-                  <InputOTP maxLength={4} {...field}>
-                    <InputOTPGroup>
+                <FormControl>
+                  <InputOTP
+                    maxLength={6}
+                    {...field}
+                    className="flex items-center justify-center"
+                  >
+                    <InputOTPGroup className="flex items-center justify-center">
                       <InputOTPSlot index={0} />
                       <InputOTPSlot index={1} />
                       <InputOTPSlot index={2} />
                       <InputOTPSlot index={3} />
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
                     </InputOTPGroup>
                   </InputOTP>
                 </FormControl>

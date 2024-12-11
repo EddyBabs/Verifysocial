@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { redirect } from "next/navigation";
 
 export const getUserByEmail = async (email: string) => {
   try {
@@ -26,8 +27,44 @@ export const getCurrentUser = async () => {
 
 export const getCurrentUserDetails = async () => {
   const currentUser = await getCurrentUser();
+
   if (!currentUser?.id) {
-    throw new Error("Error getting user");
+    return redirect("/auth/signin");
   }
-  return getUserById(currentUser.id);
+  const credentials = await database.kYCCredential.count({
+    where: {
+      vendorId: currentUser.id,
+      status: "APPROVED",
+    },
+  });
+
+  const user = await database.user.findUnique({
+    where: { id: currentUser.id },
+    select: {
+      fullname: true,
+      email: true,
+      gender: true,
+      phone: true,
+      role: true,
+      vendor: {
+        select: {
+          tier: true,
+          buisnessName: true,
+          buisnessAbout: true,
+        },
+      },
+    },
+  });
+  if (!user) {
+    return redirect("/auth/signin");
+  }
+  const ninVerified = !!credentials;
+  return { user, ninVerified };
+};
+
+export const getVendorDetails = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser?.id) {
+    throw new Error("Access Denied");
+  }
 };

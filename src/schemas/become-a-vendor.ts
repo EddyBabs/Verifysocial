@@ -11,7 +11,6 @@ export const becomeAVendorForm1 = z.object({
   }),
   email: z.string().email(),
   nin: z.string().min(4, "Invalid Nin number"),
-  pin: z.string(),
 });
 
 export const becomeAVendorForm2 = z.object({
@@ -26,5 +25,13 @@ export const becomeAVendorForm2 = z.object({
 });
 
 export const becomeAVendorForm3 = z.object({
-  otp: z.string().length(4),
+  otp: z.string().length(6),
 });
+
+export const becomeAVendorShcema = z.object({
+  step1: becomeAVendorForm1,
+  step2: becomeAVendorForm2,
+  step3: becomeAVendorForm3,
+});
+
+export type BecomeAVendorSchemaType = z.infer<typeof becomeAVendorShcema>;

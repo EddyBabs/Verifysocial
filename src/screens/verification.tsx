@@ -1,4 +1,3 @@
-import { FormValues } from "@/components/become-a-vendor";
 import {
   FormControl,
   FormDescription,
@@ -12,10 +11,11 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { BecomeAVendorSchemaType } from "@/schemas/become-a-vendor";
 import { useFormContext } from "react-hook-form";
 
 const Verification = () => {
-  const { control, getValues } = useFormContext<FormValues>();
+  const { control, getValues } = useFormContext<BecomeAVendorSchemaType>();
   return (
     <div className="container">
       <div className="flex flex-col items-center justify-center text-center">

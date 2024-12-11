@@ -20,37 +20,55 @@ enum UserRole {
 }
 
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  email         String    @unique
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  email         String      @unique
   fullname      String
   emailVerified DateTime?
   phone         String?
   password      String?
   provider      String?
   image         String?
-  campaign      Boolean   @default(false)
-  anonymous     Boolean   @default(false)
-  role          UserRole  @default(USER)
+  gender        GenderType?
+  campaign      Boolean     @default(false)
+  anonymous     Boolean     @default(false)
+  role          UserRole    @default(USER)
   accounts      Account[]
   sessions      Session[]
   vendor        Vendor?
-  vendorId      String?   @db.ObjectId
+  vendorId      String?     @db.ObjectId
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+enum Tier {
+  TIER1
+  TIER2
+  TIER3
 }
 
 model Vendor {
   id             String                 @id @default(auto()) @map("_id") @db.ObjectId
   userId         String                 @unique @db.ObjectId
   User           User                   @relation(fields: [userId], references: [id])
-  nin            String?
   buisnessName   String?
   buisnessAbout  String?
   socialPlatform VendorSocialPlatform[]
+  tier           Tier
+  credentials    KYCCredential[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model KYCCredential {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  vendorId    String    @db.ObjectId
+  vendor      Vendor    @relation(fields: [vendorId], references: [id])
+  type        String // Type of credential (e.g., "ID", "Utility Bill")
+  status      String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  submittedAt DateTime  @default(now())
+  verifiedAt  DateTime? // Null until approved
 }
 
 enum GenderType {

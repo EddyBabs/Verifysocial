@@ -1,6 +1,7 @@
 "use client";
+import { BecomeAVendorSchemaType } from "@/schemas/become-a-vendor";
+import { CheckCheck } from "lucide-react";
 import { useFormContext } from "react-hook-form";
-import { FormValues } from "./become-a-vendor";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import {
@@ -17,8 +18,9 @@ const PersonalDetailsForm = () => {
     getValues,
     setValue,
     formState: { errors },
-  } = useFormContext<FormValues>();
+  } = useFormContext<BecomeAVendorSchemaType>();
 
+  const ninNumber = getValues("step1.nin");
   return (
     <>
       <div className="grid grid-cols-2 gap-8">
@@ -78,7 +80,7 @@ const PersonalDetailsForm = () => {
           )}
         </div>
 
-        <div className="col-span-2">
+        <div className="col-span-2 sm:col-span-1">
           <Label>Email</Label>
           <Input
             placeholder=""
@@ -88,13 +90,19 @@ const PersonalDetailsForm = () => {
           />
         </div>
 
-        <div className="col-span-2">
+        <div className="col-span-2 sm:col-span-1">
           <Label>NIN Number</Label>
-          <Input
-            placeholder=""
-            {...register("step1.nin")}
-            error={errors.step1?.nin?.message}
-          />
+          {ninNumber == "verified" ? (
+            <div className="border px-1 py-2 rounded-sm flex justify-between hover:cursor-not-allowed">
+              Verified <CheckCheck className="text-green-500" />
+            </div>
+          ) : (
+            <Input
+              placeholder=""
+              {...register("step1.nin")}
+              error={errors.step1?.nin?.message}
+            />
+          )}
         </div>
       </div>
     </>

@@ -1,12 +1,10 @@
-import VendorAvatar from "@/components/vendor-avatar";
-import { FiAward } from "react-icons/fi";
-import React from "react";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import AccessoryImage from "@/assets/images/accessories.jpeg";
 import CaptionImage from "@/assets/images/captionImage.jpeg";
 import FacialsImage from "@/assets/images/facials.jpeg";
 import ReviewCard from "@/components/reveiw-card";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { FiAward } from "react-icons/fi";
 
 const Profile = () => {
   return (
@@ -15,7 +13,7 @@ const Profile = () => {
         <div className="space-y-4">
           <h4 className="text-xl font-semibold">Hi, Glow by Banks</h4>
           <div className="flex items-center justify-between">
-            <VendorAvatar />
+            {/* <VendorAvatar /> */}
             <div className="">
               <Button
                 variant={"ghost"}

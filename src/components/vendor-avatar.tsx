@@ -3,8 +3,15 @@ import React from "react";
 import CaptionImage from "@/assets/images/captionImage.jpeg";
 import { IoLocationOutline } from "react-icons/io5";
 import { Star } from "lucide-react";
+import { Prisma } from "@prisma/client";
 
-const VendorAvatar = () => {
+interface VendorAvatarProps {
+  user: Prisma.UserGetPayload<{
+    select: { vendor: { select: { buisnessName: true } } };
+  }>;
+}
+
+const VendorAvatar: React.FC<VendorAvatarProps> = ({ user }) => {
   return (
     <div className="flex items-center gap-4">
       <div>
@@ -15,12 +22,11 @@ const VendorAvatar = () => {
         />
       </div>
       <div>
-        <h1 className="text-base">Glow by Banks</h1>
+        <h1 className="text-base">{user.vendor?.buisnessName}</h1>
         <div className="flex items-center gap-1">
           <IoLocationOutline className="text-green-500" /> Lagos{" "}
           <div className="h-4 w-[1px] bg-black"></div>
-          <Star className="fill-[#FFDD55] text-[#FFDD55] h-4" />
-          4.8 (20)
+          <Star className="fill-[#FFDD55] text-[#FFDD55] h-4" />0 (0)
         </div>
       </div>
     </div>

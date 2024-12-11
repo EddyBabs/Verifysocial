@@ -14,7 +14,6 @@ import { FaFacebookSquare } from "react-icons/fa";
 import { IoLogoWhatsapp } from "react-icons/io";
 
 const VendorId = ({ params }: { params: { vendorId: string } }) => {
-  console.log(params.vendorId);
   return (
     <div>
       <div className="mb-8 space-y-4">
@@ -36,7 +35,7 @@ const VendorId = ({ params }: { params: { vendorId: string } }) => {
           <CardContent className="p-4">
             <div className="space-y-6">
               <div className="flex justify-between">
-                <VendorAvatar />
+                {/* <VendorAvatar /> */}
                 <div>
                   <RateVendor />
                 </div>

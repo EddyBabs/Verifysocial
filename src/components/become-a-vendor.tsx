@@ -1,5 +1,9 @@
 "use client";
-import { sendBuisnessVerification, verifyNIN } from "@/actions/buisness";
+import {
+  addBuisness,
+  sendBuisnessVerification,
+  verifyNIN,
+} from "@/actions/buisness";
 import BuisnessDetailsForm from "@/components/buisness-details-form";
 import PersonalDetailsForm from "@/components/personal-details-form";
 import StepperIndicator from "@/components/stepper-indicator";
@@ -7,25 +11,17 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import {
-  becomeAVendorForm1,
-  becomeAVendorForm2,
-  becomeAVendorForm3,
+  BecomeAVendorSchemaType,
+  becomeAVendorShcema,
 } from "@/schemas/become-a-vendor";
 import Verification from "@/screens/verification";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import confetti from "canvas-confetti";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-const combinedSchema = z.object({
-  step1: becomeAVendorForm1,
-  step2: becomeAVendorForm2,
-  step3: becomeAVendorForm3,
-});
-
-export type FormValues = z.infer<typeof combinedSchema>;
 
 function getStepContent(step: number) {
   switch (step) {
@@ -41,17 +37,28 @@ function getStepContent(step: number) {
 }
 
 interface BecomeAVendorProps {
-  user: User;
+  user: Prisma.UserGetPayload<{
+    select: {
+      fullname: true;
+      email: true;
+      role: true;
+      phone: true;
+      gender: true;
+      vendor: { select: { buisnessName: true; buisnessAbout: true } };
+    };
+  }>;
+  ninVerified: boolean;
 }
 
-const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user }) => {
+const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user, ninVerified }) => {
   const [activeStep, setActiveStep] = useState(1);
   const { toast } = useToast();
+  const router = useRouter();
 
   const [isPending, startTransition] = useTransition();
 
-  const methods = useForm<FormValues>({
-    resolver: zodResolver(combinedSchema),
+  const methods = useForm<BecomeAVendorSchemaType>({
+    resolver: zodResolver(becomeAVendorShcema),
     defaultValues: {
       step1: {
         firstname: user.fullname.split(" ")[0],
@@ -60,13 +67,13 @@ const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user }) => {
             ? user.fullname.split(" ")[1]
             : "",
         email: user.email,
-        phone: "",
-        nin: "",
-        pin: "",
+        phone: user.phone || "",
+        gender: (user.gender?.toLowerCase() as any) || "",
+        nin: ninVerified ? "verified" : "",
       },
       step2: {
-        buisnessName: "",
-        buisnessAbout: "",
+        buisnessName: user.vendor?.buisnessName || "",
+        buisnessAbout: user.vendor?.buisnessAbout || "",
         socialPlatform: [{ platform: "", url: "" }],
       },
       step3: {
@@ -80,12 +87,13 @@ const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user }) => {
     trigger,
     handleSubmit,
     getValues,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = methods;
 
   const handleNext = () => {
     startTransition(async () => {
-      const currentStepKey = `step${activeStep}` as keyof FormValues;
+      const currentStepKey =
+        `step${activeStep}` as keyof BecomeAVendorSchemaType;
       const isValid = await trigger(currentStepKey);
 
       if (activeStep === 1 && isValid) {
@@ -133,8 +141,47 @@ const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user }) => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values: BecomeAVendorSchemaType) => {
     console.log("Form submitted:", values);
+    await addBuisness(values).then((response) => {
+      if (response.success) {
+        toast({ description: response.success });
+        const duration = 5 * 1000;
+        const animationEnd = Date.now() + duration;
+        const defaults = {
+          startVelocity: 30,
+          spread: 360,
+          ticks: 60,
+          zIndex: 0,
+        };
+
+        const randomInRange = (min: number, max: number) =>
+          Math.random() * (max - min) + min;
+
+        const interval = window.setInterval(() => {
+          const timeLeft = animationEnd - Date.now();
+
+          if (timeLeft <= 0) {
+            router.refresh();
+            return clearInterval(interval);
+          }
+
+          const particleCount = 50 * (timeLeft / duration);
+          confetti({
+            ...defaults,
+            particleCount,
+            origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+          });
+          confetti({
+            ...defaults,
+            particleCount,
+            origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+          });
+        }, 250);
+      } else {
+        toast({ variant: "destructive", description: response.error });
+      }
+    });
   };
   return (
     <div>

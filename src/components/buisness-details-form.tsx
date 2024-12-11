@@ -1,5 +1,6 @@
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { FormValues } from "./become-a-vendor";
+
+import { BecomeAVendorSchemaType } from "@/schemas/become-a-vendor";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -20,18 +21,17 @@ const PLATFORMS = [
 const BuisnessDetailsForm = () => {
   const {
     register,
-    control,
     getValues,
+    control,
     setValue,
     formState: { errors },
-  } = useFormContext<FormValues>();
+  } = useFormContext<BecomeAVendorSchemaType>();
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "step2.socialPlatform",
   });
 
-  console.log({ fields });
   return (
     <>
       <div className="grid grid-cols-2 gap-8">
@@ -57,10 +57,9 @@ const BuisnessDetailsForm = () => {
           <>
             <div className="col-span-1">
               <Label>Select social platform</Label>
-              {/* <Input placeholder="" /> */}
+
               <Select
-                defaultValue={field.platform || ""}
-                value={getValues((field.platform || "") as any)}
+                value={getValues(`step2.socialPlatform.${index}.platform`)}
                 onValueChange={(value) =>
                   setValue(`step2.socialPlatform.${index}.platform`, value)
                 }

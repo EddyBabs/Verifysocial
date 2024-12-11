@@ -1,6 +1,8 @@
+import { getBuisnessVerificationTokenByEmail } from "@/data/buisness-token";
+import { getPasswordResetTokenByEmail } from "@/data/forgot-password-token";
+import crypto from "crypto";
 import { v4 as uuidv4 } from "uuid";
 import { database } from "./database";
-import { getPasswordResetTokenByEmail } from "@/data/forgot-password-token";
 
 export const generateForgotPasswordToken = async (email: string) => {
   const token = uuidv4();
@@ -25,4 +27,28 @@ export const generateForgotPasswordToken = async (email: string) => {
   });
 
   return forgotPasswordToken;
+};
+
+export const generateBusinessVerificationToken = async (email: string) => {
+  const token = crypto.randomInt(100_000, 1_000_000).toString();
+  const expires = new Date(new Date().getTime() + 900 * 1000);
+  const existingToken = await getBuisnessVerificationTokenByEmail(email);
+  if (existingToken) {
+    await database.buisnessVerificationToken.delete({
+      where: {
+        id: existingToken.id,
+      },
+    });
+  }
+
+  const businessVerificationToken =
+    await database.buisnessVerificationToken.create({
+      data: {
+        token,
+        expires,
+        email,
+      },
+    });
+
+  return businessVerificationToken;
 };

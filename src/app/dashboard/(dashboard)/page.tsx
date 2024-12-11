@@ -3,6 +3,7 @@ import BecomeAVendor from "@/components/become-a-vendor";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import VendorAvatar from "@/components/vendor-avatar";
+import VendorProfile from "@/components/vendor-profile";
 import { getCurrentUserDetails } from "@/data/user";
 import { UserRole } from "@prisma/client";
 import { Search } from "lucide-react";
@@ -10,9 +11,12 @@ import Image from "next/image";
 import Link from "next/link";
 
 const Dashboard = async () => {
-  const user = await getCurrentUserDetails();
+  const { user, ninVerified } = await getCurrentUserDetails();
   if (user?.role === UserRole.VENDOR) {
-    return <BecomeAVendor user={user} />;
+    if (user.vendor?.tier === "TIER1") {
+      return <VendorProfile user={user} />;
+    }
+    return <BecomeAVendor user={user} ninVerified={ninVerified} />;
   }
   return (
     <div>
@@ -44,7 +48,7 @@ const Dashboard = async () => {
                       />
                     </div>
 
-                    <VendorAvatar />
+                    <VendorAvatar user={user} />
                   </div>
                 </Link>
               ))}
@@ -64,7 +68,7 @@ const Dashboard = async () => {
                     key={index}
                     className="py-4 border-b-2 border-accent last:border-b-0"
                   >
-                    <VendorAvatar />
+                    <VendorAvatar user={user} />
                   </div>
                 ))}
               </div>

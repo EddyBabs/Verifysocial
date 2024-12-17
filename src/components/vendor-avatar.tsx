@@ -6,12 +6,12 @@ import { Star } from "lucide-react";
 import { Prisma } from "@prisma/client";
 
 interface VendorAvatarProps {
-  user: Prisma.UserGetPayload<{
-    select: { vendor: { select: { buisnessName: true } } };
-  }>;
+  vendor: Prisma.VendorGetPayload<{
+    select: { tier: true; buisnessName: true; buisnessAbout: true };
+  }> | null;
 }
 
-const VendorAvatar: React.FC<VendorAvatarProps> = ({ user }) => {
+const VendorAvatar: React.FC<VendorAvatarProps> = ({ vendor }) => {
   return (
     <div className="flex items-center gap-4">
       <div>
@@ -22,7 +22,7 @@ const VendorAvatar: React.FC<VendorAvatarProps> = ({ user }) => {
         />
       </div>
       <div>
-        <h1 className="text-base">{user.vendor?.buisnessName}</h1>
+        <h1 className="text-base">{vendor?.buisnessName}</h1>
         <div className="flex items-center gap-1">
           <IoLocationOutline className="text-green-500" /> Lagos{" "}
           <div className="h-4 w-[1px] bg-black"></div>

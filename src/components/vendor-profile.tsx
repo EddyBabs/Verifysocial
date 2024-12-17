@@ -30,7 +30,7 @@ const VendorProfile: React.FC<VendorProfileProps> = ({ user }) => {
       <div className="space-y-4 h-full">
         <h4 className="text-xl font-semibold">Hi, {user.fullname}</h4>
         <div className="flex items-center justify-between">
-          <VendorAvatar user={user} />
+          <VendorAvatar vendor={user.vendor} />
           <div className="">
             <Button
               variant={"ghost"}

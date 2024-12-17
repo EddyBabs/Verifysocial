@@ -36,6 +36,7 @@ model User {
   sessions      Session[]
   vendor        Vendor?
   vendorId      String?     @db.ObjectId
+  orders        Order[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -56,9 +57,32 @@ model Vendor {
   socialPlatform VendorSocialPlatform[]
   tier           Tier
   credentials    KYCCredential[]
+  Product        Product[]
+  Review         Review[]
+  orders         Order[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+}
+
+model Order {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  code      String
+  status    OrderStatus @default(PENDING)
+  vendorId  String      @db.ObjectId
+  userId    String?     @db.ObjectId
+  user      User?       @relation(references: [id], fields: [userId])
+  vendor    Vendor      @relation(references: [id], fields: [vendorId])
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  @@unique([code, vendorId])
 }
 
 model KYCCredential {
@@ -69,11 +93,21 @@ model KYCCredential {
   status      String    @default("PENDING") // PENDING, APPROVED, REJECTED
   submittedAt DateTime  @default(now())
   verifiedAt  DateTime? // Null until approved
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 }
 
 enum GenderType {
   MALE
   FEMALE
+}
+
+enum ReviewRating {
+  ONE
+  TWO
+  THREE
+  FOUR
+  FIVE
 }
 
 type VendorSocialPlatform {
@@ -141,4 +175,29 @@ model BuisnessVerificationToken {
   expires DateTime
 
   @@unique([email, token])
+}
+
+model Product {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  vendorId    String @db.ObjectId
+  vendor      Vendor @relation(fields: [vendorId], references: [id])
+  name        String
+  description String
+  price       Float
+
+  reviews   Review[] // Reviews on this product
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Review {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  vendor     Vendor?  @relation(fields: [vendorId], references: [id])
+  productId  String?  @db.ObjectId // Null if review is only for a vendor
+  vendorId   String?  @db.ObjectId // Null if review is only for a product
+  product    Product? @relation(fields: [productId], references: [id])
+  rating     Int // Rating from 1 to 5
+  comment    String
+  reviewerId String // ID of the user who gave the review
+  createdAt  DateTime @default(now())
 }

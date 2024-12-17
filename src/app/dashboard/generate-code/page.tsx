@@ -1,8 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { CopyIcon } from "lucide-react";
-import React from "react";
+import { vendorGetCode } from "@/actions/code";
+import QRCode from "react-qr-code";
+import GenerateCodeSection from "./generate-code-section";
 
-const GenerateCode = () => {
+const GenerateCode = async () => {
+  const order = await vendorGetCode();
+
   return (
     <div>
       <div className="container">
@@ -14,20 +16,15 @@ const GenerateCode = () => {
               verification
             </h6>
           </div>
-          <div></div>
-          <div>
-            <div className="flex w-full border items-center  border-primary rounded-xl">
-              <Button className="h-full py-2.5 rounded-r-none">
-                Generate New Code
-              </Button>
-              <div className="flex-1 ml-4">
-                <span>AEFGGFJDJDKS</span>
-              </div>
-              <div className="p-2 px-4 border-l border-primary hover:cursor-pointer">
-                <CopyIcon />
-              </div>
-            </div>
+          <div className="flex items-center justify-center">
+            <QRCode
+              size={256}
+              style={{ height: "auto", maxWidth: 400, width: "100%" }}
+              value={order.code}
+              viewBox={`0 0 256 256`}
+            />
           </div>
+          <GenerateCodeSection order={order} />
         </div>
       </div>
     </div>

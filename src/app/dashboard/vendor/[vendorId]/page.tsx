@@ -1,8 +1,10 @@
+import { getVendorAndOrder } from "@/actions/vendor";
 import Accessories from "@/assets/images/accessories.jpeg";
 import FacialsImage from "@/assets/images/facials.jpeg";
 import ReviewCard from "@/components/reveiw-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import VendorAvatar from "@/components/vendor-avatar";
 import RateVendor from "@/screens/rating-modal";
@@ -12,8 +14,19 @@ import Link from "next/link";
 import { BsInstagram } from "react-icons/bs";
 import { FaFacebookSquare } from "react-icons/fa";
 import { IoLogoWhatsapp } from "react-icons/io";
+import OrderForm from "./order-form";
 
-const VendorId = ({ params }: { params: { vendorId: string } }) => {
+const VendorId = async ({
+  params,
+  searchParams,
+}: {
+  params: { vendorId: string };
+  searchParams: { vendorcode?: string };
+}) => {
+  const { vendor, order } = await getVendorAndOrder(
+    params.vendorId,
+    searchParams
+  );
   return (
     <div>
       <div className="mb-8 space-y-4">
@@ -35,7 +48,7 @@ const VendorId = ({ params }: { params: { vendorId: string } }) => {
           <CardContent className="p-4">
             <div className="space-y-6">
               <div className="flex justify-between">
-                {/* <VendorAvatar /> */}
+                <VendorAvatar vendor={vendor} />
                 <div>
                   <RateVendor />
                 </div>
@@ -107,6 +120,7 @@ const VendorId = ({ params }: { params: { vendorId: string } }) => {
           </CardContent>
         </Card>
       </div>
+      {order && <OrderForm />}
     </div>
   );
 };

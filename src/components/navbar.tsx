@@ -4,7 +4,7 @@ import Logo from "./logo";
 import { getCurrentUser } from "@/data/user";
 
 const Navbar = async () => {
-  const currentUser = await getCurrentUser();
+  const currentUser = await getCurrentUser(false);
   return (
     <div className="sticky top-0 inset-x-0 w-full transition-all bg-white z-50">
       <div className="container mx-auto ">

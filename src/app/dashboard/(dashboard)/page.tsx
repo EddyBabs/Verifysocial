@@ -48,7 +48,7 @@ const Dashboard = async () => {
                       />
                     </div>
 
-                    <VendorAvatar user={user} />
+                    <VendorAvatar vendor={user.vendor} />
                   </div>
                 </Link>
               ))}
@@ -68,7 +68,7 @@ const Dashboard = async () => {
                     key={index}
                     className="py-4 border-b-2 border-accent last:border-b-0"
                   >
-                    <VendorAvatar user={user} />
+                    <VendorAvatar vendor={user.vendor} />
                   </div>
                 ))}
               </div>

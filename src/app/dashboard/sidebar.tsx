@@ -42,19 +42,11 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
             prefetch={false}
           >
             <HomeIcon className="h-4 w-4" />
-            Home
+            {user.role === UserRole.VENDOR ? "Profile" : "Home"}
           </Link>
 
           {user.role === UserRole.VENDOR && (
             <>
-              <Link
-                href="/dashboard/generate-code"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                prefetch={false}
-              >
-                <HomeIcon className="h-4 w-4" />
-                Generate Code
-              </Link>
               <Link
                 href="/dashboard/reviews"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
@@ -63,17 +55,24 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
                 <HomeIcon className="h-4 w-4" />
                 Reviews
               </Link>
+              <Link
+                href="#"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                prefetch={false}
+              >
+                <HomeIcon className="h-4 w-4" />
+                Analytics
+              </Link>
+              <Link
+                href="/dashboard/generate-code"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                prefetch={false}
+              >
+                <HomeIcon className="h-4 w-4" />
+                Generate Code
+              </Link>
             </>
           )}
-
-          <Link
-            href="/dashboard/profile"
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-            prefetch={false}
-          >
-            <HomeIcon className="h-4 w-4" />
-            Profile
-          </Link>
 
           <Link
             href="/dashboard/settings"

@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -25,17 +26,36 @@ const OrderForm = () => {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="flex flex-col gap-1">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
+            <Label htmlFor="name">Name</Label>
             <Input id="name" value="" className="col-span-3" />
           </div>
           <div className="flex flex-col gap-1">
-            <Label htmlFor="username" className="text-right">
-              Email
-            </Label>
+            <Label htmlFor="username">Email</Label>
             <Input id="username" value="" />
           </div>
+
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="username">Order Value</Label>
+            <Input id="username" value="" />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="username">Delivery Date</Label>
+            <Input id="username" value="" />
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="terms"
+            onCheckedChange={(value) => console.log({ value })}
+          />
+          <label
+            htmlFor="terms"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            I consent to have my order tracked
+          </label>
         </div>
         <DialogFooter>
           <Button type="submit" className="w-full">

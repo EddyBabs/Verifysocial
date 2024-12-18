@@ -110,19 +110,19 @@ const VendorProducts = () => {
   );
 };
 
-const VendorVendorReviews = () => {
-  return (
-    <div className="space-y-4 pt-8">
-      <h3 className="text-xl font-semibold">What Customers Saying</h3>
-      <div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-          {Array.from({ length: 3 }, (_, index) => (
-            <ReviewCard key={index} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
+// const VendorVendorReviews = () => {
+//   return (
+//     <div className="space-y-4 pt-8">
+//       <h3 className="text-xl font-semibold">What Customers Saying</h3>
+//       <div>
+//         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+//           {Array.from({ length: 3 }, (_, index) => (
+//             <ReviewCard key={index} />
+//           ))}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 
 export default VendorProfile;

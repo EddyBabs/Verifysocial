@@ -97,7 +97,7 @@ const SearchVendors = () => {
               </div>
             ) : (
               vendors.map((vendor) => (
-                <div>
+                <div key={vendor.id}>
                   <Link href={`/dashboard/vendor/${vendor.id}`}>
                     <div>
                       <VendorAvatar vendor={vendor} />

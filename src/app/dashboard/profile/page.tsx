@@ -1,7 +1,6 @@
 import AccessoryImage from "@/assets/images/accessories.jpeg";
 import CaptionImage from "@/assets/images/captionImage.jpeg";
 import FacialsImage from "@/assets/images/facials.jpeg";
-import ReviewCard from "@/components/reveiw-card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { FiAward } from "react-icons/fi";
@@ -67,9 +66,9 @@ const Profile = () => {
             <h3 className="text-xl font-semibold">What Customers Saying</h3>
             <div>
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-                {Array.from({ length: 3 }, (_, index) => (
+                {/* {Array.from({ length: 3 }, (_, index) => (
                   <ReviewCard key={index} />
-                ))}
+                ))} */}
               </div>
             </div>
           </div>

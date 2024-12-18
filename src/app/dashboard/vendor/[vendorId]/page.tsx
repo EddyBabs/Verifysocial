@@ -1,12 +1,12 @@
-import { getVendorAndOrder } from "@/actions/vendor";
+import { getVendorAndOrder, getVendorReviews } from "@/actions/vendor";
 import Accessories from "@/assets/images/accessories.jpeg";
 import FacialsImage from "@/assets/images/facials.jpeg";
 import ReviewCard from "@/components/reveiw-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import VendorAvatar from "@/components/vendor-avatar";
+import { getCurrentUserDetails } from "@/data/user";
 import RateVendor from "@/screens/rating-modal";
 import { Search } from "lucide-react";
 import Image from "next/image";
@@ -23,10 +23,12 @@ const VendorId = async ({
   params: { vendorId: string };
   searchParams: { vendorcode?: string };
 }) => {
+  const { user } = await getCurrentUserDetails();
   const { vendor, order } = await getVendorAndOrder(
     params.vendorId,
     searchParams
   );
+  const reviews = await getVendorReviews(params.vendorId);
   return (
     <div>
       <div className="mb-8 space-y-4">
@@ -49,9 +51,11 @@ const VendorId = async ({
             <div className="space-y-6">
               <div className="flex justify-between">
                 <VendorAvatar vendor={vendor} />
-                <div>
-                  <RateVendor />
-                </div>
+                {order && (
+                  <div>
+                    <RateVendor order={order} />
+                  </div>
+                )}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -85,13 +89,28 @@ const VendorId = async ({
                 </p>
               </div>
               <div className="flex gap-6 items-center">
-                <Link href="#">
-                  <div className="flex items-center justify-center flex-col ">
-                    <IoLogoWhatsapp className="fill-green-500 h-10 w-10" />
-                    <h3 className="text-base">Whatsapp</h3>
-                  </div>
-                </Link>
-                <Link href="#">
+                {vendor.socialPlatform.map((platform) => (
+                  <Link
+                    href={platform.url}
+                    target="_blank"
+                    key={platform.platform}
+                  >
+                    <div className="flex items-center justify-center flex-col ">
+                      {platform.platform === "whatsapp" ? (
+                        <IoLogoWhatsapp className="fill-green-500 h-10 w-10" />
+                      ) : platform.platform === "facebook" ? (
+                        <FaFacebookSquare className="h-10 w-10 fill-blue-800" />
+                      ) : (
+                        <BsInstagram className="h-10 w-10" />
+                      )}
+                      <h3 className="text-base">{`${platform.platform
+                        .charAt(0)
+                        .toUpperCase()}${platform.platform.slice(1)}`}</h3>
+                    </div>
+                  </Link>
+                ))}
+
+                {/* <Link href="#">
                   <div className="flex items-center justify-center flex-col">
                     <FaFacebookSquare className="h-10 w-10 fill-blue-800" />
                     <h3 className="text-base">Facebook</h3>
@@ -102,7 +121,7 @@ const VendorId = async ({
                     <BsInstagram className="h-10 w-10" />
                     <h3 className="text-base">Instagram</h3>
                   </div>
-                </Link>
+                </Link> */}
               </div>
             </div>
           </CardContent>
@@ -112,15 +131,20 @@ const VendorId = async ({
             <div className="space-y-6">
               <h1 className="text-2xl font-semibold">Reviews</h1>
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">
-                {Array.from({ length: 3 }, (_, index) => (
+                {/* {Array.from({ length: 3 }, (_, index) => (
                   <ReviewCard key={index} />
+                ))} */}
+                {reviews.map((review) => (
+                  <ReviewCard key={review.id} review={review} />
                 ))}
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
-      {order && <OrderForm />}
+      {order && order.status === "PENDING" && (
+        <OrderForm user={user} order={order} />
+      )}
     </div>
   );
 };

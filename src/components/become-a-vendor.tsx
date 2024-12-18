@@ -142,7 +142,6 @@ const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user, ninVerified }) => {
   };
 
   const onSubmit = async (values: BecomeAVendorSchemaType) => {
-    console.log("Form submitted:", values);
     await addBuisness(values).then((response) => {
       if (response.success) {
         toast({ description: response.success });

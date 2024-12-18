@@ -63,3 +63,51 @@ export const getVendorAndOrder = async (
 
   return { vendor, order };
 };
+
+export const getVendors = async () => {
+  const vendors = await database.vendor.findMany();
+  return vendors;
+};
+
+export const getSearchedVendors = async (value: string) => {
+  const order = await database.order.findFirst({
+    where: {
+      code: value,
+    },
+    include: {
+      vendor: {
+        select: {
+          buisnessAbout: true,
+          buisnessName: true,
+          tier: true,
+        },
+      },
+    },
+  });
+  if (order) {
+    return { order };
+  }
+  const vendors = await database.vendor.findMany({
+    where: {
+      buisnessName: { contains: value, mode: "insensitive" },
+    },
+  });
+  return { vendors };
+};
+
+export const getVendorReviews = async (vendorId: string) => {
+  const reviews = await database.review.findMany({
+    where: {
+      vendorId,
+    },
+    include: {
+      user: {
+        select: {
+          fullname: true,
+        },
+      },
+    },
+  });
+ 
+  return reviews;
+};

@@ -1,25 +1,25 @@
+import { Prisma } from "@prisma/client";
 import Ratings from "./ui/ratings";
+import { format } from "date-fns";
 
-const ReviewCard = () => {
+const ReviewCard = ({
+  review,
+}: {
+  review: Prisma.ReviewGetPayload<{
+    include: { user: { select: { fullname: true } } };
+  }>;
+}) => {
   return (
     <div className="p-4 border-2 border-gray-300 rounded-lg">
       <div className="space-y-4">
         <div>
-          <h2 className="text-3xl font-semibold">Daniel Ejike</h2>
-          <p>10-9-2024</p>
+          <h2 className="text-3xl font-semibold">{review.user.fullname}</h2>
+          <p>{format(review.createdAt, "PPP")}</p>
         </div>
         <div className="fill-[#FFDD55]">
-          <Ratings value={4.5} variant="yellow" />
+          <Ratings value={review.rating} variant="yellow" />
         </div>
-        <div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa odio
-          aspernatur aliquam saepe, vel voluptate voluptas tenetur ipsum iure
-          quam recusandae doloremque quis enim nam corrupti aliquid minima.
-          Numquam dolor alias ad saepe corporis iusto minus unde. Velit ratione
-          atque voluptas minus, qui necessitatibus, ab tempora saepe illo nisi
-          maiores quasi fugit repellendus, a sit tempore ea obcaecati debitis
-          libero autem minima rerum cupiditate.
-        </div>
+        <div>{review.comment}</div>
       </div>
     </div>
   );

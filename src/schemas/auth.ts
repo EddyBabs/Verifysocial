@@ -43,7 +43,9 @@ export const signUpSchema = z.object({
   fullname: fullNameSchema,
   email: emailSchema,
   password: passwordSchema,
-  terms: z.boolean(),
+  terms: z.boolean().refine((value) => value === true, {
+    message: "Accept terms and conditions",
+  }),
 });
 
 export const signInSchema = z.object({
@@ -59,5 +61,16 @@ export const VerifyEmailSchema = z.object({
   email: z.string().email(),
   code: z.string().regex(/^\d{6}$/, {
     message: "Token must be exactly 6 digits",
+  }),
+});
+
+export const orderSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email"),
+  code: z.string(),
+  value: z.number().min(1),
+  date: z.date(),
+  consent: z.boolean().refine((value) => value === true, {
+    message: "Consent is needed to track product",
   }),
 });

@@ -1,12 +1,12 @@
+import { getVendors } from "@/actions/vendor";
 import Accessories from "@/assets/images/accessories.jpeg";
 import BecomeAVendor from "@/components/become-a-vendor";
+import SearchVendors from "@/components/search-vendors";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import VendorAvatar from "@/components/vendor-avatar";
 import VendorProfile from "@/components/vendor-profile";
 import { getCurrentUserDetails } from "@/data/user";
 import { UserRole } from "@prisma/client";
-import { Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -24,10 +24,7 @@ const Dashboard = async () => {
         <div className="flex justify-between items-center">
           <h1 className="text-2xl sm:text-4xl font-bold">Vendors</h1>
         </div>
-        <div className="relative">
-          <Search className="absolute w-6 h-6 top-1/2 left-2 -translate-y-3" />
-          <Input placeholder="Search by name" className="pl-10" />
-        </div>
+        <SearchVendors />
       </div>
       <div className="grid grid-cols-1 gap-4">
         <Card className="">
@@ -36,23 +33,7 @@ const Dashboard = async () => {
           </CardHeader>
           <CardContent className="">
             {/* <div className="space-y-6"> */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-              {Array.from({ length: 4 }, (_, index) => (
-                <Link href={"/dashboard/vendor/1"} key={index}>
-                  <div className="group cursor-pointer">
-                    <div className="mb-4 overflow-hidden">
-                      <Image
-                        src={Accessories}
-                        alt=""
-                        className="group-hover:scale-105 transition-all rounded-xl object-cover w-full h-full aspect-video overflow-hidden"
-                      />
-                    </div>
-
-                    <VendorAvatar vendor={user.vendor} />
-                  </div>
-                </Link>
-              ))}
-            </div>
+            <VendorList />
           </CardContent>
         </Card>
 
@@ -76,6 +57,29 @@ const Dashboard = async () => {
           </CardContent>
         </Card>
       </div>
+    </div>
+  );
+};
+
+const VendorList = async () => {
+  const vendors = await getVendors();
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      {vendors.map((vendor, index) => (
+        <Link href={`/dashboard/vendor/${vendor.id}`} key={index}>
+          <div className="group cursor-pointer">
+            <div className="mb-4 overflow-hidden">
+              <Image
+                src={Accessories}
+                alt=""
+                className="group-hover:scale-105 transition-all rounded-xl object-cover w-full h-full aspect-video overflow-hidden"
+              />
+            </div>
+
+            <VendorAvatar vendor={vendor} />
+          </div>
+        </Link>
+      ))}
     </div>
   );
 };

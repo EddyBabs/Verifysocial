@@ -8,9 +8,7 @@ import { sendVerification } from "./send-verification";
 
 export const login = async (values: z.infer<typeof signInSchema>) => {
   const validatedFields = signInSchema.safeParse(values);
-  console.log({ values });
   if (!validatedFields.success) {
-    console.log(validatedFields.error);
     return { error: "Invalid fields" };
   }
   const { email, password } = validatedFields.data;

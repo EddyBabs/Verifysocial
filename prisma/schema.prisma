@@ -55,6 +55,22 @@ model User {
   updatedAt     DateTime    @updatedAt @map("updated_at")
 }
 
+enum SocialPlatforms {
+  FACEBOOK
+}
+
+model socialAccount {
+  id           String          @id @default(auto()) @map("_id") @db.ObjectId
+  provider     SocialPlatforms
+  accessToken  String
+  refreshToken String?
+  tokenExpiry  DateTime?
+  vendorId     String          @db.ObjectId
+  vendor       Vendor          @relation(references: [id], fields: [vendorId])
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
+}
+
 enum Tier {
   TIER1
   TIER2
@@ -73,6 +89,7 @@ model Vendor {
   Product        Product[]
   Review         Review[]
   orders         Order[]
+  socialAccount  socialAccount[]
   totalRating    Int                    @default(0)
   reviewCount    Int                    @default(0)
   rating         Float                  @default(0) // Stores the average rating

@@ -45,14 +45,18 @@ const UploadProductForm = () => {
             setSocialPlatform={setSocialPlatform}
           />
         ) : (
-          <ChooseSocialPlatform />
+          <ChooseSocialPlatform setSocialPlatform={setSocialPlatform} />
         )}
       </DialogContent>
     </Dialog>
   );
 };
 
-export const ChooseSocialPlatform = () => {
+export const ChooseSocialPlatform = ({
+  setSocialPlatform,
+}: {
+  setSocialPlatform: Dispatch<SetStateAction<boolean>>;
+}) => {
   const [isPending, startTransition] = useTransition();
   const handleMeta = () => {
     startTransition(async () => {
@@ -79,7 +83,9 @@ export const ChooseSocialPlatform = () => {
           </Button>
         </div>
         <div className="">
-          <Button>Back</Button>
+          <Button onClick={() => setSocialPlatform((prev) => !prev)}>
+            Back
+          </Button>
         </div>
       </div>
     </>
@@ -215,7 +221,7 @@ export const CloudinaryUpload = ({
         <Button
           disabled={uploading}
           type="button"
-          onClick={() => console.log("Clicked")}
+          onClick={() => setSocialPlatform((prev) => !prev)}
         >
           Connect Social Media
         </Button>

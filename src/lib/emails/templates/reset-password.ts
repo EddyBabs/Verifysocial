@@ -402,7 +402,7 @@ export const resetPasswordTemplate = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1
                               "
                             >
                               Regards,<br />
-                              Fantom Market
+                              Verify Social
                             </p>
 
                             <table
@@ -558,7 +558,7 @@ export const resetPasswordTemplate = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1
                                 text-align: center;
                               "
                             >
-                              &copy; 2024 CC Fantom Market. All rights reserved.
+                              &copy; 2024 CC Verify Social. All rights reserved.
                             </p>
                           </td>
                         </tr>

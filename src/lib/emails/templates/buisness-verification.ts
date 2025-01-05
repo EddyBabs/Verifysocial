@@ -259,7 +259,7 @@ export const buisnessVerificationTemplate = `<!DOCTYPE html PUBLIC "-//W3C//DTD 
                               "
                             >
                               Regards,<br />
-                              Fantom Market
+                              Verify Social
                             </p>
                           </td>
                         </tr>

@@ -75,6 +75,12 @@ const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user, ninVerified }) => {
         buisnessName: user.vendor?.buisnessName || "",
         buisnessAbout: user.vendor?.buisnessAbout || "",
         socialPlatform: [{ platform: "", url: "" }],
+        address: {
+          country: "",
+          state: "",
+          city: "",
+          street: "",
+        },
       },
       step3: {
         otp: "",

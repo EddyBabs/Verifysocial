@@ -1,5 +1,5 @@
 import { getUserById } from "@/data/user";
-import { database } from "@/lib/database";
+import { database, UserRole } from "@/lib/database";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth from "next-auth";
 import authConfig from "./auth.config";
@@ -20,7 +20,7 @@ export const {
     },
   },
   callbacks: {
-    async signIn({ user, profile, account }) {
+    async signIn({ user, account }) {
       const existingUser = await getUserById(user.id || "");
 
       if (account?.provider !== "credentials") return true;
@@ -38,7 +38,7 @@ export const {
     async session({ token, session }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
-        // session.user.role = token.role as UserRole;
+        session.user.role = token.role as UserRole;
       }
 
       return session;
@@ -47,7 +47,7 @@ export const {
       if (!token.sub) return token;
       const existingUser = await getUserById(token.sub);
       if (!existingUser) return token;
-      token.role = "user";
+      token.role = existingUser.role;
       return token;
     },
   },

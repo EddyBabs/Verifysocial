@@ -163,6 +163,26 @@ export const addBuisness = async (values: BecomeAVendorSchemaType) => {
     },
     data: {
       fullname: `${validatedData.step1.firstname} ${validatedData.step1.lastname}`,
+      address: {
+        upsert: {
+          where: {
+            userId: vendor.id,
+          },
+          create: {
+            userId: vendor.id,
+            country: validatedData.step2.address.country,
+            city: validatedData.step2.address.city,
+            state: validatedData.step2.address.state,
+            street: validatedData.step2.address.street,
+          },
+          update: {
+            country: validatedData.step2.address.country,
+            city: validatedData.step2.address.city,
+            state: validatedData.step2.address.state,
+            street: validatedData.step2.address.street,
+          },
+        },
+      },
       gender:
         validatedData.step1.gender === "male"
           ? GenderType.MALE

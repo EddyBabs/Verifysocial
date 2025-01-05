@@ -1,5 +1,6 @@
 "use server";
 
+import { getCurrentUser } from "@/data/user";
 import { database } from "@/lib/database";
 
 export async function getVendorOverallRating(vendorId: string) {
@@ -42,6 +43,19 @@ export const getVendorAndOrder = async (
     where: {
       id: vendorId,
     },
+    include: {
+      User: {
+        select: {
+          image: true,
+          address: {
+            select: {
+              country: true,
+              state: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   let order;
@@ -65,7 +79,25 @@ export const getVendorAndOrder = async (
 };
 
 export const getVendors = async () => {
-  const vendors = await database.vendor.findMany();
+  const vendors = await database.vendor.findMany({
+    select: {
+      id: true,
+      buisnessName: true,
+      reviewCount: true,
+      rating: true,
+      User: {
+        select: {
+          image: true,
+          address: {
+            select: {
+              country: true,
+              state: true,
+            },
+          },
+        },
+      },
+    },
+  });
   return vendors;
 };
 
@@ -79,7 +111,20 @@ export const getSearchedVendors = async (value: string) => {
         select: {
           buisnessAbout: true,
           buisnessName: true,
+          rating: true,
+          reviewCount: true,
           tier: true,
+          User: {
+            select: {
+              image: true,
+              address: {
+                select: {
+                  country: true,
+                  state: true,
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -90,6 +135,16 @@ export const getSearchedVendors = async (value: string) => {
   const vendors = await database.vendor.findMany({
     where: {
       buisnessName: { contains: value, mode: "insensitive" },
+    },
+    include: {
+      User: {
+        select: {
+          image: true,
+          address: {
+            select: { country: true, state: true },
+          },
+        },
+      },
     },
   });
   return { vendors };
@@ -108,6 +163,16 @@ export const getVendorReviews = async (vendorId: string) => {
       },
     },
   });
- 
+
   return reviews;
+};
+
+export const getCurrentVendorReviews = async () => {
+  const user = await getCurrentUser();
+  const vendor = await database.vendor.findUnique({
+    where: {
+      userId: user?.id,
+    },
+  });
+  return await getVendorReviews(vendor?.id || "");
 };

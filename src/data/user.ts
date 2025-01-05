@@ -45,16 +45,28 @@ export const getCurrentUserDetails = async () => {
   const user = await database.user.findUnique({
     where: { id: currentUser.id },
     select: {
+      address: {
+        select: {
+          country: true,
+          state: true,
+          city: true,
+          street: true,
+        },
+      },
       fullname: true,
       email: true,
       gender: true,
       phone: true,
       role: true,
+      image: true,
       vendor: {
         select: {
           tier: true,
           buisnessName: true,
           buisnessAbout: true,
+          rating: true,
+          totalRating: true,
+          reviewCount: true,
         },
       },
     },

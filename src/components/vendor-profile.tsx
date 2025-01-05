@@ -1,15 +1,19 @@
 import AccessoryImage from "@/assets/images/accessories.jpeg";
 import CaptionImage from "@/assets/images/captionImage.jpeg";
 import FacialsImage from "@/assets/images/facials.jpeg";
-import ReviewCard from "@/components/reveiw-card";
 import { Button } from "@/components/ui/button";
 import VendorAvatar from "@/components/vendor-avatar";
 import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
 import { FiAward } from "react-icons/fi";
+import UploadProductForm from "./upload-product-form";
+import { getCurrentVendorProducts } from "@/actions/product";
+import { Card, CardContent, CardHeader } from "./ui/card";
+import { getCurrentVendorReviews } from "@/actions/vendor";
+import ReviewCard from "./reveiw-card";
 
-interface VendorProfileProps {
+export interface VendorProfileProps {
   user: Prisma.UserGetPayload<{
     select: {
       fullname: true;
@@ -17,20 +21,45 @@ interface VendorProfileProps {
       role: true;
       phone: true;
       gender: true;
+      image: true;
+      address: {
+        select: {
+          country: true;
+          state: true;
+        };
+      };
       vendor: {
-        select: { buisnessName: true; buisnessAbout: true; tier: true };
+        select: {
+          buisnessName: true;
+          buisnessAbout: true;
+          tier: true;
+          reviewCount: true;
+          rating: true;
+        };
       };
     };
   }>;
 }
 
-const VendorProfile: React.FC<VendorProfileProps> = ({ user }) => {
+const VendorProfile: React.FC<VendorProfileProps> = async ({ user }) => {
+  const products = await getCurrentVendorProducts();
+  const reviews = await getCurrentVendorReviews();
   return (
     <div className="pb-20">
       <div className="space-y-4 h-full">
         <h4 className="text-xl font-semibold">Hi, {user.fullname}</h4>
         <div className="flex items-center justify-between">
-          <VendorAvatar vendor={user.vendor} />
+          <VendorAvatar
+            vendor={{
+              buisnessName: user.vendor?.buisnessName || "",
+              reviewCount: user.vendor?.reviewCount || 0,
+              rating: user.vendor?.rating || 0,
+              User: {
+                address: user.address,
+                image: user.image,
+              },
+            }}
+          />
           <div className="">
             <Button
               variant={"ghost"}
@@ -58,20 +87,57 @@ const VendorProfile: React.FC<VendorProfileProps> = ({ user }) => {
           </div>
         </div>
 
-        {/* Test */}
-        <div className="w-full flex justify-center items-center min-h-[400px] bg-gray-200 mt-10 rounded-xl py-10 px-4">
-          <div className="space-y-6 text-center">
-            <div>
-              <Image
-                src="https://staticmania.cdn.prismic.io/staticmania/7c82d76e-be06-41ca-a6ef-3db9009e6231_Property+1%3DFolder_+Property+2%3DSm.svg"
-                height={234}
-                width={350}
-                alt="404"
-              />
+        {products.length ? (
+          <div>
+            <div className="grid grid-cols-2 lg:grid-cols-3">
+              {products.map((product) => (
+                <div key={product.id}>
+                  <Card>
+                    <Image
+                      src={product.image}
+                      width={250}
+                      height={250}
+                      alt=""
+                      className="aspect-video object-contain w-full h-full max-h-64"
+                    />
+                  </Card>
+                </div>
+              ))}
             </div>
-            <h2 className="text-lg font-semibold">No Product Added</h2>
-            <div className="text-center">
-              <Button>Add Products</Button>
+            <div className="mt-8">
+              <UploadProductForm />
+            </div>
+          </div>
+        ) : (
+          <div className="w-full flex justify-center items-center min-h-[400px] bg-gray-200 mt-10 rounded-xl py-10 px-4">
+            <div className="space-y-6 text-center">
+              <div>
+                <Image
+                  src="https://staticmania.cdn.prismic.io/staticmania/7c82d76e-be06-41ca-a6ef-3db9009e6231_Property+1%3DFolder_+Property+2%3DSm.svg"
+                  height={234}
+                  width={350}
+                  alt="404"
+                />
+              </div>
+              <h2 className="text-lg font-semibold">No Product Added</h2>
+              <div className="text-center">
+                <UploadProductForm />
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="pt-8 mb-8">
+          <div>
+            <h4 className="text-xl font-semibold my-4">
+              What Customers are saying
+            </h4>
+          </div>
+          <div>
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+              {reviews.map((review) => (
+                <ReviewCard review={review} key={review.id} />
+              ))}
             </div>
           </div>
         </div>

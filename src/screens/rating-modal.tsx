@@ -24,6 +24,7 @@ import * as z from "zod";
 type rateOrderValueType = z.infer<typeof rateOrderShema>;
 
 const RateVendor = ({ order }: { order: Order }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   const methods = useForm<rateOrderValueType>({
@@ -47,6 +48,7 @@ const RateVendor = ({ order }: { order: Order }) => {
       if (response.success) {
         toast({ description: response.success });
         router.refresh();
+        setIsOpen(false);
       } else {
         toast({ description: response.error });
       }
@@ -55,7 +57,7 @@ const RateVendor = ({ order }: { order: Order }) => {
 
   const rate = watch("rating");
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant={"outline"} className="border-primary text-primary">
           Rate our services

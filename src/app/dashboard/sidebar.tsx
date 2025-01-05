@@ -2,10 +2,12 @@
 
 import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Prisma, UserRole } from "@prisma/client";
 import { HomeIcon } from "@radix-ui/react-icons";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
 
 interface SidebarProps {
@@ -19,6 +21,42 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ user }) => {
+  const SIDEBAR_VALUE = [
+    ...(user.role === "VENDOR"
+      ? [
+          {
+            href: "/dashboard",
+            value: "Profile",
+          },
+          {
+            href: "/dashboard/reviews",
+            value: "Reviews",
+          },
+          {
+            href: "#",
+            value: "Analytics",
+          },
+          {
+            href: "/dashboard/generate-code",
+            value: "Generate Code",
+          },
+          {
+            href: "/dashboard/settings",
+            value: "Settings",
+          },
+        ]
+      : [
+          {
+            href: "/dashboard",
+            value: "Home",
+          },
+          {
+            href: "/dashboard/settings",
+            value: "Settings",
+          },
+        ]),
+  ];
+  const pathname = usePathname();
   return (
     <div className="flex h-full max-h-screen flex-col gap-2  bg-gray-100/40  dark:bg-gray-800/40 fixed left-0 top-0 w-[280px]">
       <div className="flex h-[60px] items-center border-b px-6">
@@ -36,7 +74,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
       </div>
       <div className="flex-1 overflow-auto py-2">
         <nav className="grid items-start px-4 text-sm font-medium ">
-          <Link
+          {/* <Link
             href="/dashboard"
             className="flex items-center gap-3 rounded-lg bg-gray-100 px-3 py-2 text-gray-900  transition-all hover:text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50"
             prefetch={false}
@@ -81,7 +119,21 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
           >
             <HomeIcon className="h-4 w-4" />
             Settings
-          </Link>
+          </Link> */}
+          {SIDEBAR_VALUE.map((bar) => (
+            <Link
+              href={bar.href}
+              className={cn(
+                "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50",
+                { "bg-gray-100": pathname === bar.href }
+              )}
+              prefetch={false}
+              key={bar.href}
+            >
+              <HomeIcon className="h-4 w-4" />
+              {bar.value}
+            </Link>
+          ))}
         </nav>
       </div>
       <div className="mt-auto p-4 mb-4">

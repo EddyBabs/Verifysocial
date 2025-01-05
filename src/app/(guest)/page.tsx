@@ -10,6 +10,7 @@ import { MagnifyingGlassIcon, StarFilledIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import Link from "next/link";
 import VerifySocialVideo from "@/assets/verify social video.gif";
+import VendorSearchInput from "@/components/vendor-search-input";
 
 const offers = [
   {
@@ -35,8 +36,12 @@ export default function Home() {
       <div className="container mx-auto mt-10 px-4">
         <div className="relative">
           <MagnifyingGlassIcon className="absolute top-1/2 -translate-y-2.5 left-6 w-5 h-5" />
-          <Input
+          {/* <Input
             className="p-6 w-full rounded-3xl pl-12"
+            placeholder="Search"
+          /> */}
+          <VendorSearchInput
+            className="p-6 w-full pl-12"
             placeholder="Search"
           />
         </div>

@@ -1,14 +1,43 @@
+import CaptionImage from "@/assets/images/captionImage.jpeg";
+import { Prisma } from "@prisma/client";
+import { Star } from "lucide-react";
 import Image from "next/image";
 import React from "react";
-import CaptionImage from "@/assets/images/captionImage.jpeg";
 import { IoLocationOutline } from "react-icons/io5";
-import { Star } from "lucide-react";
-import { Prisma } from "@prisma/client";
+
+type VendorDetails = Prisma.VendorGetPayload<{
+  select: {
+    buisnessName: true;
+    rating: true;
+    reviewCount: true;
+    User: {
+      select: {
+        image: true;
+        address: {
+          select: {
+            country: true;
+            state: true;
+          };
+        };
+      };
+    };
+  };
+  // select: {
+  //   image: true;
+  //   address: {
+  //     select: {
+  //       country: true;
+  //       state: true;
+  //     };
+  //   };
+  //   vendor: {
+  //     select: { buisnessName: true; rating: true; totalRating: true };
+  //   };
+  // };
+}>;
 
 interface VendorAvatarProps {
-  vendor: Prisma.VendorGetPayload<{
-    select: { tier: true; buisnessName: true; buisnessAbout: true };
-  }> | null;
+  vendor: VendorDetails;
 }
 
 const VendorAvatar: React.FC<VendorAvatarProps> = ({ vendor }) => {
@@ -16,7 +45,7 @@ const VendorAvatar: React.FC<VendorAvatarProps> = ({ vendor }) => {
     <div className="flex items-center gap-4">
       <div>
         <Image
-          src={CaptionImage}
+          src={vendor.User.image || CaptionImage}
           alt=""
           className="rounded-full w-14 h-14 object-cover"
         />
@@ -24,9 +53,11 @@ const VendorAvatar: React.FC<VendorAvatarProps> = ({ vendor }) => {
       <div>
         <h1 className="text-base">{vendor?.buisnessName}</h1>
         <div className="flex items-center gap-1">
-          <IoLocationOutline className="text-green-500" /> Lagos{" "}
+          <IoLocationOutline className="text-green-500" />{" "}
+          {vendor?.User?.address?.state}
           <div className="h-4 w-[1px] bg-black"></div>
-          <Star className="fill-[#FFDD55] text-[#FFDD55] h-4" />0 (0)
+          <Star className="fill-[#FFDD55] text-[#FFDD55] h-4" />
+          {vendor?.rating} ({vendor?.reviewCount})
         </div>
       </div>
     </div>

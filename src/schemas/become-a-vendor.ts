@@ -22,6 +22,12 @@ export const becomeAVendorForm2 = z.object({
       url: z.string().url("Enter a vaild URL"),
     })
   ),
+  address: z.object({
+    country: z.string().min(1, "Country is address"),
+    state: z.string().min(1, "State is required!"),
+    city: z.string().min(1, "City is required"),
+    street: z.string().min(1, "Street is required"),
+  }),
 });
 
 export const becomeAVendorForm3 = z.object({

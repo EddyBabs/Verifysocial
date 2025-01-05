@@ -15,6 +15,7 @@ import { BsInstagram } from "react-icons/bs";
 import { FaFacebookSquare } from "react-icons/fa";
 import { IoLogoWhatsapp } from "react-icons/io";
 import OrderForm from "./order-form";
+import VendorSearchInput from "@/components/vendor-search-input";
 
 const VendorId = async ({
   params,
@@ -42,7 +43,8 @@ const VendorId = async ({
         </div>
         <div className="relative">
           <Search className="absolute w-6 h-6 top-1/2 left-2 -translate-y-3" />
-          <Input placeholder="Search by name" className="pl-10" />
+          {/* <Input placeholder="Search by name" className="pl-10" /> */}
+          <VendorSearchInput className="pl-10" />
         </div>
       </div>
       <div className="grid grid-cols-2 gap-4">

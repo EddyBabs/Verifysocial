@@ -1,3 +1,4 @@
+import { getLatestReviews } from "@/actions/rating";
 import { getVendors } from "@/actions/vendor";
 import Accessories from "@/assets/images/accessories.jpeg";
 import BecomeAVendor from "@/components/become-a-vendor";
@@ -12,6 +13,7 @@ import Link from "next/link";
 
 const Dashboard = async () => {
   const { user, ninVerified } = await getCurrentUserDetails();
+  const latestReviews = await getLatestReviews();
   if (user?.role === UserRole.VENDOR) {
     if (user.vendor?.tier === "TIER1") {
       return <VendorProfile user={user} />;
@@ -32,24 +34,32 @@ const Dashboard = async () => {
             <CardTitle>Explore</CardTitle>
           </CardHeader>
           <CardContent className="">
-            {/* <div className="space-y-6"> */}
             <VendorList />
           </CardContent>
         </Card>
 
         <Card className="col-span-2">
           <CardHeader>
-            <CardTitle>All Cloth Vendors</CardTitle>
+            <CardTitle className="text-2xl">Reviews</CardTitle>
           </CardHeader>
           <CardContent className="p-4">
             <div className="space-y-6">
               <div className="grid grid-cols-1 gap-2">
-                {Array.from({ length: 3 }, (_, index) => (
+                {!latestReviews.length && (
+                  <div className="min-h-60 flex items-center justify-center">
+                    <h4 className="text-xl font-semibold">
+                      No review at the moment
+                    </h4>
+                  </div>
+                )}
+                {latestReviews.map((review, index) => (
                   <div
                     key={index}
                     className="py-4 border-b-2 border-accent last:border-b-0"
                   >
-                    <VendorAvatar vendor={user.vendor} />
+                    {review.vendor?.User && (
+                      <VendorAvatar vendor={review.vendor} />
+                    )}
                   </div>
                 ))}
               </div>
@@ -72,10 +82,11 @@ const VendorList = async () => {
               <Image
                 src={Accessories}
                 alt=""
+                width={300}
+                height={300}
                 className="group-hover:scale-105 transition-all rounded-xl object-cover w-full h-full aspect-video overflow-hidden"
               />
             </div>
-
             <VendorAvatar vendor={vendor} />
           </div>
         </Link>

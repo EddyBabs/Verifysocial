@@ -19,6 +19,18 @@ enum UserRole {
   ADMIN
 }
 
+model Address {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  country   String
+  state     String
+  city      String
+  street    String
+  userId    String   @unique @db.ObjectId
+  user      User?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
 model User {
   id            String      @id @default(auto()) @map("_id") @db.ObjectId
   email         String      @unique
@@ -35,12 +47,12 @@ model User {
   accounts      Account[]
   sessions      Session[]
   vendor        Vendor?
-  vendorId      String?     @db.ObjectId
+  addressId     String?     @unique @db.ObjectId
+  address       Address?    @relation(references: [id], fields: [addressId])
   orders        Order[]
   reviews       Review[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
 }
 
 enum Tier {
@@ -61,9 +73,11 @@ model Vendor {
   Product        Product[]
   Review         Review[]
   orders         Order[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  totalRating    Int                    @default(0)
+  reviewCount    Int                    @default(0)
+  rating         Float                  @default(0) // Stores the average rating
+  createdAt      DateTime               @default(now()) @map("created_at")
+  updatedAt      DateTime               @updatedAt @map("updated_at")
 }
 
 enum OrderStatus {
@@ -182,13 +196,10 @@ model BuisnessVerificationToken {
 }
 
 model Product {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  vendorId    String @db.ObjectId
-  vendor      Vendor @relation(fields: [vendorId], references: [id])
-  name        String
-  description String
-  price       Float
-
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  vendorId  String   @db.ObjectId
+  vendor    Vendor   @relation(fields: [vendorId], references: [id])
+  image     String
   reviews   Review[] // Reviews on this product
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

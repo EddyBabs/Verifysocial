@@ -53,6 +53,42 @@ const BuisnessDetailsForm = () => {
           />
         </div>
 
+        <div className="col-span-1">
+          <Label>Country</Label>
+          <Input
+            placeholder=""
+            {...register("step2.address.country")}
+            error={errors.step2?.address?.country?.message}
+          />
+        </div>
+
+        <div className="col-span-1">
+          <Label>State</Label>
+          <Input
+            placeholder=""
+            {...register("step2.address.state")}
+            error={errors.step2?.address?.state?.message}
+          />
+        </div>
+
+        <div className="col-span-1">
+          <Label>City</Label>
+          <Input
+            placeholder=""
+            {...register("step2.address.city")}
+            error={errors.step2?.address?.city?.message}
+          />
+        </div>
+
+        <div className="col-span-1">
+          <Label>Street</Label>
+          <Input
+            placeholder=""
+            {...register("step2.address.street")}
+            error={errors.step2?.address?.street?.message}
+          />
+        </div>
+
         {fields.map((field, index) => (
           <>
             <div className="col-span-1">

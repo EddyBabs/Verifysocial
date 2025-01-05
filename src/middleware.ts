@@ -38,9 +38,9 @@ export default auth((req) => {
     return Response.redirect(new URL("/auth/signin", nextUrl));
   }
 
-  if (!isVendorLoggedIn && isVendorRoute) {
-    return Response.redirect(new URL("/dashboard", nextUrl));
-  }
+  // if (!isVendorLoggedIn && isVendorRoute) {
+  //   return Response.redirect(new URL("/dashboard", nextUrl));
+  // }
 
   return NextResponse.next();
 });

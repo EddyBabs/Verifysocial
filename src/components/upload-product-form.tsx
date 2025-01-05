@@ -145,7 +145,7 @@ export const CloudinaryUpload = ({
   };
 
   return (
-    <>
+    <DialogContent className="sm:max-w-[525px]">
       <DialogHeader>
         <DialogTitle>Add Product</DialogTitle>
         <DialogDescription>
@@ -156,74 +156,71 @@ export const CloudinaryUpload = ({
         <DialogTrigger asChild>
           <Button>Add Products</Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[525px]">
-          <DialogHeader>
-            <DialogTitle>Add Product</DialogTitle>
-            <DialogDescription>
-              Add products to your inventory for users to see.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="">
-            <div>
-              <label htmlFor="product-file">
-                {file ? (
-                  <div>
-                    <Image
-                      src={URL.createObjectURL(file)}
-                      alt="Product Image"
-                      width={250}
-                      height={250}
-                      className="aspect-video w-full h-full object-cover mx-auto"
-                    />
-                  </div>
-                ) : (
-                  <div
-                    className="cursor-pointer p-12 flex justify-center bg-white border border-dashed border-gray-300 rounded-xl dark:bg-neutral-800 dark:border-neutral-600"
-                    data-hs-file-upload-trigger=""
-                  >
-                    <div className="text-center">
-                      <span className="inline-flex justify-center items-center size-16 bg-gray-100 text-gray-800 rounded-full dark:bg-neutral-700 dark:text-neutral-200">
-                        <Upload />
+        <DialogHeader>
+          <DialogTitle>Add Product</DialogTitle>
+          <DialogDescription>
+            Add products to your inventory for users to see.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="">
+          <div>
+            <label htmlFor="product-file">
+              {file ? (
+                <div>
+                  <Image
+                    src={URL.createObjectURL(file)}
+                    alt="Product Image"
+                    width={250}
+                    height={250}
+                    className="aspect-video w-full h-full object-cover mx-auto"
+                  />
+                </div>
+              ) : (
+                <div
+                  className="cursor-pointer p-12 flex justify-center bg-white border border-dashed border-gray-300 rounded-xl dark:bg-neutral-800 dark:border-neutral-600"
+                  data-hs-file-upload-trigger=""
+                >
+                  <div className="text-center">
+                    <span className="inline-flex justify-center items-center size-16 bg-gray-100 text-gray-800 rounded-full dark:bg-neutral-700 dark:text-neutral-200">
+                      <Upload />
+                    </span>
+
+                    <div className="mt-4 flex flex-wrap justify-center text-sm leading-6 text-gray-600">
+                      <span className="pe-1 font-medium text-gray-800 dark:text-neutral-200">
+                        Drop your file here or
                       </span>
-
-                      <div className="mt-4 flex flex-wrap justify-center text-sm leading-6 text-gray-600">
-                        <span className="pe-1 font-medium text-gray-800 dark:text-neutral-200">
-                          Drop your file here or
-                        </span>
-                        <span className="bg-white font-semibold text-blue-600 hover:text-blue-700 rounded-lg decoration-2 hover:underline focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2 dark:bg-neutral-800 dark:text-blue-500 dark:hover:text-blue-600">
-                          browse
-                        </span>
-                      </div>
-
-                      <p className="mt-1 text-xs text-gray-400 dark:text-neutral-400">
-                        Pick a file up to 2MB.
-                      </p>
+                      <span className="bg-white font-semibold text-blue-600 hover:text-blue-700 rounded-lg decoration-2 hover:underline focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2 dark:bg-neutral-800 dark:text-blue-500 dark:hover:text-blue-600">
+                        browse
+                      </span>
                     </div>
-                  </div>
-                )}
 
-                <input
-                  id="product-file"
-                  type="file"
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
-              </label>
-              {uploading && (
-                <div className="mt-2">
-                  <Progress value={progress} />
+                    <p className="mt-1 text-xs text-gray-400 dark:text-neutral-400">
+                      Pick a file up to 2MB.
+                    </p>
+                  </div>
                 </div>
               )}
-            </div>
+
+              <input
+                id="product-file"
+                type="file"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+            </label>
+            {uploading && (
+              <div className="mt-2">
+                <Progress value={progress} />
+              </div>
+            )}
           </div>
-          <DialogFooter>
-            <Button type="button" onClick={handleUpload} disabled={uploading}>
-              Save changes{" "}
-              {uploading && <Loader className="animate-spin ml-2" />}
-            </Button>
-            <Button disabled={uploading}>Connect Social Media</Button>
-          </DialogFooter>
-        </DialogContent>
+        </div>
+        <DialogFooter>
+          <Button type="button" onClick={handleUpload} disabled={uploading}>
+            Save changes {uploading && <Loader className="animate-spin ml-2" />}
+          </Button>
+          <Button disabled={uploading}>Connect Social Media</Button>
+        </DialogFooter>
       </div>
       <DialogFooter>
         <Button type="button" onClick={handleUpload} disabled={uploading}>
@@ -237,7 +234,7 @@ export const CloudinaryUpload = ({
           Connect Social Media
         </Button>
       </DialogFooter>
-    </>
+    </DialogContent>
   );
 };
 

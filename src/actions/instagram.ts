@@ -1,5 +1,7 @@
 "use server";
 
+import { getCurrentUser } from "@/data/user";
+import { database } from "@/lib/database";
 import { redirect } from "next/navigation";
 
 const clientId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID;
@@ -62,16 +64,42 @@ export const fetchInstagramMedia = async (accessToken: string) => {
 // }
 
 export const faceBookToken = async (code: string) => {
+  const currentUser = await getCurrentUser();
+
+  const vendor = await database.vendor.findUnique({
+    where: {
+      userId: currentUser?.id,
+    },
+  });
+  if (!vendor) {
+    return { error: "Access Denied" };
+  }
+
   const appSecret = process.env.FACEBOOK_APP_SECRET;
   const tokenUrl = `https://graph.facebook.com/v17.0/oauth/access_token?client_id=${clientId}&redirect_uri=${redirectUri}&client_secret=${appSecret}&code=${code}`;
 
   const response = await fetch(tokenUrl);
   const data = await response.json();
 
-  console.log({ data });
-
   if (data.access_token) {
-    return { accessToken: data.access_token };
+    await database.socialAccount.upsert({
+      where: {
+        vendorId_provider: {
+          vendorId: vendor.id,
+          provider: "FACEBOOK",
+        },
+      },
+      create: {
+        provider: "FACEBOOK",
+        vendorId: vendor.id,
+        accessToken: data.access_token,
+      },
+      update: {
+        accessToken: data.access_token,
+      },
+    });
+
+    return { success: "Fetched Access token successfully" };
   } else {
     return { error: "Failed to fetch access token" };
   }

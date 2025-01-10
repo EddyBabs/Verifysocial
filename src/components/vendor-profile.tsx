@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
 import { FiAward } from "react-icons/fi";
+import InstagramCallback from "./instagram-callback";
 import ReviewCard from "./reveiw-card";
 import { Card } from "./ui/card";
 import UploadProductForm from "./upload-product-form";
@@ -41,8 +42,10 @@ export interface VendorProfileProps {
 const VendorProfile: React.FC<VendorProfileProps> = async ({ user }) => {
   const products = await getCurrentVendorProducts();
   const reviews = await getCurrentVendorReviews();
+
   return (
     <div className="pb-20">
+      <InstagramCallback />
       <div className="space-y-4 h-full">
         <h4 className="text-xl font-semibold">Hi, {user.fullname}</h4>
         <div className="flex items-center justify-between">

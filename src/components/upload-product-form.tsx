@@ -27,7 +27,7 @@ const UploadProductForm = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [uploading, setUploading] = useState<boolean>(false);
   const [socialPlatform, setSocialPlatform] = useState<boolean>(false);
-  console.log({ socialPlatform });
+
   return (
     <Dialog
       open={isOpen}

@@ -25,11 +25,11 @@ const Page = async () => {
             {user.vendor?.totalRating || 0}
           </h1>
           <div className="space-y-4 w-full sm:w-2/6">
-            <Progress value={100} />
-            <Progress value={90} />
-            <Progress value={70} />
-            <Progress value={50} />
-            <Progress value={30} />
+            <Progress value={(user?.vendor?.totalRating || 0) >= 5 ? 100 : 0} />
+            <Progress value={(user?.vendor?.totalRating || 0) >= 4 ? 100 : 0} />
+            <Progress value={(user?.vendor?.totalRating || 0) >= 3 ? 100 : 0} />
+            <Progress value={(user?.vendor?.totalRating || 0) >= 2 ? 100 : 0} />
+            <Progress value={(user?.vendor?.totalRating || 0) >= 1 ? 100 : 0} />
           </div>
         </div>
       </div>

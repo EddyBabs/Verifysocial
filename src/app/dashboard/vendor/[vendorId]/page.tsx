@@ -1,11 +1,9 @@
 import { getVendorAndOrder, getVendorReviews } from "@/actions/vendor";
-import Accessories from "@/assets/images/accessories.jpeg";
-import FacialsImage from "@/assets/images/facials.jpeg";
 import ReviewCard from "@/components/reveiw-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import VendorAvatar from "@/components/vendor-avatar";
+import VendorSearchInput from "@/components/vendor-search-input";
 import { getCurrentUserDetails } from "@/data/user";
 import RateVendor from "@/screens/rating-modal";
 import { Search } from "lucide-react";
@@ -15,7 +13,6 @@ import { BsInstagram } from "react-icons/bs";
 import { FaFacebookSquare } from "react-icons/fa";
 import { IoLogoWhatsapp } from "react-icons/io";
 import OrderForm from "./order-form";
-import VendorSearchInput from "@/components/vendor-search-input";
 
 const VendorId = async ({
   params,
@@ -60,20 +57,17 @@ const VendorId = async ({
                 )}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <Image
-                    src={Accessories}
-                    alt=""
-                    className="rounded-xl object-cover w-full h-full aspect-video"
-                  />
-                </div>
-                <div>
-                  <Image
-                    src={FacialsImage}
-                    alt=""
-                    className=" rounded-xl object-cover w-full h-full aspect-video"
-                  />
-                </div>
+                {vendor.Product.map((product) => (
+                  <div key={product.id}>
+                    <Image
+                      src={product.image}
+                      alt=""
+                      width={400}
+                      height={400}
+                      className="rounded-xl object-cover w-full h-full aspect-video"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           </CardContent>

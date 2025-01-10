@@ -153,7 +153,7 @@ export const CloudinaryUpload = ({
   };
 
   return (
-    <DialogContent className="sm:max-w-[525px]">
+    <>
       <DialogHeader>
         <DialogTitle>Add Product</DialogTitle>
         <DialogDescription>
@@ -226,7 +226,7 @@ export const CloudinaryUpload = ({
           Connect Social Media
         </Button>
       </DialogFooter>
-    </DialogContent>
+    </>
   );
 };
 

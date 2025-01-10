@@ -1,17 +1,14 @@
-import AccessoryImage from "@/assets/images/accessories.jpeg";
-import CaptionImage from "@/assets/images/captionImage.jpeg";
-import FacialsImage from "@/assets/images/facials.jpeg";
+import { getCurrentVendorProducts } from "@/actions/product";
+import { getCurrentVendorReviews } from "@/actions/vendor";
 import { Button } from "@/components/ui/button";
 import VendorAvatar from "@/components/vendor-avatar";
 import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
 import { FiAward } from "react-icons/fi";
-import UploadProductForm from "./upload-product-form";
-import { getCurrentVendorProducts } from "@/actions/product";
-import { Card, CardContent, CardHeader } from "./ui/card";
-import { getCurrentVendorReviews } from "@/actions/vendor";
 import ReviewCard from "./reveiw-card";
+import { Card } from "./ui/card";
+import UploadProductForm from "./upload-product-form";
 
 export interface VendorProfileProps {
   user: Prisma.UserGetPayload<{
@@ -89,7 +86,7 @@ const VendorProfile: React.FC<VendorProfileProps> = async ({ user }) => {
 
         {products.length ? (
           <div>
-            <div className="grid grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
               {products.map((product) => (
                 <div key={product.id}>
                   <Card>
@@ -145,50 +142,5 @@ const VendorProfile: React.FC<VendorProfileProps> = async ({ user }) => {
     </div>
   );
 };
-
-const VendorProducts = () => {
-  return (
-    <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-        <div>
-          <Image
-            src={AccessoryImage}
-            alt=""
-            className="rounded-xl w-full h-full aspect-video object-cover"
-          />
-        </div>
-        <div>
-          <Image
-            src={CaptionImage}
-            alt=""
-            className="rounded-xl w-full h-full aspect-video object-cover"
-          />
-        </div>
-        <div>
-          <Image
-            src={FacialsImage}
-            alt=""
-            className="rounded-xl w-full h-full aspect-video object-cover"
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// const VendorVendorReviews = () => {
-//   return (
-//     <div className="space-y-4 pt-8">
-//       <h3 className="text-xl font-semibold">What Customers Saying</h3>
-//       <div>
-//         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-//           {Array.from({ length: 3 }, (_, index) => (
-//             <ReviewCard key={index} />
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
 
 export default VendorProfile;

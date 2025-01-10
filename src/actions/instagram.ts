@@ -60,3 +60,19 @@ export const fetchInstagramMedia = async (accessToken: string) => {
 //     res.status(400).json({ error: "Failed to fetch access token" });
 //   }
 // }
+
+export const faceBookToken = async (code: string) => {
+  const appSecret = process.env.FACEBOOK_APP_SECRET;
+  const tokenUrl = `https://graph.facebook.com/v17.0/oauth/access_token?client_id=${clientId}&redirect_uri=${redirectUri}&client_secret=${appSecret}&code=${code}`;
+
+  const response = await fetch(tokenUrl);
+  const data = await response.json();
+
+  console.log({ data });
+
+  if (data.access_token) {
+    return { accessToken: data.access_token };
+  } else {
+    return { error: "Failed to fetch access token" };
+  }
+};

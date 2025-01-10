@@ -44,6 +44,16 @@ export const getVendorAndOrder = async (
       id: vendorId,
     },
     include: {
+      Product: {
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 2,
+        select: {
+          id: true,
+          image: true,
+        },
+      },
       User: {
         select: {
           image: true,

@@ -5,3 +5,16 @@ export const rateOrderShema = z.object({
   rating: z.number().min(1).max(5),
   comment: z.string().min(1, "Comment is required"),
 });
+
+export const createOrderShema = z.object({
+  name: z.string().min(1, "Product name is required"),
+  quantity: z.number().min(1, "Quantity cannot be less than 1"),
+  amount: z.object({
+    min: z.number().min(1000, "Amount cannot be less than 1000"),
+    max: z.number().min(1000, "Amount cannot be less than 1000"),
+  }),
+  deliveryPeriod: z.date(),
+  returnPeriod: z.number().min(1, "Return period cannot be less than 1"),
+});
+
+export type createOrderShemaType = z.infer<typeof createOrderShema>;

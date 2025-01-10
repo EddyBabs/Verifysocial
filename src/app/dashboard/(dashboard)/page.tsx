@@ -1,12 +1,14 @@
 import { getLatestReviews } from "@/actions/rating";
 import { getVendors } from "@/actions/vendor";
-import Accessories from "@/assets/images/accessories.jpeg";
+// import Accessories from "@/assets/images/accessories.jpeg";
+import noImagePlacehoder from "@/assets/images/no-image-placehoder.webp";
 import BecomeAVendor from "@/components/become-a-vendor";
 import SearchVendors from "@/components/search-vendors";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import VendorAvatar from "@/components/vendor-avatar";
 import VendorProfile from "@/components/vendor-profile";
 import { getCurrentUserDetails } from "@/data/user";
+
 import { UserRole } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -80,7 +82,7 @@ const VendorList = async () => {
           <div className="group cursor-pointer">
             <div className="mb-4 overflow-hidden">
               <Image
-                src={Accessories}
+                src={vendor.Product?.[0].image || noImagePlacehoder}
                 alt=""
                 width={300}
                 height={300}

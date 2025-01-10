@@ -17,18 +17,18 @@ const GenerateCodeSection: React.FC<GenerateCodeSectionTypes> = ({ order }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [copied, setCopied] = useState(false);
-  const handleNewCode = () => {
-    startTransition(async () => {
-      await getNewCode().then((response) => {
-        if (response.success) {
-          toast({ description: response.success });
-          router.refresh();
-        } else {
-          toast({ description: response.error, variant: "destructive" });
-        }
-      });
-    });
-  };
+  // const handleNewCode = () => {
+  //   startTransition(async () => {
+  //     await getNewCode().then((response) => {
+  //       if (response.success) {
+  //         toast({ description: response.success });
+  //         router.refresh();
+  //       } else {
+  //         toast({ description: response.error, variant: "destructive" });
+  //       }
+  //     });
+  //   });
+  // };
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -41,14 +41,6 @@ const GenerateCodeSection: React.FC<GenerateCodeSectionTypes> = ({ order }) => {
   return (
     <div>
       <div className="flex w-full border items-center  border-primary rounded-xl">
-        <Button
-          className="h-full py-2.5 rounded-r-none"
-          onClick={handleNewCode}
-          disabled={isPending}
-        >
-          Generate New Code{" "}
-          {isPending && <Loader className="ml-2 animate-spin" />}
-        </Button>
         <div className="flex-1 ml-4">
           <span>{order.code}</span>
         </div>

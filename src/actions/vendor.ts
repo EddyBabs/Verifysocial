@@ -85,6 +85,15 @@ export const getVendors = async () => {
       buisnessName: true,
       reviewCount: true,
       rating: true,
+      Product: {
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 1,
+        select: {
+          image: true,
+        },
+      },
       User: {
         select: {
           image: true,

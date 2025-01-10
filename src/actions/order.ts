@@ -17,8 +17,8 @@ export const fillOrder = async (values: orderSchemaType) => {
       status: OrderStatus.PENDING,
     },
     data: {
-      amount: validatedData.value,
-      delivery: validatedData.date,
+      // amount: validatedData.value,
+      // delivery: validatedData.date,
       status: OrderStatus.PROCESSING,
     },
   });

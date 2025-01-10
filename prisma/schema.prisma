@@ -104,18 +104,22 @@ enum OrderStatus {
 }
 
 model Order {
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
-  code      String      @unique
-  status    OrderStatus @default(PENDING)
-  vendorId  String      @db.ObjectId
-  userId    String?     @db.ObjectId
-  user      User?       @relation(references: [id], fields: [userId])
-  amount    Float?
-  review    Review?
-  delivery  DateTime?
-  vendor    Vendor      @relation(references: [id], fields: [vendorId])
-  createdAt DateTime    @default(now()) @map("created_at")
-  updatedAt DateTime    @updatedAt @map("updated_at")
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  code           String      @unique
+  status         OrderStatus @default(PENDING)
+  vendorId       String      @db.ObjectId
+  userId         String?     @db.ObjectId
+  user           User?       @relation(references: [id], fields: [userId])
+  name           String
+  minAmount      Float
+  maxAmount      Float
+  review         Review?
+  deliveryPeriod DateTime
+  returnPeriod   Int
+  quantity       Int
+  vendor         Vendor      @relation(references: [id], fields: [vendorId])
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
 
   @@unique([code, vendorId])
 }

@@ -8,36 +8,69 @@ const clientId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID;
 const redirectUri = process.env.NEXT_PUBLIC_REDIRECT_URI;
 
 export const facebookLogin = async () => {
-  const authUrl = `https://www.facebook.com/v17.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=pages_show_list,instagram_basic,instagram_manage_insights&response_type=code`;
+  const authUrl = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=pages_show_list,instagram_basic,instagram_manage_insights&response_type=code`;
   redirect(authUrl);
   // Redirect the user to authUrl to log in and authorize
 };
 
-export const fetchInstagramMedia = async (accessToken: string) => {
-  const userUrl = `https://graph.facebook.com/v17.0/me/accounts?access_token=${accessToken}`;
+export const fetchInstagramMedia = async () => {
+  const currentUser = await getCurrentUser();
+  console.log("Fetching...");
+
+  const vendor = await database.vendor.findUnique({
+    where: {
+      userId: currentUser?.id,
+    },
+  });
+  if (!vendor) {
+    return { error: "Access Denied" };
+  }
+  const socialPlatform = await database.socialAccount.findUnique({
+    where: {
+      vendorId_provider: {
+        vendorId: vendor.id,
+        provider: "FACEBOOK",
+      },
+    },
+  });
+  console.log({ socialPlatform });
+  if (!socialPlatform?.accessToken) {
+    return { failed: true };
+  }
+  const accessToken = socialPlatform.accessToken;
+
+  const userUrl = `https://graph.facebook.com/v21.0/me/accounts?access_token=${accessToken}&fields=id,name,first_name,last_name,username,media_count,account_type`;
 
   // Fetch the Facebook pages linked to the user's account
-  const pageResponse = await fetch(userUrl);
-  const pageData = await pageResponse.json();
+  try {
+    const pageResponse = await fetch(userUrl);
+    const pageData = await pageResponse.json();
 
-  if (pageData.data.length > 0) {
-    const pageId = pageData.data[0].id;
+    console.dir(pageData, { depth: null });
+    if (pageData.data.length > 0) {
+      const pageId = pageData.data[0].id;
 
-    const mediaUrl = `https://graph.facebook.com/v17.0/${pageId}?fields=instagram_business_account&access_token=${accessToken}`;
-    const mediaResponse = await fetch(mediaUrl);
-    const mediaData = await mediaResponse.json();
+      const mediaUrl = `https://graph.facebook.com/v21.0/${pageId}?fields=instagram_business_account&access_token=${accessToken}`;
+      const mediaResponse = await fetch(mediaUrl);
+      const mediaData = await mediaResponse.json();
+      console.dir(mediaData, { depth: null });
 
-    if (mediaData.instagram_business_account) {
-      const instagramId = mediaData.instagram_business_account.id;
+      if (mediaData.instagram_business_account) {
+        const instagramId = mediaData.instagram_business_account.id;
 
-      const userMediaUrl = `https://graph.facebook.com/v17.0/${instagramId}/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink&access_token=${accessToken}`;
-      const mediaResult = await fetch(userMediaUrl);
-      const mediaList = await mediaResult.json();
+        const userMediaUrl = `https://graph.facebook.com/v21.0/${instagramId}/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink&access_token=${accessToken}`;
+        const mediaResult = await fetch(userMediaUrl);
+        const mediaList = await mediaResult.json();
 
-      return mediaList.data;
+        return { success: mediaList.data };
+      }
     }
+    // throw new Error("No linked Instagram business account found");
+    return { error: "No linked Instagram business account found" };
+  } catch (error) {
+    console.log("Error Occured");
+    console.log({ error });
   }
-  throw new Error("No linked Instagram business account found");
 };
 
 // import { NextApiRequest, NextApiResponse } from "next";
@@ -76,7 +109,7 @@ export const faceBookToken = async (code: string) => {
   }
 
   const appSecret = process.env.FACEBOOK_APP_SECRET;
-  const tokenUrl = `https://graph.facebook.com/v17.0/oauth/access_token?client_id=${clientId}&redirect_uri=${redirectUri}&client_secret=${appSecret}&code=${code}`;
+  const tokenUrl = `https://graph.facebook.com/v21.0/oauth/access_token?client_id=${clientId}&redirect_uri=${redirectUri}&client_secret=${appSecret}&code=${code}`;
 
   const response = await fetch(tokenUrl);
   const data = await response.json();

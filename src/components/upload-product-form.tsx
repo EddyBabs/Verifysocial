@@ -2,6 +2,8 @@
 import React, {
   Dispatch,
   SetStateAction,
+  useCallback,
+  useEffect,
   useState,
   useTransition,
 } from "react";
@@ -19,9 +21,10 @@ import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import Image from "next/image";
 import { uploadProductImage } from "@/actions/product";
-import { useToast } from "@/hooks/use-toast";
-import { facebookLogin } from "@/actions/instagram";
+import { toast, useToast } from "@/hooks/use-toast";
+import { facebookLogin, fetchInstagramMedia } from "@/actions/instagram";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "./ui/skeleton";
 
 const UploadProductForm = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -57,12 +60,57 @@ export const ChooseSocialPlatform = ({
 }: {
   setSocialPlatform: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const [error, setError] = useState<string | null>(null);
+  const [media, setMedia] = useState();
   const [isPending, startTransition] = useTransition();
+  const fetchMedia = useCallback(() => {
+    startTransition(async () => {
+      setError(null);
+      const response = await fetchInstagramMedia();
+      if (response?.success) {
+        setMedia(response.success);
+      } else if (response?.error) {
+        setError(response.error);
+        toast({ description: response.error, variant: "destructive" });
+      }
+    });
+  }, []);
+
   const handleMeta = () => {
     startTransition(async () => {
       await facebookLogin();
     });
   };
+
+  useEffect(() => {
+    fetchMedia();
+  }, [fetchMedia]);
+  if (isPending) {
+    return (
+      <div className="flex flex-col space-y-3">
+        <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-[250px]" />
+          <Skeleton className="h-4 w-[200px]" />
+        </div>
+      </div>
+    );
+  }
+  if (media) {
+    return (
+      <>
+        <DialogHeader>
+          <DialogTitle>Select Media</DialogTitle>
+          <DialogDescription>
+            Select from the available media from your instagram account
+          </DialogDescription>
+        </DialogHeader>
+        <div>
+          <h1>Got accounts</h1>
+        </div>
+      </>
+    );
+  }
   return (
     <>
       <DialogHeader>
@@ -82,6 +130,13 @@ export const ChooseSocialPlatform = ({
             Link to Meta
           </Button>
         </div>
+
+        {error && (
+          <div>
+            <p className="text-destructive text-[0.8rem]">{error}</p>
+          </div>
+        )}
+
         <div className="">
           <Button onClick={() => setSocialPlatform((prev) => !prev)}>
             Back

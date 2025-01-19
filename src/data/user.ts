@@ -62,11 +62,13 @@ export const getCurrentUserDetails = async () => {
       vendor: {
         select: {
           tier: true,
+          categories: true,
           buisnessName: true,
           buisnessAbout: true,
           rating: true,
           totalRating: true,
           reviewCount: true,
+          socialAccount: true,
         },
       },
     },

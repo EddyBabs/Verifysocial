@@ -1,3 +1,4 @@
+import { platform } from "os";
 import * as z from "zod";
 
 export const rateOrderShema = z.object({
@@ -18,3 +19,21 @@ export const createOrderShema = z.object({
 });
 
 export type createOrderShemaType = z.infer<typeof createOrderShema>;
+
+export const settingFormSchema = z.object({
+  fullname: z.string(),
+  phone: z.string(),
+  gender: z.string(),
+  socialPlatform: z.array(
+    z.object({
+      platform: z.string(),
+      token: z.string(),
+    })
+  ),
+
+  categories: z.array(z.string()),
+});
+
+export type settingFormSchemaType = z.infer<typeof settingFormSchema>;
+
+// export type

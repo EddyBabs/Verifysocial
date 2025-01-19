@@ -13,9 +13,8 @@ import {
 } from "./ui/select";
 
 const PLATFORMS = [
-  { value: "facebook", label: "Facebook" },
-  { value: "instagram", label: "Instagram" },
-  { value: "twitter", label: "Twitter" },
+  { value: "facebook", label: "Facebook & Instagram" },
+  { value: "twitter", label: "Twitter", disabled: true },
 ];
 
 const BuisnessDetailsForm = () => {
@@ -113,7 +112,11 @@ const BuisnessDetailsForm = () => {
                       field.platform === platform.value; // Replace 'selectedPlatform' with your actual state or logic for the current selection
                     return !isAlreadySelected || isCurrentlySelected;
                   }).map((platform) => (
-                    <SelectItem value={platform.value} key={platform.value}>
+                    <SelectItem
+                      value={platform.value}
+                      key={platform.value}
+                      disabled={platform?.disabled}
+                    >
                       {platform.label}
                     </SelectItem>
                   ))}

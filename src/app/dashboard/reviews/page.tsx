@@ -22,14 +22,14 @@ const Page = async () => {
         </div>
         <div className="flex gap-4 items-center">
           <h1 className="font-extrabold text-6xl">
-            {user.vendor?.totalRating || 0}
+            {user.vendor?.rating || 0}
           </h1>
           <div className="space-y-4 w-full sm:w-2/6">
-            <Progress value={(user?.vendor?.totalRating || 0) >= 5 ? 100 : 0} />
-            <Progress value={(user?.vendor?.totalRating || 0) >= 4 ? 100 : 0} />
-            <Progress value={(user?.vendor?.totalRating || 0) >= 3 ? 100 : 0} />
-            <Progress value={(user?.vendor?.totalRating || 0) >= 2 ? 100 : 0} />
-            <Progress value={(user?.vendor?.totalRating || 0) >= 1 ? 100 : 0} />
+            <Progress value={(user?.vendor?.rating || 0) >= 5 ? 100 : 0} />
+            <Progress value={(user?.vendor?.rating || 0) >= 4 ? 100 : 0} />
+            <Progress value={(user?.vendor?.rating || 0) >= 3 ? 100 : 0} />
+            <Progress value={(user?.vendor?.rating || 0) >= 2 ? 100 : 0} />
+            <Progress value={(user?.vendor?.rating || 0) >= 1 ? 100 : 0} />
           </div>
         </div>
       </div>

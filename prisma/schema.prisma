@@ -92,6 +92,7 @@ model Vendor {
   Review         Review[]
   orders         Order[]
   socialAccount  socialAccount[]
+  categories     String[]
   totalRating    Int                    @default(0)
   reviewCount    Int                    @default(0)
   rating         Float                  @default(0) // Stores the average rating

@@ -1,4 +1,3 @@
-import { platform } from "os";
 import * as z from "zod";
 
 export const rateOrderShema = z.object({

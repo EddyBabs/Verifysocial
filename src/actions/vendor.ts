@@ -195,3 +195,32 @@ export const getCurrentVendorReviews = async () => {
   });
   return await getVendorReviews(vendor?.id || "");
 };
+
+export const getPaginatedVendors = async (category: string | undefined) => {
+  const vendors = await database.vendor.findMany({
+    where: {
+      ...(!!category
+        ? {
+            categories: {
+              has: category as string,
+            },
+          }
+        : {}),
+    },
+    include: {
+      Product: true,
+      User: {
+        select: {
+          image: true,
+          address: {
+            select: {
+              country: true,
+              state: true,
+            },
+          },
+        },
+      },
+    },
+  });
+  return vendors;
+};

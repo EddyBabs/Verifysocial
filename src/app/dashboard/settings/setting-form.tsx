@@ -1,17 +1,11 @@
 "use client";
-import React, { useTransition } from "react";
+import { facebookLogin } from "@/actions/instagram";
 import { updateSetting } from "@/actions/setting";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { MultiSelect } from "@/components/ui/multi-select";
-import { toast } from "@/hooks/use-toast";
-import { settingFormSchema, settingFormSchemaType } from "@/schemas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
-import { z } from "zod";
-import { Prisma, User } from "@prisma/client";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { MultiSelect } from "@/components/ui/multi-select";
 import {
   Select,
   SelectContent,
@@ -19,22 +13,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import categories from "@/data/categories";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { settingFormSchema, settingFormSchemaType } from "@/schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Prisma } from "@prisma/client";
 import { Loader2 } from "lucide-react";
-import { facebookLogin } from "@/actions/instagram";
-
-const categories = [
-  { label: "Fashion", value: "fashion" },
-  { label: "Electronics", value: "electronics" },
-  { label: "Home & Kitchen", value: "home_kitchen" },
-  { label: "Beauty & Personal Care", value: "beauty_personal_care" },
-  { label: "Health & Fitness", value: "health_fitness" },
-  { label: "Sports & Outdoors", value: "sports_outdoors" },
-  { label: "Baby & Kids", value: "baby_kids" },
-  { label: "Books, Movies & Music", value: "book_movies_music" },
-  { label: "Groceries & Gourmet Food", value: "groceries_gourmet_food" },
-  { label: "Automotive", value: "automotive" },
-];
+import React, { useTransition } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
 
 const PLATFORMS = [
   { value: "facebook", label: "Facebook & Instagram" },

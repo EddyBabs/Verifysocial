@@ -1,17 +1,66 @@
-import Link from "next/link";
-import React from "react";
-import Logo from "./logo";
 import { getCurrentUser } from "@/data/user";
+import { Menu } from "lucide-react";
+import Link from "next/link";
+import Logo from "./logo";
+import { Button } from "./ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 const Navbar = async () => {
   const currentUser = await getCurrentUser(false);
   return (
     <div className="sticky top-0 inset-x-0 w-full transition-all bg-white z-50">
       <div className="container mx-auto ">
-        <div className="navbar bg-base-100 px-0 sm:px-4 justify-between flex items-center">
-          <div className="">
+        <div className="navbar bg-base-100 px-4 justify-between flex items-center overflow-hidden">
+          <div className="block md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant={"ghost"}>
+                  <Menu />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="overflow-x-hidden">
+                {/* <Link href="/" prefetch={false}>
+                  <Logo className="sr-only" />
+                </Link> */}
+                <div className="grid gap-2 py-6">
+                  <Link
+                    href="#"
+                    className="flex w-full items-center py-2 text-lg font-semibold"
+                    prefetch={false}
+                  >
+                    Home
+                  </Link>
+
+                  <Link
+                    href="#"
+                    className="flex w-full items-center py-2 text-lg font-semibold"
+                    prefetch={false}
+                  >
+                    Contact Us
+                  </Link>
+
+                  <Link
+                    href="/auth/signin"
+                    className="flex w-full items-center py-2 text-lg font-semibold"
+                    prefetch={false}
+                  >
+                    Sign In
+                  </Link>
+
+                  <Link
+                    href="/auth/signup"
+                    className="flex w-full items-center py-2 text-lg font-semibold"
+                    prefetch={false}
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+          <div className="-ml-10">
             <Link href="/" passHref>
-              <Logo />
+              <Logo className="xs:sr-only" />
             </Link>
           </div>
           <div className="hidden md:flex items-center gap-4">
@@ -47,7 +96,7 @@ const Navbar = async () => {
                   <li>
                     <Link
                       href="/auth/signup"
-                      className="btn btn-secondary rounded-xl bg-primary text-secondary py-3 px-2 sm:px-4 btn-md"
+                      className="btn btn-secondary rounded-xl bg-primary text-secondary py-2 px-3 sm:px-4 btn-md"
                     >
                       Sign Up
                     </Link>

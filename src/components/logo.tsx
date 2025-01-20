@@ -18,10 +18,14 @@ const Logo = ({
         src={LogoText.src}
         width={width ?? 150}
         height={height ?? 100}
+        className="w-[130px] h-[80px]  sm:w-[150px] sm:h-[100px] aspect-auto"
         alt="logo"
       />
       <h3
-        className={cn("-ml-10 font-semibold text-xl font-jakarta", className)}
+        className={cn(
+          "-ml-10 font-semibold text-lg md:text-lg font-jakarta",
+          className
+        )}
       >
         Verify Social
       </h3>

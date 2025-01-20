@@ -48,7 +48,7 @@ const VendorProfile: React.FC<VendorProfileProps> = async ({ user }) => {
       <InstagramCallback />
       <div className="space-y-4 h-full">
         <h4 className="text-xl font-semibold">Hi, {user.fullname}</h4>
-        <div className="flex items-center justify-between">
+        <div className="flex items-start gap-4 md:items-center justify-between flex-col md:flex-row">
           <VendorAvatar
             vendor={{
               buisnessName: user.vendor?.buisnessName || "",
@@ -63,7 +63,7 @@ const VendorProfile: React.FC<VendorProfileProps> = async ({ user }) => {
           <div className="">
             <Button
               variant={"ghost"}
-              className="flex relative hover:bg-transparent"
+              className="flex relative hover:bg-transparent -ml-4"
             >
               <FiAward
                 size={50}
@@ -89,7 +89,7 @@ const VendorProfile: React.FC<VendorProfileProps> = async ({ user }) => {
 
         {products.length ? (
           <div>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {products.map((product) => (
                 <div key={product.id}>
                   <Card>
@@ -134,7 +134,7 @@ const VendorProfile: React.FC<VendorProfileProps> = async ({ user }) => {
             </h4>
           </div>
           <div>
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
               {reviews.map((review) => (
                 <ReviewCard review={review} key={review.id} />
               ))}

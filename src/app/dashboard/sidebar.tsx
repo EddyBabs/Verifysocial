@@ -2,17 +2,27 @@
 
 import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import categories from "@/data/categories";
 import { cn } from "@/lib/utils";
-import { Prisma, UserRole } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { HomeIcon } from "@radix-ui/react-icons";
-import { VscPreview } from "react-icons/vsc";
-import { IoMdAnalytics } from "react-icons/io";
-import { FaBarcode } from "react-icons/fa";
-import { CiSettings } from "react-icons/ci";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import { CiSettings } from "react-icons/ci";
+import { FaBarcode } from "react-icons/fa";
+import { IoMdAnalytics } from "react-icons/io";
+import { MdOutlineCategory } from "react-icons/md";
+import { VscPreview } from "react-icons/vsc";
 
 interface SidebarProps {
   user: Prisma.UserGetPayload<{
@@ -61,6 +71,12 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
             value: "Home",
           },
           {
+            icon: MdOutlineCategory,
+            href: "/dashboard/vendors",
+            value: "Category",
+            children: categories,
+          },
+          {
             icon: CiSettings,
             href: "/dashboard/settings",
             value: "Settings",
@@ -76,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
           className="flex items-center gap-2 font-semibold"
           prefetch={false}
         >
-          <Logo width={110} height={60} className="-ml-8" />
+          <Logo width={110} height={60} className="-ml-8 text-sm" />
         </Link>
         {/* <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
         <BellIcon className="h-4 w-4" />
@@ -85,54 +101,40 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
       </div>
       <div className="flex-1 overflow-auto py-2">
         <nav className="grid items-start px-4 gap-4 text-sm font-medium ">
-          {/* <Link
-            href="/dashboard"
-            className="flex items-center gap-3 rounded-lg bg-gray-100 px-3 py-2 text-gray-900  transition-all hover:text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50"
-            prefetch={false}
-          >
-            <HomeIcon className="h-4 w-4" />
-            {user.role === UserRole.VENDOR ? "Profile" : "Home"}
-          </Link>
-
-          {user.role === UserRole.VENDOR && (
-            <>
-              <Link
-                href="/dashboard/reviews"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                prefetch={false}
-              >
-                <HomeIcon className="h-4 w-4" />
-                Reviews
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                prefetch={false}
-              >
-                <HomeIcon className="h-4 w-4" />
-                Analytics
-              </Link>
-              <Link
-                href="/dashboard/generate-code"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                prefetch={false}
-              >
-                <HomeIcon className="h-4 w-4" />
-                Generate Code
-              </Link>
-            </>
-          )}
-
-          <Link
-            href="/dashboard/settings"
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-            prefetch={false}
-          >
-            <HomeIcon className="h-4 w-4" />
-            Settings
-          </Link> */}
           {SIDEBAR_VALUE.map((bar) => {
             const Icon = bar.icon;
+            if (bar.children?.length) {
+              return (
+                <>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <div
+                        className={cn(
+                          "flex items-center gap-3 cursor-pointer rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50",
+                          { "bg-gray-100": pathname === bar.href }
+                        )}
+                      >
+                        <Icon className="h-5 w-5" />
+                        {bar.value}
+                      </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuLabel>Categories</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {bar.children.map((item) => (
+                        <Link
+                          key={item.value}
+                          href={`/dashboard/vendors?category=${item.value}`}
+                          passHref
+                        >
+                          <DropdownMenuItem>{item.label}</DropdownMenuItem>
+                        </Link>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </>
+              );
+            }
             return (
               <Link
                 href={bar.href}

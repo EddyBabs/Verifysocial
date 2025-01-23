@@ -207,6 +207,9 @@ export const getPaginatedVendors = async (category: string | undefined) => {
           }
         : {}),
     },
+    orderBy: {
+      rating: "desc",
+    },
     include: {
       Product: true,
       User: {

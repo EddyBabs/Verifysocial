@@ -38,29 +38,39 @@ const Navbar = async () => {
                   >
                     Contact Us
                   </Link>
+                  {!currentUser ? (
+                    <>
+                      <Link
+                        href="/auth/signin"
+                        className="flex w-full items-center py-2 text-lg font-semibold"
+                        prefetch={false}
+                      >
+                        Sign In
+                      </Link>
 
-                  <Link
-                    href="/auth/signin"
-                    className="flex w-full items-center py-2 text-lg font-semibold"
-                    prefetch={false}
-                  >
-                    Sign In
-                  </Link>
-
-                  <Link
-                    href="/auth/signup"
-                    className="flex w-full items-center py-2 text-lg font-semibold"
-                    prefetch={false}
-                  >
-                    Sign Up
-                  </Link>
+                      <Link
+                        href="/auth/signup"
+                        className="flex w-full items-center py-2 text-lg font-semibold"
+                        prefetch={false}
+                      >
+                        Sign Up
+                      </Link>
+                    </>
+                  ) : (
+                    <Link
+                      href="/dashboard"
+                      className="flex w-full items-center py-2 text-lg font-semibold"
+                    >
+                      Dashboard
+                    </Link>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>
           </div>
-          <div className="-ml-10">
+          <div>
             <Link href="/" passHref>
-              <Logo className="xs:sr-only" />
+              <Logo className="sr-only sm:not-sr-only" />
             </Link>
           </div>
           <div className="hidden md:flex items-center gap-4">

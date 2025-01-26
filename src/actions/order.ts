@@ -11,14 +11,32 @@ export const fillOrder = async (values: orderSchemaType) => {
     return { error: "Invalid Fields" };
   }
   const validatedData = validatedFields.data;
+  const updateOrder = await database.order.findUnique({
+    where: {
+      code: validatedData.code,
+      status: OrderStatus.PENDING,
+    },
+  });
+  if (!updateOrder) {
+    return { error: "Order does not exist" };
+  }
+  const { value, date } = validatedData;
+
+  if (value < updateOrder.minAmount || value > updateOrder.maxAmount) {
+    return { error: "Order value does not correlate with the vendor" };
+  }
+  if (
+    new Date(date).getTime() != new Date(updateOrder.deliveryPeriod).getTime()
+  ) {
+    return { error: "Delivery date does not correlate with the vendor" };
+  }
+
   const order = await database.order.update({
     where: {
       code: validatedData.code,
       status: OrderStatus.PENDING,
     },
     data: {
-      // amount: validatedData.value,
-      // delivery: validatedData.date,
       status: OrderStatus.PROCESSING,
     },
   });

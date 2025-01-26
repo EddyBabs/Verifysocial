@@ -10,6 +10,8 @@ import { CiSettings } from "react-icons/ci";
 import { MdOutlineCategory } from "react-icons/md";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { signOut } from "next-auth/react";
 
 const MobileSidebar = ({ user }: { user: any }) => {
   const pathname = usePathname();
@@ -81,6 +83,15 @@ const MobileSidebar = ({ user }: { user: any }) => {
           </Link>
         );
       })}
+      <div className="mt-auto p-4 mb-4">
+        <Button
+          size="sm"
+          className="w-full"
+          onClick={async () => await signOut({ redirectTo: "/" })}
+        >
+          Logout
+        </Button>
+      </div>
     </>
   );
 };

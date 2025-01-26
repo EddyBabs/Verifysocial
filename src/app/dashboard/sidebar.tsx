@@ -92,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
           className="flex items-center gap-2 font-semibold"
           prefetch={false}
         >
-          <Logo width={110} height={60} className="-ml-8 text-sm" />
+          <Logo width={20} height={20} className="text-sm" />
         </Link>
         {/* <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
         <BellIcon className="h-4 w-4" />

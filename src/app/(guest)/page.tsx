@@ -11,6 +11,8 @@ import Image from "next/image";
 import Link from "next/link";
 import VerifySocialVideo from "@/assets/verify social video.gif";
 import VendorSearchInput from "@/components/vendor-search-input";
+import { database } from "@/lib/database";
+import noImagePlacehoder from "@/assets/images/no-image-placehoder.webp";
 
 const offers = [
   {
@@ -30,7 +32,27 @@ const offers = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const bestSellerVendors = await database.vendor.findMany({
+    take: 3,
+    include: {
+      User: {
+        select: {
+          address: {
+            select: {
+              state: true,
+            },
+          },
+        },
+      },
+      Product: {
+        take: 1,
+        select: {
+          image: true,
+        },
+      },
+    },
+  });
   return (
     <div>
       <div className="container mx-auto mt-10 px-4">
@@ -107,24 +129,30 @@ export default function Home() {
       <div className="bg-[#F5F7FF] p-8 md:p-20">
         <div className=" container mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: 3 }).map((_, index) => (
+            {bestSellerVendors.map((vendor) => (
               <Card
                 className="max-w-sm rounded-lg shadow-none border-none bg-transparent"
-                key={index}
+                key={vendor.id}
               >
-                <a href="#">
-                  <img className="rounded-t-lg" src={Brand.src} alt="" />
-                </a>
+                <Link href={`/dashboard/vendor/${vendor.id}`}>
+                  <img
+                    className="rounded-t-lg"
+                    src={vendor.Product?.[0].image || noImagePlacehoder.src}
+                    alt=""
+                  />
+                </Link>
                 <div className="py-5">
                   <a href="#">
                     <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                      Glow by Banks
+                      {vendor.buisnessName}
                     </h5>
                   </a>
                   <div className="space-x-2 flex items-center text-sm">
-                    <span>Lagos</span>
+                    <span>{vendor.User.address?.state}</span>
                     <StarFilledIcon className="text-[#FFDD55]" />
-                    <span> 4.8(20)</span>
+                    <span>
+                      {vendor.rating}({vendor.reviewCount})
+                    </span>
                   </div>
                 </div>
               </Card>

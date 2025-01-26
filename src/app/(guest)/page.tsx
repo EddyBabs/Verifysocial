@@ -137,7 +137,7 @@ export default async function Home() {
                 <Link href={`/dashboard/vendor/${vendor.id}`}>
                   <img
                     className="rounded-t-lg"
-                    src={vendor.Product?.[0].image || noImagePlacehoder.src}
+                    src={vendor.Product?.[0]?.image || noImagePlacehoder.src}
                     alt=""
                   />
                 </Link>

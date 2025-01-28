@@ -58,7 +58,7 @@ const Navbar = async () => {
                     </>
                   ) : (
                     <Link
-                      href="/dashboard"
+                      href="/"
                       className="flex w-full items-center py-2 text-lg font-semibold"
                     >
                       Dashboard
@@ -115,7 +115,7 @@ const Navbar = async () => {
               ) : (
                 <li>
                   <Link
-                    href="/dashboard"
+                    href="/"
                     className="btn btn-secondary rounded-xl bg-primary text-secondary py-3 px-2 sm:px-4 btn-md"
                   >
                     Dashboard

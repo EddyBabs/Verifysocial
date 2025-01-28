@@ -67,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
       : [
           {
             icon: HomeIcon,
-            href: "/dashboard",
+            href: "/",
             value: "Home",
           },
           {

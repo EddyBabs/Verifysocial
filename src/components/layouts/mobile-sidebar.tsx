@@ -19,7 +19,7 @@ const MobileSidebar = ({ user }: { user: any }) => {
       ? [
           {
             icon: HomeIcon,
-            href: "/dashboard",
+            href: "/",
             value: "Profile",
           },
           {

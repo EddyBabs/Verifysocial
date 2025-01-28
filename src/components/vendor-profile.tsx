@@ -48,7 +48,7 @@ const VendorProfile: React.FC<VendorProfileProps> = async ({ user }) => {
       <InstagramCallback />
       <div className="space-y-4 h-full">
         <h4 className="text-xl font-semibold">Hi, {user.fullname}</h4>
-        <div className="flex items-start gap-4 md:items-center justify-between flex-col md:flex-row">
+        <div className="flex items-start gap-4 md:items-center justify-between flex-row">
           <VendorAvatar
             vendor={{
               buisnessName: user.vendor?.buisnessName || "",
@@ -78,7 +78,7 @@ const VendorProfile: React.FC<VendorProfileProps> = async ({ user }) => {
                   : 3}
               </h1>
 
-              <div className="-ml-6">
+              <div className="-ml-6 hidden sm:block">
                 <span className="bg-[#AF8A6F] p-2 text-background z-10 rounded-xl pl-6">
                   Upgrade to tier 2
                 </span>

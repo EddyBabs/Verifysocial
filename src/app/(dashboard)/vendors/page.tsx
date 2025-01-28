@@ -33,7 +33,7 @@ const Page = async ({
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           {vendors.map((vendor, index) => (
-            <Link href={`/dashboard/vendor/${vendor.id}`} key={index}>
+            <Link href={`/vendor/${vendor.id}`} key={index}>
               <div className="group cursor-pointer border rounded-xl shadow">
                 <div className="mb-4 overflow-hidden">
                   <Image

@@ -37,7 +37,7 @@ const GenerateCodeSection: React.FC<GenerateCodeSectionTypes> = ({ order }) => {
 
     return () => clearTimeout(timeout);
   }, [copied]);
-
+  //  `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/vendor/${order.vendorId}?vendorcode=${order.code}`
   return (
     <div>
       <div className="flex w-full border items-center  border-primary rounded-xl">
@@ -48,9 +48,7 @@ const GenerateCodeSection: React.FC<GenerateCodeSectionTypes> = ({ order }) => {
           variant={"ghost"}
           className="p-2 px-4 relative border-l rounded-none border-primary hover:cursor-pointer"
           onClick={() => {
-            navigator.clipboard.writeText(
-              `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/vendor/${order.vendorId}?vendorcode=${order.code}`
-            );
+            navigator.clipboard.writeText(order.code);
             setCopied(true);
           }}
         >

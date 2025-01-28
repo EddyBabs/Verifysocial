@@ -160,9 +160,7 @@ const SettingForm: React.FC<SettingFormProps> = ({ user }) => {
                         <Label>Select social platform</Label>
 
                         <Select
-                          value={form.getValues(
-                            `socialPlatform.${index}.platform`
-                          )}
+                          value={form.watch(`socialPlatform.${index}.platform`)}
                           onValueChange={(value) =>
                             form.setValue(
                               `socialPlatform.${index}.platform`,
@@ -211,15 +209,15 @@ const SettingForm: React.FC<SettingFormProps> = ({ user }) => {
                           type="button"
                           className={cn(
                             "md:mt-[26px]",
-                            form.getValues(`socialPlatform.${index}.token`) &&
+                            form.watch(`socialPlatform.${index}.token`) &&
                               "bg-destructive"
                           )}
                           disabled={
-                            !!form.getValues(`socialPlatform.${index}.token`) ||
+                            !!form.watch(`socialPlatform.${index}.token`) ||
                             isPending
                           }
                         >
-                          {form.getValues(`socialPlatform.${index}.token`)
+                          {form.watch(`socialPlatform.${index}.token`)
                             ? "Linked"
                             : "Link"}
                         </Button>

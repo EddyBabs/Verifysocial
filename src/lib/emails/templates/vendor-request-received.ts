@@ -1,3 +1,6 @@
+import { logoTemplate } from "../partials/logo";
+
+export const vendorRequestReceived = `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -196,15 +199,16 @@
                                 text-align: left;
                               "
                             >
-                              We received a recall request by your customer #
-                              with the stated reason Kindly visit the the url
-                              below to approve or
+                              Your request "{{requestName}}" has been accepted
+                              by your customer, please note that you are to
+                              ensure the goods/services are delivered on or
+                              before the due date 05:00PM.
                             </p>
                             <p>
-                              Please note that some features may not be active
-                              till your response have been submitted
+                              Our Terms and conditions refer, please note that
+                              if the order cannot be processed as at when due,
+                              ensure to recall or reach out to support.
                             </p>
-                            <p>Our terms and conditions refer</p>
                             <p>Thank you for choosing Verify Social</p>
 
                             <p
@@ -310,3 +314,5 @@
     </table>
   </body>
 </html>
+
+`;

@@ -28,7 +28,7 @@ export const logoTemplate = `   <tr>
                       "
                       ><img
                         alt="LOGO"
-                        src="${process.env.NEXT_PUBLIC_SITE_URL}/images/logo.jpeg"
+                        src="${process.env.NEXT_PUBLIC_SITE_URL}/images/logo.png"
                         style="
                           box-sizing: border-box;
                           font-family: -apple-system, BlinkMacSystemFont,

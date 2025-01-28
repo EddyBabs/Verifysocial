@@ -109,7 +109,7 @@ const VendorSearchInput: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({
             ) : order ? (
               <div className="">
                 <Link
-                  href={`/dashboard/vendor/${order?.vendorId}?vendorcode=${order?.code}`}
+                  href={`/vendor/${order?.vendorId}?vendorcode=${order?.code}`}
                 >
                   <div>
                     <VendorAvatar vendor={order.vendor} />
@@ -123,7 +123,7 @@ const VendorSearchInput: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({
             ) : (
               vendors.map((vendor) => (
                 <div key={vendor.id}>
-                  <Link href={`/dashboard/vendor/${vendor.id}`}>
+                  <Link href={`/vendor/${vendor.id}`}>
                     <div>
                       <VendorAvatar vendor={vendor} />
                     </div>

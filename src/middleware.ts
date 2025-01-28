@@ -2,13 +2,11 @@ import { auth } from "@/lib/auth";
 
 import { NextResponse } from "next/server";
 import { DEFAULT_LOGIN_REDIRECT, apiAuthPRefix, authRoutes } from "./routes";
+import { notFound } from "next/navigation";
 
 const publicApiRoute = ["/api/openai"];
-const vendorRoutes = [
-  "/dashboard/reviews",
-  "/dashboard/generate-code",
-  "/dashboard/analytics",
-];
+const vendorRoutes = ["/reviews", "/generate-code", "/analytics"];
+const customerRoutes = ["/history", "/vendors"];
 
 export default auth((req) => {
   const { nextUrl } = req;
@@ -22,6 +20,7 @@ export default auth((req) => {
   const isPublicRoute = nextUrl.pathname.includes("/");
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
   const isVendorRoute = vendorRoutes.includes(nextUrl.pathname);
+  const isCustomerRoute = customerRoutes.includes(nextUrl.pathname);
 
   if (isApiAuthRoute) {
     return NextResponse.next();
@@ -38,9 +37,17 @@ export default auth((req) => {
     return Response.redirect(new URL("/auth/signin", nextUrl));
   }
 
-  // if (!isVendorLoggedIn && isVendorRoute) {
-  //   return Response.redirect(new URL("/dashboard", nextUrl));
-  // }
+  if (isVendorLoggedIn && isCustomerRoute) {
+    const url = nextUrl.clone();
+    url.pathname = "/404";
+    return NextResponse.rewrite(url);
+  }
+
+  if (!isVendorLoggedIn && isVendorRoute) {
+    const url = nextUrl.clone();
+    url.pathname = "/404";
+    return NextResponse.rewrite(url);
+  }
 
   return NextResponse.next();
 });

@@ -16,7 +16,7 @@ const Page = async () => {
       <div className="space-y-4">
         <div className="flex justify-between">
           <h4 className="text-xl font-semibold">Reviews & Ratings</h4>
-          <Link href="/dashboard/generate-code">
+          <Link href="/generate-code">
             <Button>Generate Code</Button>
           </Link>
         </div>

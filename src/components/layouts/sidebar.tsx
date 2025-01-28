@@ -40,12 +40,12 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
       ? [
           {
             icon: HomeIcon,
-            href: "/dashboard",
+            href: "/",
             value: "Profile",
           },
           {
             icon: VscPreview,
-            href: "/dashboard/reviews",
+            href: "/reviews",
             value: "Reviews",
           },
           {
@@ -55,12 +55,12 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
           },
           {
             icon: FaBarcode,
-            href: "/dashboard/generate-code",
+            href: "/generate-code",
             value: "Generate Code",
           },
           {
             icon: CiSettings,
-            href: "/dashboard/settings",
+            href: "/settings",
             value: "Settings",
           },
         ]
@@ -72,13 +72,13 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
           },
           {
             icon: MdOutlineCategory,
-            href: "/dashboard/vendors",
+            href: "/vendors",
             value: "Category",
             children: categories,
           },
           {
             icon: CiSettings,
-            href: "/dashboard/settings",
+            href: "/settings",
             value: "Settings",
           },
         ]),
@@ -88,7 +88,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
     <div className="flex h-full max-h-screen flex-col gap-2  bg-gray-100/40  dark:bg-gray-800/40 fixed left-0 top-0 w-[280px]">
       <div className="flex h-[60px] items-center border-b px-6">
         <Link
-          href="/"
+          href="/home"
           className="flex items-center gap-2 font-semibold"
           prefetch={false}
         >
@@ -124,7 +124,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
                       {bar.children.map((item) => (
                         <Link
                           key={item.value}
-                          href={`/dashboard/vendors?category=${item.value}`}
+                          href={`/vendors?category=${item.value}`}
                           passHref
                         >
                           <DropdownMenuItem>{item.label}</DropdownMenuItem>

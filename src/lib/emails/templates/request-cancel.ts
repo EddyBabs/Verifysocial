@@ -1,3 +1,6 @@
+import { logoTemplate } from "../partials/logo";
+
+export const requestCanceledTemplate = `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -196,15 +199,14 @@
                                 text-align: left;
                               "
                             >
-                              We received a recall request by your customer #
-                              with the stated reason Kindly visit the the url
-                              below to approve or
+                              Your request {{requestName}} has been recalled by
+                              the vendor with the stated reason {{reason}}
                             </p>
                             <p>
-                              Please note that some features may not be active
-                              till your response have been submitted
+                              We are sorry this could not be processed, if you
+                              have any concern or complaint with regards to this
+                              request, kindly click the url below
                             </p>
-                            <p>Our terms and conditions refer</p>
                             <p>Thank you for choosing Verify Social</p>
 
                             <p
@@ -310,3 +312,4 @@
     </table>
   </body>
 </html>
+`;

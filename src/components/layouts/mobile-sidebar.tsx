@@ -1,17 +1,16 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import React from "react";
-import { HomeIcon } from "@radix-ui/react-icons";
-import { VscPreview } from "react-icons/vsc";
-import { IoMdAnalytics } from "react-icons/io";
-import { FaBarcode } from "react-icons/fa";
-import { CiSettings } from "react-icons/ci";
-import { MdOutlineCategory } from "react-icons/md";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { HomeIcon } from "@radix-ui/react-icons";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { CiSettings } from "react-icons/ci";
+import { FaBarcode } from "react-icons/fa";
+import { IoMdAnalytics } from "react-icons/io";
+import { MdOutlineCategory } from "react-icons/md";
+import { VscPreview } from "react-icons/vsc";
 
 const MobileSidebar = ({ user }: { user: any }) => {
   const pathname = usePathname();
@@ -25,7 +24,7 @@ const MobileSidebar = ({ user }: { user: any }) => {
           },
           {
             icon: VscPreview,
-            href: "/dashboard/reviews",
+            href: "/reviews",
             value: "Reviews",
           },
           {
@@ -35,19 +34,19 @@ const MobileSidebar = ({ user }: { user: any }) => {
           },
           {
             icon: FaBarcode,
-            href: "/dashboard/generate-code",
+            href: "/generate-code",
             value: "Generate Code",
           },
           {
             icon: CiSettings,
-            href: "/dashboard/settings",
+            href: "/settings",
             value: "Settings",
           },
         ]
       : [
           {
             icon: HomeIcon,
-            href: "/dashboard",
+            href: "/",
             value: "Home",
           },
           {
@@ -58,7 +57,7 @@ const MobileSidebar = ({ user }: { user: any }) => {
           },
           {
             icon: CiSettings,
-            href: "/dashboard/settings",
+            href: "/settings",
             value: "Settings",
           },
         ]),

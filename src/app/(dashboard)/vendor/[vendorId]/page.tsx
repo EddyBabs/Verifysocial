@@ -32,7 +32,7 @@ const VendorId = async ({
       <div className="mb-8 space-y-4">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl sm:text-4xl font-bold">Vendors</h1>
-          <Link href="/dashboard/reviews">
+          <Link href="/reviews">
             <Button className="text-xl font-semibold md:px-8 md:py-6 rounded-xl">
               View All Review
             </Button>
@@ -138,7 +138,7 @@ const VendorId = async ({
           </CardContent>
         </Card>
       </div>
-      {order && order.status === "PENDING" && (
+      {order && order.status === "PENDING" && !order.userId && (
         <OrderForm user={user} order={order} />
       )}
     </div>

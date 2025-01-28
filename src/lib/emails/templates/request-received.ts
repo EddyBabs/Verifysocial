@@ -1,3 +1,6 @@
+import { logoTemplate } from "../partials/logo";
+
+export const RequestReceivedTemplate = `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -196,16 +199,34 @@
                                 text-align: left;
                               "
                             >
-                              We received a recall request by your customer #
-                              with the stated reason Kindly visit the the url
-                              below to approve or
+                              Your request "{{requestName}}" has been received.
                             </p>
                             <p>
-                              Please note that some features may not be active
-                              till your response have been submitted
+                              Please note that you would be sent email at the
+                              due date 5:00pm to ensure that you're satisfied
+                              with the vendor and verify social
                             </p>
-                            <p>Our terms and conditions refer</p>
-                            <p>Thank you for choosing Verify Social</p>
+                            <p>
+                              Please note that you can recall the transaction by
+                              logging into your profile or clicking the link
+                              below
+                            </p>
+
+                            <div style="margin: 0 auto 40px">
+                              <a
+                                href="{{requestLink}}"
+                                style="
+                                  background-color: #003399;
+                                  margin: 0 auto;
+                                  padding: 10px 30px;
+                                  border-radius: 10px;
+                                  text-decoration: none;
+                                  color: white;
+                                  min-width: 300px;
+                                "
+                                >View</a
+                              >
+                            </div>
 
                             <p
                               style="
@@ -310,3 +331,4 @@
     </table>
   </body>
 </html>
+`;

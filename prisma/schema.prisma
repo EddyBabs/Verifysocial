@@ -114,6 +114,7 @@ model Order {
   userId         String?     @db.ObjectId
   user           User?       @relation(references: [id], fields: [userId])
   name           String
+  amountValue    Float       @default(0)
   minAmount      Float
   maxAmount      Float
   review         Review?

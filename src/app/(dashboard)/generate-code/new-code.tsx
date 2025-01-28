@@ -14,7 +14,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -27,18 +26,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Slider } from "@/components/ui/slider";
-import { cn, currencyFormat } from "@/lib/utils";
-import { createOrderShema, createOrderShemaType } from "@/schemas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Order } from "@prisma/client";
-import { formatDate } from "date-fns";
-import { CalendarIcon, Loader2Icon } from "lucide-react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import ViewCodeSection from "./view-code-section";
-import { toast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -46,6 +33,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "@/hooks/use-toast";
+import { cn, currencyFormat } from "@/lib/utils";
+import { createOrderShema, createOrderShemaType } from "@/schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Order } from "@prisma/client";
+import { formatDate } from "date-fns";
+import { CalendarIcon, Loader2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import ViewCodeSection from "./view-code-section";
 
 const AMOUNT_RANGES = [
   { min: 1000, max: 5000 },
@@ -82,15 +80,14 @@ const NewCode = () => {
   } = form;
 
   const onSubmit = async (values: createOrderShemaType) => {
-    console.log({ values });
-    // const order = await getNewCode(values);
-    // if (order.success) {
-    //   setCodeCreated(order.success);
-    //   reset();
-    //   router.refresh();
-    // } else {
-    //   toast({ description: order.error });
-    // }
+    const order = await getNewCode(values);
+    if (order.success) {
+      setCodeCreated(order.success);
+      reset();
+      router.refresh();
+    } else {
+      toast({ description: order.error });
+    }
   };
 
   return (

@@ -3,6 +3,8 @@ import * as handlebars from "handlebars";
 import { resetPasswordTemplate } from "./templates/reset-password";
 import { verifyEmailTemplate } from "./templates/verify-email";
 import { buisnessVerificationTemplate } from "./templates/buisness-verification";
+import { RequestReceivedTemplate } from "./templates/request-received";
+import { vendorRequestReceived } from "./templates/vendor-request-received";
 // import { welcomeTemplate } from "./templates/welcome";
 
 export async function sendMail({
@@ -68,6 +70,32 @@ export function compileBuisnessVerificationTemplate(
   const htmlBody = template({
     name,
     token,
+  });
+  return htmlBody;
+}
+
+export function compileRequestReceived(
+  name: string,
+  requestName: string,
+  requestLink: string
+) {
+  const template = handlebars.compile(RequestReceivedTemplate);
+  const htmlBody = template({
+    name,
+    requestName,
+    requestLink,
+  });
+  return htmlBody;
+}
+
+export function compileVendorRequestReceived(
+  name: string,
+  requestName: string
+) {
+  const template = handlebars.compile(vendorRequestReceived);
+  const htmlBody = template({
+    name,
+    requestName,
   });
   return htmlBody;
 }

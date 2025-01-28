@@ -1,6 +1,5 @@
 import { getLatestReviews } from "@/actions/rating";
 import { getVendors } from "@/actions/vendor";
-// import Accessories from "@/assets/images/accessories.jpeg";
 import noImagePlacehoder from "@/assets/images/no-image-placehoder.webp";
 import BecomeAVendor from "@/components/become-a-vendor";
 import SearchVendors from "@/components/search-vendors";
@@ -13,7 +12,7 @@ import { UserRole } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 
-const Dashboard = async () => {
+const AuthHome = async () => {
   const { user, ninVerified } = await getCurrentUserDetails();
   const latestReviews = await getLatestReviews();
   if (user?.role === UserRole.VENDOR) {
@@ -78,11 +77,11 @@ const VendorList = async () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
       {vendors.map((vendor, index) => (
-        <Link href={`/dashboard/vendor/${vendor.id}`} key={index}>
+        <Link href={`/vendor/${vendor.id}`} key={index}>
           <div className="group cursor-pointer">
             <div className="mb-4 overflow-hidden">
               <Image
-                src={vendor.Product?.[0].image || noImagePlacehoder}
+                src={vendor.Product?.[0]?.image || noImagePlacehoder}
                 alt=""
                 width={300}
                 height={300}
@@ -97,4 +96,4 @@ const VendorList = async () => {
   );
 };
 
-export default Dashboard;
+export default AuthHome;

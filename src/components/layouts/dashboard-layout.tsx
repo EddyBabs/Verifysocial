@@ -1,3 +1,4 @@
+import Sidebar from "@/app/(dashboard)/sidebar";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -10,10 +11,8 @@ import { getCurrentUserDetails } from "@/data/user";
 import { MenuIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 import React, { PropsWithChildren } from "react";
-import Sidebar from "./sidebar";
 
 import MobileSidebar from "./mobile-sidebar";
-
 const DashboardLayout: React.FC<PropsWithChildren> = async ({ children }) => {
   const { user } = await getCurrentUserDetails();
   if (!user) {

@@ -10,6 +10,11 @@ const clientId = process.env.INSTAGRAM_APP_ID;
 const redirectUri = process.env.NEXT_PUBLIC_REDIRECT_URI;
 const appSecret = process.env.INSTAGRAM_APP_SECRET;
 
+export const instagramLogin = async () => {
+  const authUrl = `https://www.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish`;
+  redirect(authUrl);
+};
+
 export const facebookLogin = async (
   values: z.infer<typeof businessDetails>
 ) => {
@@ -57,12 +62,8 @@ export const facebookLogin = async (
       },
     });
   }
-
-  // const authUrl = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=pages_show_list,instagram_basic,instagram_manage_insights&response_type=code`;
   const authUrl = `https://www.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish`;
-  console.log({ authUrl });
   redirect(authUrl);
-  // Redirect the user to authUrl to log in and authorize
 };
 
 export const fetchFacebookMedia = async () => {
@@ -271,6 +272,31 @@ export const fetchInstagramUser = async (access_token: string) => {
   }
   const data = await response.json();
   return data;
+};
+
+export const fetchCurrentUserInstagramMedia = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser || !currentUser.id) {
+    return { error: "Access Denied" };
+  }
+  const vendor = await database.vendor.findUnique({
+    where: {
+      userId: currentUser.id,
+    },
+  });
+  if (!vendor) {
+    return { error: "You are currently not a vendor" };
+  }
+  const socialAccount = await database.socialAccount.findFirst({
+    where: {
+      provider: "INSTAGRAM",
+      vendorId: vendor.id,
+    },
+  });
+  if (!socialAccount) {
+    instagramLogin();
+  }
+  return { success: [] };
 };
 
 export const fetchInstagramMedia = async (

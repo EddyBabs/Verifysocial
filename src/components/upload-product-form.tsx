@@ -1,4 +1,13 @@
 "use client";
+import {
+  fetchCurrentUserInstagramMedia,
+  instagramLogin,
+} from "@/actions/instagram";
+import { uploadProductImage } from "@/actions/product";
+import { toast, useToast } from "@/hooks/use-toast";
+import { Loader, Upload } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, {
   Dispatch,
   SetStateAction,
@@ -7,6 +16,7 @@ import React, {
   useState,
   useTransition,
 } from "react";
+import { Button } from "./ui/button";
 import {
   Dialog,
   DialogContent,
@@ -16,14 +26,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { Loader, Upload } from "lucide-react";
-import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
-import Image from "next/image";
-import { uploadProductImage } from "@/actions/product";
-import { toast, useToast } from "@/hooks/use-toast";
-import { facebookLogin, fetchInstagramMedia } from "@/actions/instagram";
-import { useRouter } from "next/navigation";
 import { Skeleton } from "./ui/skeleton";
 
 const UploadProductForm = () => {
@@ -61,12 +64,12 @@ export const ChooseSocialPlatform = ({
   setSocialPlatform: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [error, setError] = useState<string | null>(null);
-  const [media, setMedia] = useState();
+  const [media, setMedia] = useState([]);
   const [isPending, startTransition] = useTransition();
   const fetchMedia = useCallback(() => {
     startTransition(async () => {
       setError(null);
-      const response = await fetchInstagramMedia();
+      const response = await fetchCurrentUserInstagramMedia();
       if (response?.success) {
         setMedia(response.success);
       } else if (response?.error) {
@@ -78,7 +81,7 @@ export const ChooseSocialPlatform = ({
 
   const handleMeta = () => {
     startTransition(async () => {
-      await facebookLogin();
+      await instagramLogin();
     });
   };
 

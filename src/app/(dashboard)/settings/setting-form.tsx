@@ -1,5 +1,5 @@
 "use client";
-import { facebookLogin } from "@/actions/instagram";
+import { facebookLogin, instagramLogin } from "@/actions/instagram";
 import { updateSetting } from "@/actions/setting";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -82,7 +82,7 @@ const SettingForm: React.FC<SettingFormProps> = ({ user }) => {
 
   const handleMeta = () => {
     startTransition(async () => {
-      await facebookLogin();
+      instagramLogin();
     });
   };
 

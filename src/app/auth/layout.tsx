@@ -21,7 +21,6 @@ const AuthLayout: React.FC<PropsWithChildren> = ({ children }) => {
             className="absolute right-0 top-0 z-10 hidden xl:block"
           />
           <Image src={Amico} alt="" />
-          {/* <AmicoSvgIcon /> */}
         </div>
       </div>
     </div>

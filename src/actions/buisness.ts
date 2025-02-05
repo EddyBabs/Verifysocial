@@ -1,6 +1,6 @@
 "use server";
 import { getBuisnessVerificationTokenByToken } from "@/data/buisness-token";
-import { getCurrentUser, getUserByEmail } from "@/data/user";
+import { getCurrentUser } from "@/data/user";
 import { customCheckRateLimitAndThrowError } from "@/lib/check-ratelimit-throw-error";
 import { database, GenderType, Tier } from "@/lib/database";
 import {
@@ -80,7 +80,7 @@ export const verifyNIN = async (nin: string) => {
   return { success: "NIN Verified" };
 };
 
-export const sendBuisnessVerification = async (name: string) => {
+export const sendBusinessVerification = async (name: string) => {
   const vendor = await getCurrentUser();
   if (!vendor || !vendor.email) {
     return { error: "Access Denied" };
@@ -143,16 +143,16 @@ export const addBuisness = async (values: BecomeAVendorSchemaType) => {
       userId: vendor.id,
     },
     update: {
-      buisnessName: validatedData.step2.buisnessName,
-      buisnessAbout: validatedData.step2.buisnessAbout,
-      socialPlatform: validatedData.step2.socialPlatform,
+      businessName: validatedData.step2.businessName,
+      businessAbout: validatedData.step2.businessAbout,
+      // socialPlatform: validatedData.step2.socialPlatform,
       tier: Tier.TIER1,
     },
     create: {
       userId: vendor.id,
-      buisnessName: validatedData.step2.buisnessName,
-      buisnessAbout: validatedData.step2.buisnessAbout,
-      socialPlatform: validatedData.step2.socialPlatform,
+      businessName: validatedData.step2.businessName,
+      businessAbout: validatedData.step2.businessAbout,
+      // socialPlatform: validatedData.step2.socialPlatform,
       tier: Tier.TIER1,
     },
   });
@@ -169,7 +169,6 @@ export const addBuisness = async (values: BecomeAVendorSchemaType) => {
             userId: vendor.id,
           },
           create: {
-            userId: vendor.id,
             country: validatedData.step2.address.country,
             city: validatedData.step2.address.city,
             state: validatedData.step2.address.state,

@@ -28,8 +28,8 @@ export interface VendorProfileProps {
       };
       vendor: {
         select: {
-          buisnessName: true;
-          buisnessAbout: true;
+          businessName: true;
+          businessAbout: true;
           tier: true;
           reviewCount: true;
           rating: true;
@@ -45,13 +45,12 @@ const VendorProfile: React.FC<VendorProfileProps> = async ({ user }) => {
 
   return (
     <div className="pb-20">
-      <InstagramCallback />
       <div className="space-y-4 h-full">
         <h4 className="text-xl font-semibold">Hi, {user.fullname}</h4>
         <div className="flex items-start gap-4 md:items-center justify-between flex-row">
           <VendorAvatar
             vendor={{
-              buisnessName: user.vendor?.buisnessName || "",
+              businessName: user.vendor?.businessName || "",
               reviewCount: user.vendor?.reviewCount || 0,
               rating: user.vendor?.rating || 0,
               User: {

@@ -91,7 +91,7 @@ export const getLatestReviews = async () => {
       id: true,
       vendor: {
         select: {
-          buisnessName: true,
+          businessName: true,
           rating: true,
           reviewCount: true,
           User: {

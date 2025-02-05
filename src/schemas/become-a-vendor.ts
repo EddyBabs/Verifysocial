@@ -14,16 +14,17 @@ export const becomeAVendorForm1 = z.object({
 });
 
 export const becomeAVendorForm2 = z.object({
-  buisnessName: z.string().min(1, "Business name is required"),
-  buisnessAbout: z.string().min(1, "What your business is about is required!"),
+  businessName: z.string().min(1, "Business name is required"),
+  businessAbout: z.string().min(1, "What your business is about is required!"),
   socialPlatform: z.array(
     z.object({
       platform: z.string().min(1, "Platform is required."),
-      url: z.string().url("Enter a vaild URL"),
+      username: z.string().min(1, "Username is required"),
     })
   ),
+  categories: z.array(z.string()),
   address: z.object({
-    country: z.string().min(1, "Country is address"),
+    country: z.string().min(1, "Country is required"),
     state: z.string().min(1, "State is required!"),
     city: z.string().min(1, "City is required"),
     street: z.string().min(1, "Street is required"),
@@ -38,6 +39,18 @@ export const becomeAVendorShcema = z.object({
   step1: becomeAVendorForm1,
   step2: becomeAVendorForm2,
   step3: becomeAVendorForm3,
+});
+
+export const businessDetails = z.object({
+  businessName: z.string().min(1, "Business name is required"),
+  businessAbout: z.string().min(1, "What your business is about is required!"),
+  categories: z.array(z.string()),
+  address: z.object({
+    country: z.string().min(1, "Country is required"),
+    state: z.string().min(1, "State is required!"),
+    city: z.string().min(1, "City is required"),
+    street: z.string().min(1, "Street is required"),
+  }),
 });
 
 export type BecomeAVendorSchemaType = z.infer<typeof becomeAVendorShcema>;

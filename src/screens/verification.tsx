@@ -35,6 +35,7 @@ const Verification = () => {
                   <InputOTP
                     maxLength={6}
                     {...field}
+                    containerClassName="justify-center"
                     className="flex items-center justify-center"
                   >
                     <InputOTPGroup className="flex items-center justify-center">

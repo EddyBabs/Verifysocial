@@ -1,10 +1,11 @@
 "use client";
 import React, { useCallback, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { faceBookToken } from "@/actions/instagram";
 import { toast } from "@/hooks/use-toast";
 
 const InstagramCallback = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
 
@@ -12,12 +13,13 @@ const InstagramCallback = () => {
     if (code) {
       const response = await faceBookToken(code);
       if (response.success) {
+        router.refresh();
         toast({ description: response.success });
       } else {
         toast({ description: response.error, variant: "destructive" });
       }
     }
-  }, [code]);
+  }, [code, router]);
 
   useEffect(() => {
     if (code) {

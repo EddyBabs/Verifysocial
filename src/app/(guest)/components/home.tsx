@@ -11,6 +11,7 @@ import VendorSearchInput from "@/components/vendor-search-input";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { MagnifyingGlassIcon, StarFilledIcon } from "@radix-ui/react-icons";
+import { State } from "country-state-city";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -42,6 +43,7 @@ export default async function Home() {
           address: {
             select: {
               state: true,
+              country: true,
             },
           },
         },
@@ -103,7 +105,7 @@ export default async function Home() {
           </video> */}
         </div>
 
-        <div className="flex col-span-3 lg:col-span-2 flex-col gap-6 p-8 xl:pl-40  md:min-w-[500px] min-h-[650px] justify-center">
+        <div className="flex col-span-3 lg:col-span-2 flex-col gap-6 p-8 xl:pl-40  md:min-w-[500px] min-h-[300px] md:min-h-[650px] justify-center">
           <h1 className="text-6xl sm:text-7xl font-semibold font-montserrat_alternates">
             Online Shopping Reasured
           </h1>
@@ -129,6 +131,13 @@ export default async function Home() {
         </div>
       </div>
 
+      <div className="bg-[#CCD6EB] min-h-[20rem] flex justify-center items-center lg:hidden mb-6">
+        <Image
+          src={VerifySocialVideo}
+          alt=""
+          className="h-[calc(100%+100px)] object-cover"
+        />
+      </div>
       <div className="bg-[#F5F7FF] p-8 md:p-20">
         <div className=" container mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -147,11 +156,18 @@ export default async function Home() {
                 <div className="py-5">
                   <a href="#">
                     <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                      {vendor.buisnessName}
+                      {vendor.businessName}
                     </h5>
                   </a>
                   <div className="space-x-2 flex items-center text-sm">
-                    <span>{vendor.User.address?.state}</span>
+                    <span>
+                      {
+                        State.getStateByCodeAndCountry(
+                          vendor.User.address?.state || "",
+                          vendor.User.address?.country || ""
+                        )?.name
+                      }
+                    </span>
                     <StarFilledIcon className="text-[#FFDD55]" />
                     <span>
                       {vendor.rating}({vendor.reviewCount})
@@ -169,7 +185,7 @@ export default async function Home() {
           <div className="container mx-auto flex items-center flex-col gap-4 text-center">
             <h2 className="text-3xl font-semibold">What We Offer</h2>
             <h5>
-              Know what you&apos;re buying, know what you&apos;re doing buisness
+              Know what you&apos;re buying, know what you&apos;re doing business
               with.
             </h5>
           </div>
@@ -177,17 +193,20 @@ export default async function Home() {
           <div className="w-full">
             <div className=" md:border-b-4 border-primary w-full">
               <div className="container mx-auto text-center">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-10 border-l-4 md:border-l-0 border-primary ">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:border-l-0 border-primary ">
                   {offers.map((offer) => (
-                    <div
-                      key={offer.title}
-                      className="md:border-l-4 before:w-6 before:h-6 before:absolute before:-left-3.5 before:-top-2 before:bg-primary before:rounded-full relative border-primary p-5 pb-10"
-                    >
-                      <h1 className="font-semibold text-xl mb-4">
-                        {offer.title}
-                      </h1>
-                      <p>{offer.description}</p>
-                    </div>
+                    <>
+                      <div
+                        key={offer.title}
+                        className="md:border-l-4 md:before:w-6 md:before:h-6 md:before:absolute md:before:-left-3.5 md:before:-top-2 md:before:bg-primary before:rounded-full relative border-primary p-5 pb-10"
+                      >
+                        <h1 className="font-semibold text-xl mb-4">
+                          {offer.title}
+                        </h1>
+                        <p>{offer.description}</p>
+                      </div>
+                      <hr className="bg-[#0033994A] h-2 -mx-4" />
+                    </>
                   ))}
                 </div>
               </div>
@@ -236,7 +255,9 @@ export default async function Home() {
                   rows={5}
                 />
               </div>
-              <Button>Send</Button>
+              <Button className="bg-gradient-to-r from-[#003399] to-[#2C64D4]">
+                Send
+              </Button>
             </div>
             <div>
               <div className="flex items-center w-full justify-center">

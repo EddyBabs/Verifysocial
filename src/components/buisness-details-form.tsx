@@ -1,9 +1,11 @@
 import { useFieldArray, useFormContext } from "react-hook-form";
-
+import categories from "@/data/categories";
+import { City, State } from "country-state-city";
 import { BecomeAVendorSchemaType } from "@/schemas/become-a-vendor";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { MultiSelect } from "./ui/multi-select";
 import {
   Select,
   SelectContent,
@@ -11,10 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { useTransition } from "react";
+import { cn } from "@/lib/utils";
+import { facebookLogin } from "@/actions/instagram";
 
 const PLATFORMS = [
-  { value: "facebook", label: "Facebook & Instagram" },
-  { value: "twitter", label: "Twitter", disabled: true },
+  { value: "instagram", label: "Instagram" },
+  { value: "twitter", label: "Twitter", disabled: false },
 ];
 
 const BuisnessDetailsForm = () => {
@@ -23,13 +28,29 @@ const BuisnessDetailsForm = () => {
     getValues,
     control,
     setValue,
+    watch,
     formState: { errors },
   } = useFormContext<BecomeAVendorSchemaType>();
+  const [isPending, startTransition] = useTransition();
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "step2.socialPlatform",
   });
+
+  const handleSelectCategories = (value: string[]) => {
+    setValue("step2.categories", value);
+  };
+
+  const handleSocialLogin = (platform: string) => {
+    startTransition(async () => {
+      console.log({ platform });
+      const values = getValues("step2");
+      if (platform === "instagram") {
+        await facebookLogin(values);
+      }
+    });
+  };
 
   return (
     <>
@@ -38,45 +59,97 @@ const BuisnessDetailsForm = () => {
           <Label>Buisness Name</Label>
           <Input
             placeholder=""
-            {...register("step2.buisnessName")}
-            error={errors.step2?.buisnessName?.message}
+            {...register("step2.businessName")}
+            error={errors.step2?.businessName?.message}
           />
         </div>
 
-        <div className="col-span-2">
+        <div className="col-span-2 sm:col-span-1">
           <Label>Whats your buisness about?</Label>
           <Input
             placeholder=""
-            {...register("step2.buisnessAbout")}
-            error={errors.step2?.buisnessAbout?.message}
+            {...register("step2.businessAbout")}
+            error={errors.step2?.businessAbout?.message}
+          />
+        </div>
+
+        <div className="col-span-2 sm:col-span-1">
+          <div className="col-span-1 mb-2 sm:mb-0">
+            <h4>Categories</h4>
+          </div>
+          <MultiSelect
+            options={categories}
+            value={watch("step2.categories")}
+            defaultValue={getValues("step2.categories")}
+            onValueChange={handleSelectCategories}
+            className="col-span-1 sm:col-span-2 lg:col-span-3"
+            maxCount={5}
           />
         </div>
 
         <div className="col-span-1">
           <Label>Country</Label>
-          <Input
-            placeholder=""
-            {...register("step2.address.country")}
-            error={errors.step2?.address?.country?.message}
-          />
+
+          <Select
+            value={watch("step2.address.country")}
+            onValueChange={(value) => setValue("step2.address.country", value)}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {[{ label: "Nigeria", value: "NG" }].map((country) => (
+                <SelectItem key={country.value} value={country.value}>
+                  {country.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="col-span-1">
           <Label>State</Label>
-          <Input
-            placeholder=""
-            {...register("step2.address.state")}
-            error={errors.step2?.address?.state?.message}
-          />
+
+          <Select
+            value={watch("step2.address.state")}
+            onValueChange={(value) => setValue("step2.address.state", value)}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {State.getStatesOfCountry(watch("step2.address.country")).map(
+                (state) => (
+                  <SelectItem key={state.isoCode} value={state.isoCode}>
+                    {state.name}
+                  </SelectItem>
+                )
+              )}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="col-span-1">
           <Label>City</Label>
-          <Input
-            placeholder=""
-            {...register("step2.address.city")}
-            error={errors.step2?.address?.city?.message}
-          />
+
+          <Select
+            value={watch("step2.address.city")}
+            onValueChange={(value) => setValue("step2.address.city", value)}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {City.getCitiesOfState(
+                watch("step2.address.country"),
+                watch("step2.address.state")
+              ).map((city) => (
+                <SelectItem key={city.name} value={city.name}>
+                  {city.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="col-span-1">
@@ -94,10 +167,10 @@ const BuisnessDetailsForm = () => {
               <Label>Select social platform</Label>
 
               <Select
-                value={getValues(`step2.socialPlatform.${index}.platform`)}
-                onValueChange={(value) =>
-                  setValue(`step2.socialPlatform.${index}.platform`, value)
-                }
+                value={watch(`step2.socialPlatform.${index}.platform`)}
+                onValueChange={(value) => {
+                  setValue(`step2.socialPlatform.${index}.platform`, value);
+                }}
               >
                 <SelectTrigger className="py-5">
                   <SelectValue placeholder="platform" />{" "}
@@ -124,26 +197,39 @@ const BuisnessDetailsForm = () => {
               </Select>
             </div>
 
-            <div>
-              <Label>URL</Label>
-              <div className="col-span-1 flex items-center w-full gap-2">
-                <Input
-                  placeholder=""
-                  inputClassName="w-full flex-1"
-                  {...register(`step2.socialPlatform.${index}.url`)}
-                  error={errors.step2?.socialPlatform?.[index]?.url?.message}
-                />
-                {index > 0 && (
-                  <Button
-                    type="button"
-                    variant={"destructive"}
-                    className="self-start"
-                    onClick={() => remove(index)}
-                  >
-                    Remove
-                  </Button>
+            <div className="h-full flex items-center gap-4">
+              <Button
+                type="button"
+                className={cn(
+                  "md:mt-[26px]",
+                  watch(`step2.socialPlatform.${index}.username`) &&
+                    "bg-destructive"
                 )}
-              </div>
+                disabled={
+                  !watch(`step2.socialPlatform.${index}.platform`) ||
+                  !!watch(`step2.socialPlatform.${index}.username`) ||
+                  isPending
+                }
+                onClick={() =>
+                  handleSocialLogin(
+                    watch(`step2.socialPlatform.${index}.platform`)
+                  )
+                }
+              >
+                {watch(`step2.socialPlatform.${index}.username`)
+                  ? "Linked: " + watch(`step2.socialPlatform.${index}.username`)
+                  : "Link"}
+              </Button>
+              {index > 0 && (
+                <Button
+                  type="button"
+                  variant={"destructive"}
+                  className="self-start md:mt-[27px]"
+                  onClick={() => remove(index)}
+                >
+                  Remove
+                </Button>
+              )}
             </div>
           </>
         ))}
@@ -151,7 +237,7 @@ const BuisnessDetailsForm = () => {
         <div className="col-span-2">
           <Button
             type="button"
-            onClick={() => append({ platform: "", url: "" })}
+            onClick={() => append({ platform: "", username: "" })}
             disabled={fields.length >= PLATFORMS.length}
           >
             Add New Social Profile

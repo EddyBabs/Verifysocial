@@ -1,7 +1,7 @@
 "use client";
 import {
   addBuisness,
-  sendBuisnessVerification,
+  sendBusinessVerification,
   verifyNIN,
 } from "@/actions/buisness";
 import BuisnessDetailsForm from "@/components/buisness-details-form";
@@ -44,14 +44,31 @@ interface BecomeAVendorProps {
       role: true;
       phone: true;
       gender: true;
-      vendor: { select: { buisnessName: true; buisnessAbout: true } };
+      address: {
+        select: {
+          country: true;
+          state: true;
+          city: true;
+          street: true;
+        };
+      };
+      vendor: {
+        select: {
+          businessName: true;
+          businessAbout: true;
+          categories: true;
+          socialAccount: true;
+        };
+      };
     };
   }>;
   ninVerified: boolean;
 }
 
 const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user, ninVerified }) => {
-  const [activeStep, setActiveStep] = useState(1);
+  const step1Completed =
+    user.fullname && user.email && user.phone && user.gender && ninVerified;
+  const [activeStep, setActiveStep] = useState(step1Completed ? 2 : 1);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -68,19 +85,27 @@ const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user, ninVerified }) => {
             : "",
         email: user.email,
         phone: user.phone || "",
-        gender: (user.gender?.toLowerCase() as any) || "",
+        gender:
+          (user.gender?.toLowerCase() as "male" | "female" | undefined) ||
+          undefined,
         nin: ninVerified ? "verified" : "",
       },
       step2: {
-        buisnessName: user.vendor?.buisnessName || "",
-        buisnessAbout: user.vendor?.buisnessAbout || "",
-        socialPlatform: [{ platform: "", url: "" }],
+        businessName: user.vendor?.businessName || "",
+        businessAbout: user.vendor?.businessAbout || "",
+        socialPlatform: user.vendor?.socialAccount.length
+          ? user.vendor?.socialAccount.map((account) => ({
+              platform: account.provider.toLowerCase(),
+              username: account.username || "",
+            }))
+          : [{ platform: "", username: "" }],
         address: {
-          country: "",
-          state: "",
-          city: "",
-          street: "",
+          country: user.address?.country || "",
+          state: user.address?.state || "",
+          city: user.address?.city || "",
+          street: user.address?.street || "",
         },
+        categories: user?.vendor?.categories || [],
       },
       step3: {
         otp: "",
@@ -93,7 +118,7 @@ const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user, ninVerified }) => {
     trigger,
     handleSubmit,
     getValues,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting },
   } = methods;
 
   const handleNext = () => {
@@ -119,7 +144,8 @@ const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user, ninVerified }) => {
       }
       if (activeStep === 2 && isValid) {
         try {
-          const response = await sendBuisnessVerification(
+          sessionStorage.removeItem("STEP2");
+          const response = await sendBusinessVerification(
             `${getValues("step1.firstname")} ${getValues("step1.lastname")}`
           );
 

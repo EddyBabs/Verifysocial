@@ -18,7 +18,7 @@ import VendorAvatar from "./vendor-avatar";
 type VendorDetailsType = Prisma.VendorGetPayload<{
   select: {
     id: true;
-    buisnessName: true;
+    businessName: true;
     rating: true;
     reviewCount: true;
     User: {
@@ -42,10 +42,10 @@ const VendorSearchInput: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({
       include: {
         vendor: {
           select: {
-            buisnessAbout: true;
+            businessAbout: true;
             rating: true;
             reviewCount: true;
-            buisnessName: true;
+            businessName: true;
             tier: true;
             User: { select: { image: true; address: true } };
           };

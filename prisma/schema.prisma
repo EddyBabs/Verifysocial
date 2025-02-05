@@ -26,7 +26,7 @@ model Address {
   city      String
   street    String
   userId    String   @unique @db.ObjectId
-  user      User?
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 }
@@ -47,8 +47,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   vendor        Vendor?
-  addressId     String?     @unique @db.ObjectId
-  address       Address?    @relation(references: [id], fields: [addressId])
+  address       Address?
   orders        Order[]
   reviews       Review[]
   createdAt     DateTime    @default(now()) @map("created_at")
@@ -57,6 +56,8 @@ model User {
 
 enum SocialPlatforms {
   FACEBOOK
+  INSTAGRAM
+  TWITTER
 }
 
 model socialAccount {
@@ -64,6 +65,8 @@ model socialAccount {
   provider     SocialPlatforms
   accessToken  String
   refreshToken String?
+  userId       String?
+  username     String?
   tokenExpiry  DateTime?
   vendorId     String          @db.ObjectId
   vendor       Vendor          @relation(references: [id], fields: [vendorId])
@@ -83,10 +86,10 @@ model Vendor {
   id             String                 @id @default(auto()) @map("_id") @db.ObjectId
   userId         String                 @unique @db.ObjectId
   User           User                   @relation(fields: [userId], references: [id])
-  buisnessName   String?
-  buisnessAbout  String?
+  businessName   String?
+  businessAbout  String?
   socialPlatform VendorSocialPlatform[]
-  tier           Tier
+  tier           Tier?
   credentials    KYCCredential[]
   Product        Product[]
   Review         Review[]
@@ -211,7 +214,7 @@ model PasswordResetToken {
   @@unique([email, token])
 }
 
-model BuisnessVerificationToken {
+model BusinessVerificationToken {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   email   String   @unique
   token   String   @unique

@@ -7,7 +7,7 @@ import { IoLocationOutline } from "react-icons/io5";
 
 type VendorDetails = Prisma.VendorGetPayload<{
   select: {
-    buisnessName: true;
+    businessName: true;
     rating: true;
     reviewCount: true;
     User: {
@@ -22,18 +22,6 @@ type VendorDetails = Prisma.VendorGetPayload<{
       };
     };
   };
-  // select: {
-  //   image: true;
-  //   address: {
-  //     select: {
-  //       country: true;
-  //       state: true;
-  //     };
-  //   };
-  //   vendor: {
-  //     select: { buisnessName: true; rating: true; totalRating: true };
-  //   };
-  // };
 }>;
 
 interface VendorAvatarProps {
@@ -51,7 +39,7 @@ const VendorAvatar: React.FC<VendorAvatarProps> = ({ vendor }) => {
         />
       </div>
       <div>
-        <h1 className="text-base">{vendor?.buisnessName}</h1>
+        <h1 className="text-base">{vendor?.businessName}</h1>
         <div className="flex items-center gap-1">
           <IoLocationOutline className="text-green-500" />{" "}
           {vendor?.User?.address?.state}

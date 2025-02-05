@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Button } from "@/components/ui/button";
-import React, { Dispatch, SetStateAction } from "react";
-import SignInEmail from "./signin-email";
-import { FcGoogle } from "react-icons/fc";
-import { FaFacebook } from "react-icons/fa";
-import Link from "next/link";
 import Logo from "@/components/logo";
+import { Button } from "@/components/ui/button";
+import { InstagramLogoIcon } from "@radix-ui/react-icons";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
+import React, { Dispatch, SetStateAction } from "react";
+import { FaFacebook } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import SignInEmail from "./signin-email";
 
 type SignUpFormProps = {
   setStep: Dispatch<SetStateAction<"signup" | "verify">>;
@@ -37,9 +38,22 @@ const SignInForm: React.FC<SignUpFormProps> = ({ setStep }) => {
             <FcGoogle size={18} className="mr-2" />
             Google
           </Button>
-          <Button variant={"outline"} className="w-full">
+          <Button
+            variant={"outline"}
+            className="w-full"
+            onClick={() => signIn("facebook")}
+          >
             <FaFacebook size={18} className="mr-2 text-blue-600" />
             Facebook
+          </Button>
+
+          <Button
+            variant={"outline"}
+            className="w-full"
+            onClick={() => signIn("instagram")}
+          >
+            <InstagramLogoIcon className="mr-2 text-blue-600" />
+            Instagram
           </Button>
         </div>
         <div>

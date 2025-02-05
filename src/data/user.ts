@@ -63,8 +63,8 @@ export const getCurrentUserDetails = async () => {
         select: {
           tier: true,
           categories: true,
-          buisnessName: true,
-          buisnessAbout: true,
+          businessName: true,
+          businessAbout: true,
           rating: true,
           totalRating: true,
           reviewCount: true,

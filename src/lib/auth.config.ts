@@ -3,6 +3,7 @@ import { AuthError, NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
+import InstagramProvider from "next-auth/providers/instagram";
 import { signInSchema } from "@/schemas/auth";
 import { getUserByEmail } from "@/data/user";
 // import { sendVerification } from "@/actions/send-verification";
@@ -17,9 +18,20 @@ class UnverifiedUserError extends AuthError {
 
 export default {
   providers: [
+    InstagramProvider({
+      authorization:
+        "https://www.instagram.com/oauth/authorize?scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish",
+      clientId: process.env.INSTAGRAM_APP_ID,
+      clientSecret: process.env.INSTAGRAM_APP_SECRET,
+      async profile(profile) {
+        console.log("Instagram");
+        console.log({ profile });
+        return profile;
+      },
+    }),
     FacebookProvider({
-      clientId: process.env.FACEBOOK_CLIENTD_ID,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+      clientId: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_APP_SECRET,
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,

@@ -92,7 +92,7 @@ export const getVendors = async () => {
   const vendors = await database.vendor.findMany({
     select: {
       id: true,
-      buisnessName: true,
+      businessName: true,
       reviewCount: true,
       rating: true,
       Product: {
@@ -128,8 +128,8 @@ export const getSearchedVendors = async (value: string) => {
     include: {
       vendor: {
         select: {
-          buisnessAbout: true,
-          buisnessName: true,
+          businessAbout: true,
+          businessName: true,
           rating: true,
           reviewCount: true,
           tier: true,
@@ -153,7 +153,7 @@ export const getSearchedVendors = async (value: string) => {
   }
   const vendors = await database.vendor.findMany({
     where: {
-      buisnessName: { contains: value, mode: "insensitive" },
+      businessName: { contains: value, mode: "insensitive" },
     },
     include: {
       User: {

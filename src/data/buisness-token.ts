@@ -2,7 +2,7 @@ import { database } from "@/lib/database";
 
 export const getBuisnessVerificationTokenByEmail = async (email: string) => {
   try {
-    const passwordToken = await database.buisnessVerificationToken.findFirst({
+    const passwordToken = await database.businessVerificationToken.findFirst({
       where: { email },
     });
 
@@ -14,7 +14,7 @@ export const getBuisnessVerificationTokenByEmail = async (email: string) => {
 
 export const getBuisnessVerificationTokenByToken = async (token: string) => {
   try {
-    const passwordToken = await database.buisnessVerificationToken.findUnique({
+    const passwordToken = await database.businessVerificationToken.findUnique({
       where: { token },
     });
 

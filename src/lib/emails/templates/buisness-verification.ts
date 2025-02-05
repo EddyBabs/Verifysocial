@@ -199,11 +199,11 @@ export const buisnessVerificationTemplate = `<!DOCTYPE html PUBLIC "-//W3C//DTD 
                               "
                             >
                               You are receiving this email because you're trying
-                              to create a buisness account
+                              to create a business account
                             </p>
                             <p>
                               Please use the following One-Time Password (OTP)
-                              to verify your Buisness Account:
+                              to verify your Business Account:
                               <span style="font-size: large; font-weight: 700"
                                 >{{token}}</span
                               >
@@ -240,7 +240,7 @@ export const buisnessVerificationTemplate = `<!DOCTYPE html PUBLIC "-//W3C//DTD 
                                 text-align: left;
                               "
                             >
-                              If you did not create a buisness account, no
+                              If you did not create a business account, no
                               further action is required.
                             </p>
 

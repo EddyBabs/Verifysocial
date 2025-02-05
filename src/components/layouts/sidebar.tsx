@@ -29,7 +29,7 @@ interface SidebarProps {
     select: {
       fullname: true;
       role: true;
-      vendor: { select: { buisnessAbout: true } };
+      vendor: { select: { businessAbout: true } };
     };
   }>;
 }

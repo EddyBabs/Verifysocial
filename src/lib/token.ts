@@ -34,7 +34,7 @@ export const generateBusinessVerificationToken = async (email: string) => {
   const expires = new Date(new Date().getTime() + 900 * 1000);
   const existingToken = await getBuisnessVerificationTokenByEmail(email);
   if (existingToken) {
-    await database.buisnessVerificationToken.delete({
+    await database.businessVerificationToken.delete({
       where: {
         id: existingToken.id,
       },
@@ -42,7 +42,7 @@ export const generateBusinessVerificationToken = async (email: string) => {
   }
 
   const businessVerificationToken =
-    await database.buisnessVerificationToken.create({
+    await database.businessVerificationToken.create({
       data: {
         token,
         expires,

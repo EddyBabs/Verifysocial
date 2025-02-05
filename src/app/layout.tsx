@@ -8,6 +8,7 @@ import {
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import InstagramCallback from "@/components/instagram-callback";
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -69,6 +70,7 @@ export default function RootLayout({
         >
           {children}
           <Toaster />
+          <InstagramCallback />
         </ThemeProvider>
       </body>
     </html>

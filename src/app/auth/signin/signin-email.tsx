@@ -84,7 +84,11 @@ const SignInEmail = ({
             Forgot password?
           </Link>
         </div>
-        <Button type="submit" disabled={isPending}>
+        <Button
+          type="submit"
+          disabled={isPending}
+          className="bg-gradient-to-r from-[#003399] to-[#87B077]"
+        >
           Login
         </Button>
         <div className="text-center">

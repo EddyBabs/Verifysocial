@@ -19,6 +19,8 @@ import {
 } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogDescription } from "@radix-ui/react-dialog";
+import { Loader } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useForm, useFormContext } from "react-hook-form";
 
 const OrderModal = ({
@@ -28,6 +30,7 @@ const OrderModal = ({
   isOpen: boolean;
   orderId: string;
 }) => {
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(orderConfirmationSchema),
     defaultValues: {
@@ -36,6 +39,8 @@ const OrderModal = ({
       received: undefined,
       comment: "",
       vendorContact: "",
+      orderExtend: "",
+      madePayment: "",
     },
   });
 
@@ -46,6 +51,7 @@ const OrderModal = ({
     const response = await userOrderConfirmation(values);
     if (response.success) {
       toast({ description: response.success });
+      router.refresh();
     } else {
       toast({ description: response.error, variant: "destructive" });
     }
@@ -96,7 +102,7 @@ const RateVendor = () => {
     register,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useFormContext<orderConfirmationSchemaType>();
   const rate = watch("rating");
 
@@ -136,16 +142,53 @@ const RateVendor = () => {
         <Button type="button" onClick={() => setValue("received", undefined)}>
           Back
         </Button>
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={isSubmitting}>
+          Submit {isSubmitting && <Loader className="ml-2 animate-spin" />}
+        </Button>
       </DialogFooter>
     </>
   );
 };
 
 const NoReponse = () => {
-  const { setValue, watch } = useFormContext<orderConfirmationSchemaType>();
-
+  const { setValue, watch, handleSubmit } =
+    useFormContext<orderConfirmationSchemaType>();
   const vendorContact = watch("vendorContact");
+  const orderExtend = watch("orderExtend");
+
+  if (orderExtend) {
+    return (
+      <>
+        <DialogDescription>Have you made payment?</DialogDescription>
+        <DialogFooter>
+          <Button
+            variant={"outline"}
+            type="button"
+            onClick={() => setValue("orderExtend", "")}
+          >
+            Back
+          </Button>
+          <Button
+            type="button"
+            onClick={() => {
+              setValue("madePayment", "yes");
+            }}
+          >
+            Yes
+          </Button>
+          <Button
+            type="button"
+            onClick={() => {
+              setValue("madePayment", "no");
+            }}
+          >
+            No
+          </Button>
+        </DialogFooter>
+      </>
+    );
+  }
+
   if (vendorContact) {
     return (
       <>
@@ -158,8 +201,12 @@ const NoReponse = () => {
           >
             Back
           </Button>
-          <Button>Yes</Button>
-          <Button type="submit">No</Button>
+          <Button type="button" onClick={() => setValue("orderExtend", "yes")}>
+            Yes
+          </Button>
+          <Button type="button" onClick={() => setValue("orderExtend", "no")}>
+            No
+          </Button>
         </DialogFooter>
       </>
     );
@@ -178,7 +225,7 @@ const NoReponse = () => {
         <Button type="button" onClick={() => setValue("vendorContact", "yes")}>
           Yes
         </Button>
-        <Button type="submit" onClick={() => setValue("vendorContact", "no")}>
+        <Button type="button" onClick={() => setValue("vendorContact", "no")}>
           No
         </Button>
       </DialogFooter>

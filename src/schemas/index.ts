@@ -41,6 +41,8 @@ export const orderConfirmationSchema = z.object({
   rating: z.number().min(0).max(5),
   comment: z.string(),
   vendorContact: z.string().optional(),
+  orderExtend: z.string(),
+  madePayment: z.string(),
 });
 
 export type orderConfirmationSchemaType = z.infer<

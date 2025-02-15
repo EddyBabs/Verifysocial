@@ -1,4 +1,3 @@
-import Sidebar from "@/app/(dashboard)/sidebar";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -12,10 +11,12 @@ import { MenuIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 import React, { PropsWithChildren } from "react";
 
+import SidebarPanel from "@/app/(dashboard)/sidebar-panel";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Logo from "../logo";
 import MobileSidebar from "./mobile-sidebar";
+
 const DashboardLayout: React.FC<PropsWithChildren> = async ({ children }) => {
   const { user } = await getCurrentUserDetails();
   if (!user) {
@@ -26,7 +27,7 @@ const DashboardLayout: React.FC<PropsWithChildren> = async ({ children }) => {
   return (
     <div
       className={cn(
-        "grid h-screen min-h-screen w-full gap-4 lg:gap-0 lg:grid-cols-[280px_1fr]",
+        "grid h-screen min-h-screen w-full gap-4 lg:gap-0 lg:grid-cols-[17rem_1fr]",
         { "lg:grid-cols-none": hideSidebar }
       )}
     >
@@ -34,7 +35,7 @@ const DashboardLayout: React.FC<PropsWithChildren> = async ({ children }) => {
         <></>
       ) : (
         <div className="hidden border-r lg:block relative">
-          <Sidebar user={user} />
+          <SidebarPanel user={user} />
         </div>
       )}
 

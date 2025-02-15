@@ -10,10 +10,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import categories from "@/data/categories";
 import { cn } from "@/lib/utils";
 import { Prisma } from "@prisma/client";
 import { HomeIcon } from "@radix-ui/react-icons";
+import { ArrowDownIcon } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -24,7 +26,7 @@ import { IoMdAnalytics } from "react-icons/io";
 import { MdOutlineCategory } from "react-icons/md";
 import { VscPreview } from "react-icons/vsc";
 
-interface SidebarProps {
+interface SidebarPanelProps {
   user: Prisma.UserGetPayload<{
     select: {
       fullname: true;
@@ -34,7 +36,7 @@ interface SidebarProps {
   }>;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ user }) => {
+const SidebarPanel: React.FC<SidebarPanelProps> = ({ user }) => {
   const SIDEBAR_VALUE = [
     ...(user.role === "VENDOR"
       ? [
@@ -73,7 +75,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
           {
             icon: MdOutlineCategory,
             href: "/vendors",
-            value: "Category",
+            value: "Categories",
             children: categories,
           },
           {
@@ -90,28 +92,34 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   ];
   const pathname = usePathname();
   return (
-    <div className="flex h-full max-h-screen flex-col gap-2  bg-gray-100/40  dark:bg-gray-800/40 fixed left-0 top-0 w-[280px]">
-      <div className="flex h-[60px] items-center border-b px-6">
-        <Link
-          href="/home"
-          className="flex items-center gap-2 font-semibold"
-          prefetch={false}
-        >
-          <Logo width={20} height={20} className="text-sm" />
-        </Link>
-        {/* <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
+    <SidebarProvider>
+      <div className="flex h-full max-h-screen flex-col gap-2  bg-gray-100/40  dark:bg-gray-800/40 fixed left-0 top-0 w-[280px]">
+        <div className="flex h-[60px] items-center border-b px-6">
+          <Link
+            href="/home"
+            className="flex items-center gap-2 font-semibold"
+            prefetch={false}
+          >
+            <Logo width={20} height={20} className="text-sm" />
+          </Link>
+          {/* <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
         <BellIcon className="h-4 w-4" />
         <span className="sr-only">Toggle notifications</span>
       </Button> */}
-      </div>
-      <div className="flex-1 overflow-auto py-2">
-        <nav className="grid items-start px-4 gap-4 text-sm font-medium ">
-          {SIDEBAR_VALUE.map((bar) => {
-            const Icon = bar.icon;
-            if (bar.children?.length) {
-              return (
-                <>
-                  <DropdownMenu>
+        </div>
+        <div className="flex-1 overflow-auto py-2">
+          <nav className="grid items-start px-4 gap-4 text-sm font-medium ">
+            {SIDEBAR_VALUE.map((bar) => {
+              const Icon = bar.icon;
+              if (bar.children?.length) {
+                return (
+                  <>
+                    <Button className="flex items-center w-full p-2 rounded-lg bg-transparent hover:bg-transparent shadow-none text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
+                      <span className="flex-1 text-left">{bar.value}</span>
+                      <ArrowDownIcon />
+                    </Button>
+
+                    {/* <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <div
                         className={cn(
@@ -124,7 +132,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
                       </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuLabel>Categories</DropdownMenuLabel>
+                      <DropdownMenuLabel>{bar.value}</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       {bar.children.map((item) => (
                         <Link
@@ -136,38 +144,39 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
                         </Link>
                       ))}
                     </DropdownMenuContent>
-                  </DropdownMenu>
-                </>
+                  </DropdownMenu> */}
+                  </>
+                );
+              }
+              return (
+                <Link
+                  href={bar.href}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50",
+                    { "bg-gray-100": pathname === bar.href }
+                  )}
+                  prefetch={false}
+                  key={bar.href}
+                >
+                  <Icon className="h-5 w-5" />
+                  {bar.value}
+                </Link>
               );
-            }
-            return (
-              <Link
-                href={bar.href}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50",
-                  { "bg-gray-100": pathname === bar.href }
-                )}
-                prefetch={false}
-                key={bar.href}
-              >
-                <Icon className="h-5 w-5" />
-                {bar.value}
-              </Link>
-            );
-          })}
-        </nav>
+            })}
+          </nav>
+        </div>
+        <div className="mt-auto p-4 mb-4">
+          <Button
+            size="sm"
+            className="w-full"
+            onClick={async () => await signOut({ redirectTo: "/" })}
+          >
+            Logout
+          </Button>
+        </div>
       </div>
-      <div className="mt-auto p-4 mb-4">
-        <Button
-          size="sm"
-          className="w-full"
-          onClick={async () => await signOut({ redirectTo: "/" })}
-        >
-          Logout
-        </Button>
-      </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
-export default Sidebar;
+export default SidebarPanel;

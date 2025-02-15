@@ -14,6 +14,7 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
+  SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -62,55 +63,59 @@ const SidebarPanel: React.FC<SidebarPanelProps> = ({ user }) => {
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupContent className="space-y-2">
-              {SIDEBAR_VALUE.map((item, index) => {
-                const Icon = item.icon;
-                if (item.children && item.children.length > 0) {
-                  return (
-                    <Collapsible key={index}>
-                      <SidebarGroup>
-                        <SidebarGroupLabel className="p-0" asChild>
-                          <CollapsibleTrigger>
-                            <Icon className="h-5 w-5 mr-2" />
-                            {item.value}
-                            <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                          </CollapsibleTrigger>
-                        </SidebarGroupLabel>
-                        <CollapsibleContent>
-                          <SidebarMenuSub className="space-y-2">
-                            {item.children.map((subitem: any) => (
-                              <SidebarMenuSubItem key={subitem.value}>
-                                <SidebarMenuSubButton
-                                  className="h-fit hover:cursor-pointer"
-                                  asChild
-                                >
-                                  <Link
-                                    href={`/vendors?category=${subitem.value}`}
+              <SidebarMenu>
+                {SIDEBAR_VALUE.map((item, index) => {
+                  const Icon = item.icon;
+                  if (item.children && item.children.length > 0) {
+                    return (
+                      <Collapsible key={index} className="group/collapsible">
+                        <SidebarGroup>
+                          <SidebarGroupLabel className="p-0" asChild>
+                            <CollapsibleTrigger>
+                              <Icon className="h-5 w-5 mr-2" />
+                              {item.value}
+                              <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                            </CollapsibleTrigger>
+                          </SidebarGroupLabel>
+                          <CollapsibleContent>
+                            <SidebarMenuSub className="space-y-2">
+                              {item.children.map((subitem: any) => (
+                                <SidebarMenuSubItem key={subitem.value}>
+                                  <SidebarMenuSubButton
+                                    className="h-fit hover:cursor-pointer"
+                                    asChild
                                   >
-                                    {subitem.label}
-                                  </Link>
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
-                            ))}
-                          </SidebarMenuSub>
-                        </CollapsibleContent>
-                      </SidebarGroup>
-                    </Collapsible>
+                                    <Link
+                                      href={`/vendors?category=${subitem.value}`}
+                                    >
+                                      {subitem.label}
+                                    </Link>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              ))}
+                            </SidebarMenuSub>
+                          </CollapsibleContent>
+                        </SidebarGroup>
+                      </Collapsible>
+                    );
+                  }
+                  return (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton
+                        asChild
+                        className={cn({
+                          "bg-gray-100": pathname === item.href,
+                        })}
+                      >
+                        <Link href={item.href}>
+                          <Icon className="h-4 w-4" />
+                          {item.value}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   );
-                }
-                return (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      asChild
-                      className={cn({ "bg-gray-100": pathname === item.href })}
-                    >
-                      <Link href={item.href}>
-                        <Icon className="h-4 w-4" />
-                        {item.value}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+                })}
+              </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
 

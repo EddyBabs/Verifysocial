@@ -25,7 +25,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 
 const PLATFORMS = [
-  { value: "facebook", label: "Facebook & Instagram" },
+  { value: "instagram", label: "Instagram" },
   { value: "twitter", label: "Twitter", disabled: true },
 ];
 
@@ -57,7 +57,7 @@ const SettingForm: React.FC<SettingFormProps> = ({ user }) => {
       gender: user.gender?.toLowerCase() || "",
       socialPlatform: user.vendor?.socialAccount.map((account) => ({
         platform: account.provider.toLowerCase(),
-        token: account.accessToken,
+        username: account.username || "",
       })),
       categories: user.vendor?.categories || [],
     },
@@ -169,7 +169,7 @@ const SettingForm: React.FC<SettingFormProps> = ({ user }) => {
                           }
                         >
                           <SelectTrigger className="py-5">
-                            <SelectValue placeholder="platform" />{" "}
+                            <SelectValue />{" "}
                           </SelectTrigger>
                           <SelectContent>
                             {PLATFORMS.filter((platform) => {
@@ -194,31 +194,21 @@ const SettingForm: React.FC<SettingFormProps> = ({ user }) => {
                       </div>
 
                       <div className="h-full flex items-center gap-4">
-                        {/* <Label>Token</Label> */}
-                        {/* <div className="col-span-1 flex items-center w-full gap-2">
-                          <Input
-                            placeholder=""
-                            inputClassName="w-full flex-1"
-                            {...form.register(`socialPlatform.${index}.token`)}
-                            error={
-                              form.formState.errors?.socialPlatform?.[index]
-                                ?.token?.message
-                            }
-                          /> */}
                         <Button
                           type="button"
                           className={cn(
                             "md:mt-[26px]",
-                            form.watch(`socialPlatform.${index}.token`) &&
+                            form.watch(`socialPlatform.${index}.username`) &&
                               "bg-destructive"
                           )}
                           disabled={
-                            !!form.watch(`socialPlatform.${index}.token`) ||
+                            !!form.watch(`socialPlatform.${index}.username`) ||
                             isPending
                           }
                         >
-                          {form.watch(`socialPlatform.${index}.token`)
-                            ? "Linked"
+                          {form.watch(`socialPlatform.${index}.username`)
+                            ? "Linked: " +
+                              form.watch(`socialPlatform.${index}.username`)
                             : "Link"}
                         </Button>
                         {index > 0 && (
@@ -239,7 +229,7 @@ const SettingForm: React.FC<SettingFormProps> = ({ user }) => {
               <div className="col-span-1 md:col-span-2">
                 <Button
                   type="button"
-                  onClick={() => append({ platform: "", token: "" })}
+                  onClick={() => append({ platform: "", username: "" })}
                   disabled={fields.length >= PLATFORMS.length}
                 >
                   Add New Social Profile

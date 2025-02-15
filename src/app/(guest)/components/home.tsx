@@ -205,7 +205,7 @@ export default async function Home() {
                         </h1>
                         <p>{offer.description}</p>
                       </div>
-                      <hr className="bg-[#0033994A] h-2 -mx-4" />
+                      <hr className="bg-[#0033994A] h-2 -mx-4 md:hidden" />
                     </>
                   ))}
                 </div>

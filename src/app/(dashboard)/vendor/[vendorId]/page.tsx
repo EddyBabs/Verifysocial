@@ -85,39 +85,41 @@ const VendorId = async ({
                 </p>
               </div>
               <div className="flex gap-6 items-center">
-                {vendor.socialPlatform.map((platform) => (
-                  <Link
-                    href={platform.url}
-                    target="_blank"
-                    key={platform.platform}
-                  >
-                    <div className="flex items-center justify-center flex-col ">
-                      {platform.platform === "whatsapp" ? (
-                        <IoLogoWhatsapp className="fill-green-500 h-10 w-10" />
-                      ) : platform.platform === "facebook" ? (
-                        <FaFacebookSquare className="h-10 w-10 fill-blue-800" />
-                      ) : (
-                        <BsInstagram className="h-10 w-10" />
-                      )}
-                      <h3 className="text-base">{`${platform.platform
-                        .charAt(0)
-                        .toUpperCase()}${platform.platform.slice(1)}`}</h3>
-                    </div>
-                  </Link>
-                ))}
+                {vendor.socialAccount.map((socialAccount) => {
+                  switch (socialAccount.provider) {
+                    case "INSTAGRAM":
+                      return (
+                        <Link
+                          href={`https://instagram.com/${socialAccount.username}`}
+                          target="_blank"
+                          key={socialAccount.provider}
+                        >
+                          <BsInstagram className="h-10 w-10" />
+                        </Link>
+                      );
 
-                {/* <Link href="#">
-                  <div className="flex items-center justify-center flex-col">
-                    <FaFacebookSquare className="h-10 w-10 fill-blue-800" />
-                    <h3 className="text-base">Facebook</h3>
-                  </div>
-                </Link>
-                <Link href="#">
-                  <div className="flex items-center justify-center flex-col">
-                    <BsInstagram className="h-10 w-10" />
-                    <h3 className="text-base">Instagram</h3>
-                  </div>
-                </Link> */}
+                    case "FACEBOOK":
+                      return (
+                        <Link
+                          href={"https://facebook.com"}
+                          target="_blank"
+                          key={socialAccount.provider}
+                        >
+                          <FaFacebookSquare className="h-10 w-10 fill-blue-800" />
+                        </Link>
+                      );
+                    case "TWITTER":
+                      return (
+                        <Link
+                          href={"https://twitter.com"}
+                          target="_blank"
+                          key={socialAccount.provider}
+                        >
+                          <FaFacebookSquare className="h-10 w-10 fill-blue-800" />
+                        </Link>
+                      );
+                  }
+                })}
               </div>
             </div>
           </CardContent>

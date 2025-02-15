@@ -6,7 +6,12 @@ import {
   compileVendorRequestReceived,
   sendMail,
 } from "@/lib/emails/mail";
+import {
+  orderConfirmationSchema,
+  orderConfirmationSchemaType,
+} from "@/schemas";
 import { orderSchema } from "@/schemas/auth";
+import { notFound, redirect } from "next/navigation";
 import * as z from "zod";
 
 type orderSchemaType = z.infer<typeof orderSchema>;
@@ -103,4 +108,92 @@ export const fetchUserOrders = async () => {
     where: { userId: userSession.id },
   });
   return orders;
+};
+
+export const fetchUserOrderById = async (orderId: string) => {
+  const userSession = await getCurrentUser();
+  if (!userSession?.id) {
+    redirect("/auth/signin");
+  }
+  const order = await database.order.findUnique({
+    where: { id: orderId, userId: userSession.id },
+  });
+  if (!order) {
+    return notFound();
+  }
+  return order;
+};
+
+export const userOrderConfirmation = async (
+  values: orderConfirmationSchemaType
+) => {
+  const userSession = await getCurrentUser();
+  if (!userSession?.id) {
+    redirect("/auth/signin");
+  }
+  const validatedData = orderConfirmationSchema.safeParse(values);
+
+  if (validatedData.error) {
+    return { error: "Invalidated Fields" };
+  }
+
+  const { rating, received, comment, orderId } = validatedData.data;
+  if (received === "yes") {
+    const order = await database.order.update({
+      where: { id: orderId },
+      data: {
+        status: "COMPLETED",
+      },
+      include: { vendor: true },
+    });
+    if (!order) {
+      return { error: "Invalid Order" };
+    }
+    const existingReview = await database.review.findUnique({
+      where: { orderId: order.id },
+    });
+
+    let ratingDiff = 0;
+
+    if (existingReview) {
+      // Update: Calculate the difference to adjust the total rating
+      ratingDiff = rating - existingReview.rating;
+    } else {
+      // Create: Use the entire rating as the difference
+      ratingDiff = rating;
+    }
+
+    const reivew = await database.review.upsert({
+      where: {
+        orderId,
+      },
+      create: {
+        orderId,
+        rating,
+        comment,
+        userId: userSession.id,
+        vendorId: order.vendorId,
+      },
+      update: {
+        rating,
+        comment,
+      },
+    });
+    const totalRating = order.vendor.rating + ratingDiff;
+    const reviewCount = order.vendor.reviewCount + (existingReview ? 0 : 1);
+    const averageRating = reviewCount > 0 ? totalRating / reviewCount : 0;
+
+    await database.vendor.update({
+      where: {
+        id: order.vendorId,
+      },
+      data: {
+        totalRating,
+        reviewCount,
+        rating: averageRating,
+      },
+    });
+    return { success: "Order completed successfully" };
+  }
+  return { error: "Not handle No yet" };
 };

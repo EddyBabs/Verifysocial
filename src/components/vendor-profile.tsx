@@ -6,7 +6,6 @@ import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
 import { FiAward } from "react-icons/fi";
-import InstagramCallback from "./instagram-callback";
 import ReviewCard from "./reveiw-card";
 import { Card } from "./ui/card";
 import UploadProductForm from "./upload-product-form";

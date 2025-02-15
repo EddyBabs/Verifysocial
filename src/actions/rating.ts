@@ -57,12 +57,9 @@ export const reviewOrder = async (values: rateOrderValueType) => {
     },
   });
 
-  console.log({ vendor: order.vendor });
-  console.log({ existingReview });
   const totalRating = order.vendor.rating + ratingDiff;
   const reviewCount = order.vendor.reviewCount + (existingReview ? 0 : 1);
   const averageRating = reviewCount > 0 ? totalRating / reviewCount : 0;
-  console.log({ totalRating, reviewCount, averageRating });
 
   await database.vendor.update({
     where: {

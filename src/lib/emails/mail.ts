@@ -5,6 +5,7 @@ import { verifyEmailTemplate } from "./templates/verify-email";
 import { buisnessVerificationTemplate } from "./templates/buisness-verification";
 import { RequestReceivedTemplate } from "./templates/request-received";
 import { vendorRequestReceived } from "./templates/vendor-request-received";
+import { OrderDeliveryConfirmation } from "./templates/order-delivery-confirmation";
 // import { welcomeTemplate } from "./templates/welcome";
 
 export async function sendMail({
@@ -96,6 +97,18 @@ export function compileVendorRequestReceived(
   const htmlBody = template({
     name,
     requestName,
+  });
+  return htmlBody;
+}
+
+export function compileOrderDeliveryConfirmation(
+  name: string,
+  verifyOrderLink: string
+) {
+  const template = handlebars.compile(OrderDeliveryConfirmation);
+  const htmlBody = template({
+    name,
+    verifyOrderLink,
   });
   return htmlBody;
 }

@@ -46,13 +46,13 @@ import { useForm } from "react-hook-form";
 import ViewCodeSection from "./view-code-section";
 
 const AMOUNT_RANGES = [
-  { min: 1000, max: 5000 },
-  { min: 5001, max: 10000 },
-  { min: 10001, max: 50000 },
-  { min: 50001, max: 100000 },
-  { min: 100001, max: 500000 },
-  { min: 500001, max: 1000000 },
-  { min: 1000001, max: 10000000 },
+  { min: 1000, max: 4999 },
+  { min: 5000, max: 9999 },
+  { min: 10000, max: 49999 },
+  { min: 50000, max: 99999 },
+  { min: 100000, max: 499999 },
+  { min: 500000, max: 999999 },
+  { min: 1000000, max: 1000000000 },
 ];
 
 const NewCode = () => {

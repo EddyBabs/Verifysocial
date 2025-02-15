@@ -26,7 +26,7 @@ export const settingFormSchema = z.object({
   socialPlatform: z.array(
     z.object({
       platform: z.string(),
-      token: z.string(),
+      username: z.string(),
     })
   ),
 
@@ -34,5 +34,17 @@ export const settingFormSchema = z.object({
 });
 
 export type settingFormSchemaType = z.infer<typeof settingFormSchema>;
+
+export const orderConfirmationSchema = z.object({
+  orderId: z.string().min(10, "Invalid order Id"),
+  received: z.enum(["yes", "no"]).optional(),
+  rating: z.number().min(0).max(5),
+  comment: z.string(),
+  vendorContact: z.string().optional(),
+});
+
+export type orderConfirmationSchemaType = z.infer<
+  typeof orderConfirmationSchema
+>;
 
 // export type

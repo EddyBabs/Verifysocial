@@ -56,8 +56,9 @@ async function TableDemo() {
         <TableRow>
           <TableHead className="w-[200px]">Codes</TableHead>
           <TableHead className="w-[200px]">Status</TableHead>
-          <TableHead>Method</TableHead>
-          <TableHead className="text-right">Min Amount</TableHead>
+          <TableHead>Delivery Date</TableHead>
+          <TableHead className="text-right min-w-[50px]">Min Amount</TableHead>
+          <TableHead className="text-right min-w-[50px]">Max Amount</TableHead>
           <TableHead className="text-right w-[100px]">Action</TableHead>
         </TableRow>
       </TableHeader>
@@ -71,6 +72,9 @@ async function TableDemo() {
             </TableCell>
             <TableCell className="text-right">
               {currencyFormat(order.minAmount)}
+            </TableCell>
+            <TableCell className="text-right">
+              {currencyFormat(order.maxAmount)}
             </TableCell>
             <TableCell className="text-right">
               <Button variant={"ghost"}>

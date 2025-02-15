@@ -32,7 +32,7 @@ import { cn } from "@/lib/utils";
 import { orderSchema } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Order, Prisma } from "@prisma/client";
-import { format } from "date-fns";
+import { formatDate } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -139,11 +139,11 @@ const OrderForm = ({
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
                       <FormLabel>Date </FormLabel>
-                      <Popover open={openDate}>
-                        <PopoverTrigger
-                          asChild
-                          onClick={() => setOpenDate((prev) => !prev)}
-                        >
+                      <Popover
+                      // open={openDate}
+                      // onOpenChange={() => setOpenDate((prev) => !prev)}
+                      >
+                        <PopoverTrigger asChild>
                           <FormControl>
                             <Button
                               variant={"outline"}
@@ -153,7 +153,7 @@ const OrderForm = ({
                               )}
                             >
                               {field.value ? (
-                                format(field.value, "PPP")
+                                formatDate(field.value, "PPP")
                               ) : (
                                 <span>Pick a date</span>
                               )}

@@ -83,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
           },
           {
             icon: FaHistory,
-            href: "/history",
+            href: "/orders",
             value: "Transaction History",
           },
         ]),

@@ -1,5 +1,6 @@
 import CaptionImage from "@/assets/images/captionImage.jpeg";
 import { Prisma } from "@prisma/client";
+import { State } from "country-state-city";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import React from "react";
@@ -42,7 +43,12 @@ const VendorAvatar: React.FC<VendorAvatarProps> = ({ vendor }) => {
         <h1 className="text-base">{vendor?.businessName}</h1>
         <div className="flex items-center gap-1">
           <IoLocationOutline className="text-green-500" />{" "}
-          {vendor?.User?.address?.state}
+          {
+            State.getStateByCodeAndCountry(
+              vendor?.User?.address?.state || "",
+              vendor.User.address?.country || ""
+            )?.name
+          }
           <div className="h-4 w-[1px] bg-black"></div>
           <Star className="fill-[#FFDD55] text-[#FFDD55] h-4" />
           {vendor?.rating} ({vendor?.reviewCount})

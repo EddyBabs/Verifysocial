@@ -44,6 +44,12 @@ export const getVendorAndOrder = async (
       id: vendorId,
     },
     include: {
+      socialAccount: {
+        select: {
+          provider: true,
+          username: true,
+        },
+      },
       Product: {
         orderBy: {
           createdAt: "desc",

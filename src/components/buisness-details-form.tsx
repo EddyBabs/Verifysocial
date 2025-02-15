@@ -44,7 +44,6 @@ const BuisnessDetailsForm = () => {
 
   const handleSocialLogin = (platform: string) => {
     startTransition(async () => {
-      console.log({ platform });
       const values = getValues("step2");
       if (platform === "instagram") {
         await facebookLogin(values);

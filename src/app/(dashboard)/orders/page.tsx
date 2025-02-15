@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { currencyFormat } from "@/lib/utils";
 import { formatDate } from "date-fns";
+import Link from "next/link";
 import React from "react";
 import { BsEye } from "react-icons/bs";
 
@@ -37,7 +38,7 @@ async function TransactionTable() {
           <TableHead className="w-[200px]">Codes</TableHead>
           <TableHead className="w-[200px]">Status</TableHead>
           <TableHead>Method</TableHead>
-          <TableHead className="text-right">Min Amount</TableHead>
+          <TableHead className="text-right">Amount</TableHead>
           <TableHead className="text-right w-[100px]">Action</TableHead>
         </TableRow>
       </TableHeader>
@@ -53,9 +54,11 @@ async function TransactionTable() {
               {currencyFormat(order.amountValue)}
             </TableCell>
             <TableCell className="text-right">
-              <Button variant={"ghost"}>
-                <BsEye />
-              </Button>
+              <Link href={`/orders/${order.id}`} passHref>
+                <Button variant={"ghost"}>
+                  <BsEye />
+                </Button>
+              </Link>
             </TableCell>
           </TableRow>
         ))}

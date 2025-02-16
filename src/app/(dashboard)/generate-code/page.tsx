@@ -15,6 +15,7 @@ import { formatDate } from "date-fns";
 import { BsEye } from "react-icons/bs";
 import NewCode from "./new-code";
 import { currencyFormat } from "@/lib/utils";
+import Link from "next/link";
 
 const Page = async () => {
   return (
@@ -77,14 +78,16 @@ async function TableDemo() {
               {currencyFormat(order.maxAmount)}
             </TableCell>
             <TableCell className="text-right">
-              <Button variant={"ghost"}>
-                <BsEye />
-              </Button>
+              <Link href={`/orders/${order.id}`}>
+                <Button variant={"ghost"}>
+                  <BsEye />
+                </Button>
+              </Link>
             </TableCell>
           </TableRow>
         ))}
       </TableBody>
-      <TableFooter>
+      {/* <TableFooter>
         <TableRow>
           <TableCell colSpan={3}>Total</TableCell>
           <TableCell className="text-right">
@@ -95,7 +98,7 @@ async function TableDemo() {
             )}
           </TableCell>
         </TableRow>
-      </TableFooter>
+      </TableFooter> */}
     </Table>
   );
 }

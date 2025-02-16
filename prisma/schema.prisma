@@ -107,28 +107,49 @@ enum OrderStatus {
   PENDING
   PROCESSING
   COMPLETED
+  CANCELLED
 }
 
 model Order {
-  id             String      @id @default(auto()) @map("_id") @db.ObjectId
-  code           String      @unique
-  status         OrderStatus @default(PENDING)
-  vendorId       String      @db.ObjectId
-  userId         String?     @db.ObjectId
-  user           User?       @relation(references: [id], fields: [userId])
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  code           String           @unique
+  status         OrderStatus      @default(PENDING)
+  vendorId       String           @db.ObjectId
+  userId         String?          @db.ObjectId
+  user           User?            @relation(references: [id], fields: [userId])
   name           String
-  amountValue    Float       @default(0)
+  amountValue    Float            @default(0)
   minAmount      Float
   maxAmount      Float
   review         Review?
   deliveryPeriod DateTime
   returnPeriod   Int
   quantity       Int
-  vendor         Vendor      @relation(references: [id], fields: [vendorId])
-  createdAt      DateTime    @default(now()) @map("created_at")
-  updatedAt      DateTime    @updatedAt @map("updated_at")
+  vendor         Vendor           @relation(references: [id], fields: [vendorId])
+  orderExtension OrderExtension[]
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+  cancelled      OrderCancel?
 
   @@unique([code, vendorId])
+}
+
+type OrderCancel {
+  reason      String
+  cancelledAt DateTime
+  cancelledBy String
+}
+
+model OrderExtension {
+  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  orderId              String    @db.ObjectId
+  order                Order     @relation(fields: [orderId], references: [id])
+  hasBeenContacted     Boolean?
+  hasMadePayment       Boolean?
+  previousDeliveryDate DateTime?
+  createdAt            DateTime  @default(now())
+
+  @@unique([orderId, previousDeliveryDate]) // Ensures no duplicate extensions for the same date
 }
 
 model KYCCredential {
@@ -141,6 +162,12 @@ model KYCCredential {
   verifiedAt  DateTime? // Null until approved
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
+}
+
+enum KYCCredentialStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum GenderType {

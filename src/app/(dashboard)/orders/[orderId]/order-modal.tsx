@@ -2,6 +2,7 @@
 
 import { userOrderConfirmation } from "@/actions/order";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
@@ -9,17 +10,31 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Form } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import Ratings from "@/components/ui/ratings";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 import {
   orderConfirmationSchema,
   orderConfirmationSchemaType,
 } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogDescription } from "@radix-ui/react-dialog";
-import { Loader } from "lucide-react";
+import { formatDate } from "date-fns";
+import { CalendarIcon, Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm, useFormContext } from "react-hook-form";
 
@@ -41,13 +56,18 @@ const OrderModal = ({
       vendorContact: "",
       orderExtend: "",
       madePayment: "",
+      deliveryExtension: undefined,
     },
   });
 
-  const { setValue, watch } = form;
+  const {
+    setValue,
+    watch,
+    formState: { errors },
+  } = form;
 
   const received = watch("received");
-  const onSubmit = async (values: orderConfirmationSchemaType) => {
+  const onSubmit = async (values: any) => {
     const response = await userOrderConfirmation(values);
     if (response.success) {
       toast({ description: response.success });
@@ -56,6 +76,8 @@ const OrderModal = ({
       toast({ description: response.error, variant: "destructive" });
     }
   };
+
+  console.log({ errors });
 
   return (
     <Dialog open={isOpen}>
@@ -151,12 +173,121 @@ const RateVendor = () => {
 };
 
 const NoReponse = () => {
-  const { setValue, watch, handleSubmit } =
-    useFormContext<orderConfirmationSchemaType>();
+  const {
+    setValue,
+    watch,
+    control,
+    formState: { isSubmitting },
+  } = useFormContext<orderConfirmationSchemaType>();
   const vendorContact = watch("vendorContact");
   const orderExtend = watch("orderExtend");
+  const madePayment = watch("madePayment");
+
+  if (madePayment) {
+    if (madePayment === "yes") {
+      return (
+        <>
+          <DialogDescription>
+            An email will be sent tomorrow to confirm delivery.
+          </DialogDescription>
+          <DialogFooter className="mt-4">
+            <Button
+              variant={"outline"}
+              type="button"
+              onClick={() => setValue("madePayment", "")}
+            >
+              Back
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              Submit {isSubmitting && <Loader className="animate-spin ml-2" />}
+            </Button>
+          </DialogFooter>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <DialogDescription>Proceeding to cancel request.</DialogDescription>
+        <DialogFooter className="mt-4">
+          <Button
+            variant={"outline"}
+            type="button"
+            onClick={() => setValue("madePayment", "")}
+          >
+            Back
+          </Button>
+          <Button type="submit" disabled={isSubmitting}>
+            Submit
+            {isSubmitting && <Loader className="animate-spin ml-2" />}
+          </Button>
+        </DialogFooter>
+      </>
+    );
+  }
 
   if (orderExtend) {
+    if (orderExtend === "yes") {
+      return (
+        <>
+          <div>
+            <FormField
+              control={control}
+              name="deliveryExtension"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Delivery Extension</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            formatDate(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        className="z-50 pointer-events-auto"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) => date < new Date()}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <DialogFooter className="mt-4">
+            <Button
+              variant={"outline"}
+              type="button"
+              onClick={() => setValue("orderExtend", "")}
+            >
+              Back
+            </Button>
+            <Button type="submit" disabled={!watch("deliveryExtension")}>
+              Submit
+            </Button>
+          </DialogFooter>
+        </>
+      );
+    }
     return (
       <>
         <DialogDescription>Have you made payment?</DialogDescription>

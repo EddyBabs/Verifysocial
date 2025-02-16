@@ -51,7 +51,7 @@ export const vendorGetCodes = async () => {
 };
 
 export const getNewCode = async (values: createOrderShemaType) => {
-  const currentUser = await getCurrentUser(true);
+  const currentUser = await getCurrentUser();
   const vendor = await database.vendor.findUnique({
     where: { userId: currentUser?.id },
   });

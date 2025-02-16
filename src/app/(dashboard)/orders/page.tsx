@@ -37,8 +37,9 @@ async function TransactionTable() {
         <TableRow>
           <TableHead className="w-[200px]">Codes</TableHead>
           <TableHead className="w-[200px]">Status</TableHead>
-          <TableHead>Method</TableHead>
+          <TableHead>Delivery Date</TableHead>
           <TableHead className="text-right">Amount</TableHead>
+          <TableHead className="text-right">Created</TableHead>
           <TableHead className="text-right w-[100px]">Action</TableHead>
         </TableRow>
       </TableHeader>
@@ -52,6 +53,9 @@ async function TransactionTable() {
             </TableCell>
             <TableCell className="text-right">
               {currencyFormat(order.amountValue)}
+            </TableCell>
+            <TableCell className="text-right">
+              {formatDate(order.createdAt, "PPP")}
             </TableCell>
             <TableCell className="text-right">
               <Link href={`/orders/${order.id}`} passHref>

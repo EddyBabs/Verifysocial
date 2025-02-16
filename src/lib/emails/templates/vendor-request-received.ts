@@ -313,6 +313,4 @@ export const vendorRequestReceived = `
       </tbody>
     </table>
   </body>
-</html>
-
-`;
+</html>`;

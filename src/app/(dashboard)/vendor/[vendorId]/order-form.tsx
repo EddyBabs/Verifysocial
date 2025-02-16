@@ -32,6 +32,7 @@ import { cn } from "@/lib/utils";
 import { orderSchema } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Order, Prisma } from "@prisma/client";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { formatDate } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -54,6 +55,7 @@ const OrderForm = ({
   order: Order;
 }) => {
   const { toast } = useToast();
+  const [error, setError] = useState("");
   const router = useRouter();
   const [open, setOpen] = useState(true);
   const [openDate, setOpenDate] = useState(false);
@@ -70,13 +72,14 @@ const OrderForm = ({
   });
 
   const onSubmit = async (values: orderSchemaType) => {
+    setError("");
     await fillOrder(values).then((response) => {
       if (response.success) {
         toast({ description: response.success });
         router.refresh();
         setOpen(false);
       } else {
-        toast({ description: response.error, variant: "destructive" });
+        setError(response.error!);
       }
     });
   };
@@ -104,6 +107,13 @@ const OrderForm = ({
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
+              {error && (
+                <div>
+                  <p className="text-sm font-medium text-destructive flex gap-1 text-center items-center justify-center">
+                    <ExclamationTriangleIcon /> {error}
+                  </p>
+                </div>
+              )}
               <div className="flex flex-col gap-2">
                 <Label htmlFor="name">Name</Label>
                 <Input

@@ -35,18 +35,53 @@ export const settingFormSchema = z.object({
 
 export type settingFormSchemaType = z.infer<typeof settingFormSchema>;
 
-export const orderConfirmationSchema = z.object({
-  orderId: z.string().min(10, "Invalid order Id"),
-  received: z.enum(["yes", "no"]).optional(),
-  rating: z.number().min(0).max(5),
-  comment: z.string(),
-  vendorContact: z.string().optional(),
-  orderExtend: z.string(),
-  madePayment: z.string(),
-});
+export const orderConfirmationSchema = z
+  .object({
+    orderId: z.string().min(10, "Invalid order Id"),
+    received: z.enum(["yes", "no"]).optional(),
+    rating: z.number().min(0).max(5),
+    comment: z.string(),
+    deliveryExtension: z.date().optional(),
+    vendorContact: z.string().optional(),
+    orderExtend: z.string(),
+    madePayment: z.string(),
+  })
+  .refine(
+    (data) => {
+      if (data.orderExtend === "yes" && !data.deliveryExtension) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "New delivery date is required",
+      path: ["deliveryExtension"],
+    }
+  );
 
 export type orderConfirmationSchemaType = z.infer<
   typeof orderConfirmationSchema
 >;
+
+export const orderCancelFormSchema = z
+  .object({
+    orderId: z.string().min(12, "Invalid order"),
+    reason: z.string(),
+    otherReason: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.reason === "Other" && !data.otherReason) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Please provide a reason",
+      path: ["otherReason"], // This makes the error show under `otherReason`
+    }
+  );
+
+export type orderCancelFormSchemaType = z.infer<typeof orderCancelFormSchema>;
 
 // export type

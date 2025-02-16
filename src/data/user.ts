@@ -20,12 +20,9 @@ export const getUserById = async (id: string) => {
   }
 };
 
-export const getCurrentUser = async (enableRedirect: boolean = true) => {
+export const getCurrentUser = async () => {
   const session = await auth();
   const userSession = session?.user;
-  if (!userSession && enableRedirect) {
-    redirect("/auth/signin");
-  }
   return userSession;
 };
 

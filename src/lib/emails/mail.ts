@@ -6,6 +6,8 @@ import { buisnessVerificationTemplate } from "./templates/buisness-verification"
 import { RequestReceivedTemplate } from "./templates/request-received";
 import { vendorRequestReceived } from "./templates/vendor-request-received";
 import { OrderDeliveryConfirmation } from "./templates/order-delivery-confirmation";
+import { requestCancelledTemplate } from "./templates/request-cancel";
+import { vendorRequestCancelledTemplate } from "./templates/vendor-request-canceled";
 // import { welcomeTemplate } from "./templates/welcome";
 
 export async function sendMail({
@@ -97,6 +99,34 @@ export function compileVendorRequestReceived(
   const htmlBody = template({
     name,
     requestName,
+  });
+  return htmlBody;
+}
+
+export function compileRequestCancelled(
+  name: string,
+  requestName: string,
+  reason: string
+) {
+  const template = handlebars.compile(requestCancelledTemplate);
+  const htmlBody = template({
+    name,
+    requestName,
+    reason,
+  });
+  return htmlBody;
+}
+
+export function compileVendorRequestCancelled(
+  name: string,
+  orderLink: string,
+  reason: string
+) {
+  const template = handlebars.compile(vendorRequestCancelledTemplate);
+  const htmlBody = template({
+    name,
+    reason,
+    orderLink,
   });
   return htmlBody;
 }

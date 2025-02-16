@@ -1,6 +1,6 @@
 import { logoTemplate } from "../partials/logo";
 
-export const vendorRequestCanceledTemplate = `
+export const vendorRequestCancelledTemplate = `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -199,9 +199,9 @@ export const vendorRequestCanceledTemplate = `
                                 text-align: left;
                               "
                             >
-                              We received a recall request by your customer #
-                              with the stated reason Kindly visit the the url
-                              below to approve or
+                              We received a recall request by your customer
+                              with the stated reason "{{reason}}". Kindly visit the the url
+                              below to approve or disapprove {{orderLink}}
                             </p>
                             <p>
                               Please note that some features may not be active

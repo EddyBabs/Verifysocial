@@ -84,4 +84,28 @@ export const orderCancelFormSchema = z
 
 export type orderCancelFormSchemaType = z.infer<typeof orderCancelFormSchema>;
 
+export const orderDelaySchema = z
+  .object({
+    orderId: z.string().min(12, "Invalid order"),
+    reason: z.string(),
+    otherReason: z.string().optional(),
+    deliveryExtension: z.date().optional(),
+    extend: z.boolean(),
+    hasPaid: z.boolean(),
+  })
+  .refine(
+    (data) => {
+      if (data.reason === "Other" && !data.otherReason) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Please provide a reason",
+      path: ["otherReason"], // This makes the error show under `otherReason`
+    }
+  );
+
+export type orderDelayFormSchemaType = z.infer<typeof orderDelaySchema>;
+
 // export type

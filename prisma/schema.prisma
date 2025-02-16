@@ -111,27 +111,46 @@ enum OrderStatus {
 }
 
 model Order {
-  id             String           @id @default(auto()) @map("_id") @db.ObjectId
-  code           String           @unique
-  status         OrderStatus      @default(PENDING)
-  vendorId       String           @db.ObjectId
-  userId         String?          @db.ObjectId
-  user           User?            @relation(references: [id], fields: [userId])
-  name           String
-  amountValue    Float            @default(0)
-  minAmount      Float
-  maxAmount      Float
-  review         Review?
-  deliveryPeriod DateTime
-  returnPeriod   Int
-  quantity       Int
-  vendor         Vendor           @relation(references: [id], fields: [vendorId])
-  orderExtension OrderExtension[]
-  createdAt      DateTime         @default(now()) @map("created_at")
-  updatedAt      DateTime         @updatedAt @map("updated_at")
-  cancelled      OrderCancel?
+  id                   String                 @id @default(auto()) @map("_id") @db.ObjectId
+  code                 String                 @unique
+  status               OrderStatus            @default(PENDING)
+  vendorId             String                 @db.ObjectId
+  userId               String?                @db.ObjectId
+  user                 User?                  @relation(references: [id], fields: [userId])
+  name                 String
+  amountValue          Float                  @default(0)
+  minAmount            Float
+  maxAmount            Float
+  review               Review?
+  deliveryPeriod       DateTime
+  returnPeriod         Int
+  quantity             Int
+  vendor               Vendor                 @relation(references: [id], fields: [vendorId])
+  orderExtension       OrderExtension[]
+  createdAt            DateTime               @default(now()) @map("created_at")
+  updatedAt            DateTime               @updatedAt @map("updated_at")
+  cancelled            OrderCancel?
+  vendorOrderExtension vendorOrderExtension[]
+
+  // Fraudulent Fields
+  fraudulent     Boolean   @default(false) // Flag for fraud
+  flaggedBy      String?   @db.ObjectId // ID of the admin or system flagging
+  fraudReason    String? // Reason for flagging
+  fraudFlaggedAt DateTime? // Timestamp when flagged
 
   @@unique([code, vendorId])
+}
+
+model vendorOrderExtension {
+  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  orderId              String    @db.ObjectId
+  order                Order     @relation(fields: [orderId], references: [id])
+  reason               String
+  hasPaid              Boolean?
+  previousDeliveryDate DateTime?
+  createdAt            DateTime  @default(now())
+
+  @@unique([orderId, previousDeliveryDate])
 }
 
 type OrderCancel {

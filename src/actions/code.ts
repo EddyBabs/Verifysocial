@@ -58,6 +58,16 @@ export const getNewCode = async (values: createOrderShemaType) => {
   if (!vendor) {
     redirect("/auth/login");
   }
+
+  const fraudCount = await database.order.count({
+    where: { vendorId: vendor.id, fraudulent: true },
+  });
+
+  if (fraudCount >= 3) {
+    return {
+      error: "Your account is restricted due to fraudulent activities.",
+    };
+  }
   const validatedData = createOrderShema.parse(values);
 
   const order = await database.order.create({

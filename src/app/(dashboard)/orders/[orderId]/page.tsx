@@ -1,10 +1,11 @@
 import { fetchUserOrderById } from "@/actions/order";
+import { Badge } from "@/components/ui/badge";
 import { getCurrentUser } from "@/data/user";
+import { cn } from "@/lib/utils";
 import { formatDate } from "date-fns";
 import OrderCancel from "./order-cancel";
+import OrderDelay from "./order-delay";
 import OrderModal from "./order-modal";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 
 const Page = async ({ params }: { params: { orderId: string } }) => {
   const user = await getCurrentUser();
@@ -34,9 +35,12 @@ const Page = async ({ params }: { params: { orderId: string } }) => {
         <h2>Delivery Period</h2>
         <h4>{formatDate(order.deliveryPeriod, "PPP")}</h4>
 
-        {["PROCESSING"].includes(order.status) && (
-          <OrderCancel orderId={order.id} />
-        )}
+        <div className="flex items-center gap-2">
+          {["PROCESSING"].includes(order.status) && (
+            <OrderCancel orderId={order.id} />
+          )}
+          {user?.role === "VENDOR" && <OrderDelay orderId={order.id} />}
+        </div>
       </div>
       {user?.role === "USER" && (
         <OrderModal

@@ -2,6 +2,7 @@
 import { getCurrentUser } from "@/data/user";
 import { database, OrderStatus } from "@/lib/database";
 import {
+  compileOrderDelayFlagged,
   compileRequestCancelled,
   compileRequestReceived,
   compileVendorRequestCancelled,
@@ -13,6 +14,8 @@ import {
   orderCancelFormSchemaType,
   orderConfirmationSchema,
   orderConfirmationSchemaType,
+  orderDelayFormSchemaType,
+  orderDelaySchema,
 } from "@/schemas";
 import { orderSchema } from "@/schemas/auth";
 import { addDays } from "date-fns";
@@ -468,4 +471,90 @@ export const userOrderConfirmation = async (
     return { success: "Order has been cancelled" };
   }
   return { error: "Not handle No yet" };
+};
+
+export const delayOrder = async (values: orderDelayFormSchemaType) => {
+  const userSession = await getCurrentUser();
+  if (!userSession?.id) {
+    redirect("/auth/signin");
+  }
+
+  if (userSession.role !== "VENDOR") {
+    return { error: "Only vendors are allowed to delay the order" };
+  }
+  const vendor = await database.vendor.findUnique({
+    where: {
+      userId: userSession.id,
+    },
+  });
+  if (!vendor) {
+    redirect("/auth/signin");
+  }
+  const vendorId = vendor.id;
+
+  const validatedData = orderDelaySchema.safeParse(values);
+  if (validatedData.error) {
+    return { error: "Invalid fields" };
+  }
+  const { orderId, reason, extend, deliveryExtension, hasPaid } =
+    validatedData.data;
+
+  const order = await database.order.findUnique({
+    where: { id: orderId, vendorId },
+    include: {
+      user: true,
+      vendor: true,
+    },
+  });
+
+  if (!order) {
+    return { error: "Order does not exist!" };
+  }
+
+  if (extend) {
+    if (!deliveryExtension) {
+      return { error: "New delivery is required" };
+    }
+
+    await database.order.update({
+      where: {
+        id: orderId,
+      },
+      data: {
+        deliveryPeriod: deliveryExtension,
+        vendorOrderExtension: {
+          create: {
+            reason,
+            previousDeliveryDate: order.deliveryPeriod,
+          },
+        },
+      },
+    });
+
+    return { success: "Rescheduled Order successfully" };
+  }
+  if (hasPaid) {
+    await database.order.update({
+      where: {
+        id: order.id,
+        vendorId,
+      },
+      data: {
+        fraudulent: true,
+        flaggedBy: "system",
+        fraudReason: "Has Paid and not delivering products",
+        fraudFlaggedAt: new Date(),
+      },
+    });
+    await sendMail({
+      to: order.user?.email || "",
+      subject: "Order has been flagged",
+      body: compileOrderDelayFlagged(order.user?.fullname || ""),
+    });
+    return {
+      error:
+        "You are to refund the customer within 24hrs unless his profile will be reported and disabled",
+    };
+  }
+  return { error: "Unable to update order" };
 };

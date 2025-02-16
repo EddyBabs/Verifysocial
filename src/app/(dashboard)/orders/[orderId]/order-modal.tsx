@@ -195,6 +195,7 @@ const NoReponse = () => {
               variant={"outline"}
               type="button"
               onClick={() => setValue("madePayment", "")}
+              disabled={isSubmitting}
             >
               Back
             </Button>
@@ -214,6 +215,7 @@ const NoReponse = () => {
             variant={"outline"}
             type="button"
             onClick={() => setValue("madePayment", "")}
+            disabled={isSubmitting}
           >
             Back
           </Button>

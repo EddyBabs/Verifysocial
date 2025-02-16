@@ -11,7 +11,7 @@ export async function GET(req: Request) {
     const orders = await database.order.findMany({
       where: {
         deliveryPeriod: {
-          lt: new Date(),
+          lte: new Date(),
         },
         status: "PROCESSING",
       },

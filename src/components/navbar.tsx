@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 const Navbar = async () => {
-  const currentUser = await getCurrentUser(false);
+  const currentUser = await getCurrentUser();
   return (
     <div className="sticky top-0 inset-x-0 w-full transition-all bg-white z-50">
       <div className="container mx-auto ">

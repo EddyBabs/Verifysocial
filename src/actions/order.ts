@@ -412,6 +412,15 @@ export const userOrderConfirmation = async (
     }
 
     if (madePayment === "yes") {
+      // Send Email calming the customer while warning the vendor
+
+      await Promise.all([
+        sendMail({
+          to: order.user?.email || "",
+          subject: "Order has been flagged",
+          body: compileOrderDelayFlagged(order.user?.fullname || ""),
+        }),
+      ]);
       await database.order.update({
         where: {
           id: orderId,

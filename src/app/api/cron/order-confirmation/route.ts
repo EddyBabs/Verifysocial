@@ -1,13 +1,14 @@
 import { handleApiError } from "@/lib/api/error";
 import { database } from "@/lib/database";
 import { compileOrderDeliveryConfirmation, sendMail } from "@/lib/emails/mail";
+import { verifyVercelSignature } from "@/lib/verify-vercel";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   try {
-    // await verifyVercelSignature(req);
+    await verifyVercelSignature(req);
     const orders = await database.order.findMany({
       where: {
         deliveryPeriod: {
@@ -37,6 +38,7 @@ export async function GET(req: Request) {
         });
       })
     );
+
     return NextResponse.json({ success: true });
   } catch (error) {
     const { status, error: newError } = handleApiError(error);

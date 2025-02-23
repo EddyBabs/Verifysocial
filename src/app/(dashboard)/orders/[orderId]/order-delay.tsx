@@ -37,8 +37,8 @@ import { orderDelayFormSchemaType, orderDelaySchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formatDate } from "date-fns";
 import { CalendarIcon, Loader } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useForm, useFormContext } from "react-hook-form";
 
 const REASONS = [
@@ -48,6 +48,8 @@ const REASONS = [
 ];
 
 const OrderDelay = ({ orderId }: { orderId: string }) => {
+  const searchParams = useSearchParams();
+  const [open, setOpen] = useState(false);
   const router = useRouter();
   const form = useForm({
     resolver: zodResolver(orderDelaySchema),
@@ -68,12 +70,19 @@ const OrderDelay = ({ orderId }: { orderId: string }) => {
     } else {
       toast({ description: response.success });
       router.refresh();
+      setOpen(false);
     }
   };
 
+  useEffect(() => {
+    if (searchParams.get("delayReason")) {
+      setOpen(true);
+    }
+  }, [searchParams]);
+
   return (
     <div>
-      <Dialog>
+      <Dialog open={open} onOpenChange={() => setOpen((prev) => !prev)}>
         <DialogTrigger asChild>
           <Button className="bg-destructive">Request Delay</Button>
         </DialogTrigger>

@@ -77,8 +77,6 @@ const OrderModal = ({
     }
   };
 
-  console.log({ errors });
-
   return (
     <Dialog open={isOpen}>
       <DialogContent>

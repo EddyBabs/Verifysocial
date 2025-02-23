@@ -1,3 +1,6 @@
+import { logoTemplate } from "../partials/logo";
+
+export const VendorOrderDeliveryConfirmation = `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -196,16 +199,19 @@
                                 text-align: left;
                               "
                             >
-                              Kindly note that the order
-                              <b>#{{orderNumber}}</b> has not been delivered as
-                              at the agreed time and date
+                              We hope you're doing well.
                             </p>
-
                             <p>
-                              Kindly fill the link to let us know why and how we
-                              can salvage the relationship
+                              This is a reminder that order
+                              <b>#{{orderNumber}}</b> has reached its delivery
+                              date but has not yet been marked as delivered.
+                              Kindly check the order status and take the
+                              necessary action as soon as possible.
                             </p>
-
+                            <p>
+                              You can review the order details and update its
+                              status by clicking the link below:
+                            </p>
                             <table
                               border="0"
                               cellpadding="0"
@@ -258,12 +264,18 @@
                                         border-top: 8px solid #2d3748;
                                       "
                                       target="_blank"
-                                      >Verify Order</a
+                                      >Check order status</a
                                     >
                                   </td>
                                 </tr>
                               </tbody>
                             </table>
+                            <p>
+                              If the order has already been delivered, please
+                              ensure it is updated accordingly to avoid any
+                              discrepancies.
+                            </p>
+                            <p>Let us know if you need any assistance.</p>
                             <p>
                               Thank you for choosing Verify Social as your
                               trusted entity
@@ -372,3 +384,4 @@
     </table>
   </body>
 </html>
+`;

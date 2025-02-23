@@ -9,6 +9,7 @@ import { OrderDeliveryConfirmation } from "./templates/order-delivery-confirmati
 import { requestCancelledTemplate } from "./templates/request-cancel";
 import { vendorRequestCancelledTemplate } from "./templates/vendor-request-canceled";
 import { orderDelayFlagged } from "./templates/order-delay-flagged";
+import { VendorOrderDeliveryConfirmation } from "./templates/vendor-order-delivery-confirmation";
 // import { welcomeTemplate } from "./templates/welcome";
 
 export async function sendMail({
@@ -144,10 +145,38 @@ export function compileOrderDeliveryConfirmation(
   return htmlBody;
 }
 
+export function compileVendorOrderDeliveryConfirmation(
+  name: string,
+  orderNumber: string,
+  orderLink: string
+) {
+  const template = handlebars.compile(VendorOrderDeliveryConfirmation);
+  const htmlBody = template({
+    name,
+    orderNumber,
+    verifyOrderLink: orderLink,
+  });
+  return htmlBody;
+}
+
 export function compileOrderDelayFlagged(name: string) {
   const template = handlebars.compile(orderDelayFlagged);
   const htmlBody = template({
     name,
+  });
+  return htmlBody;
+}
+
+export function compileVendorOrderDelayFlagged(
+  name: string,
+  orderNumber: string,
+  verifyOrderLink: string
+) {
+  const template = handlebars.compile(compileVendorOrderDelayFlagged);
+  const htmlBody = template({
+    name,
+    orderNumber,
+    verifyOrderLink,
   });
   return htmlBody;
 }

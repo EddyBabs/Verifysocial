@@ -1,6 +1,10 @@
 import { handleApiError } from "@/lib/api/error";
 import { database } from "@/lib/database";
-import { compileOrderDeliveryConfirmation, sendMail } from "@/lib/emails/mail";
+import {
+  compileOrderDeliveryConfirmation,
+  compileVendorOrderDeliveryConfirmation,
+  sendMail,
+} from "@/lib/emails/mail";
 import { verifyVercelSignature } from "@/lib/verify-vercel";
 import { NextResponse } from "next/server";
 
@@ -23,6 +27,16 @@ export async function GET(req: Request) {
             email: true,
           },
         },
+        vendor: {
+          select: {
+            User: {
+              select: {
+                email: true,
+                fullname: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -33,6 +47,16 @@ export async function GET(req: Request) {
           subject: "Order delivery Confirmation",
           body: compileOrderDeliveryConfirmation(
             order.user?.fullname || "",
+            `${process.env.NEXTAUTH_URL}/orders/${order.id}`
+          ),
+        });
+
+        await sendMail({
+          to: order.vendor.User.email,
+          subject: "Order Pending delivery - Action required",
+          body: compileVendorOrderDeliveryConfirmation(
+            order.vendor.User.fullname,
+            order.id,
             `${process.env.NEXTAUTH_URL}/orders/${order.id}`
           ),
         });

@@ -420,6 +420,15 @@ export const userOrderConfirmation = async (
           subject: "Order has been flagged",
           body: compileOrderDelayFlagged(order.user?.fullname || ""),
         }),
+        sendMail({
+          to: order.vendor.User.email,
+          subject: "",
+          body: compileVendorRequestCancelled(
+            order.vendor.User.fullname,
+            order.id,
+            `${process.env.NEXTAUTH_URL}/order/${order.id}?delayReason=true`
+          ),
+        }),
       ]);
       await database.order.update({
         where: {

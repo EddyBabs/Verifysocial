@@ -10,6 +10,12 @@ import { requestCancelledTemplate } from "./templates/request-cancel";
 import { vendorRequestCancelledTemplate } from "./templates/vendor-request-canceled";
 import { orderDelayFlagged } from "./templates/order-delay-flagged";
 import { VendorOrderDeliveryConfirmation } from "./templates/vendor-order-delivery-confirmation";
+import { VendorExtensionCustomerTemplate } from "./templates/vendor-extension-customer";
+import { VendorExtensionVendorTemplate } from "./templates/vendor-extension-vendor";
+import { VendorCancellationCustomerTemplate } from "./templates/vendor-cancellation-customer";
+import { VendorCancellationVendorTemplate } from "./templates/vendor-cancellation-vendor";
+import { CustomerCancellationVendorTemplate } from "./templates/customer-cancellation-vendor";
+import { CustomerCancellationCustomerTemplate } from "./templates/customer-cancellation-customer";
 // import { welcomeTemplate } from "./templates/welcome";
 
 export async function sendMail({
@@ -177,6 +183,81 @@ export function compileVendorOrderDelayFlagged(
     name,
     orderNumber,
     verifyOrderLink,
+  });
+  return htmlBody;
+}
+
+export function compileVendorExtensionCustomer(
+  name: string,
+  orderNumber: string,
+  vendorName: string,
+  extendedReason: string,
+  extendedDate: string
+) {
+  const template = handlebars.compile(VendorExtensionCustomerTemplate);
+  const htmlBody = template({
+    name,
+    orderNumber,
+    vendorName,
+    extendedReason,
+    extendedDate,
+  });
+  return htmlBody;
+}
+
+export function compileVendorExtensionVendor(name: string) {
+  const template = handlebars.compile(VendorExtensionVendorTemplate);
+  const htmlBody = template({
+    name,
+  });
+  return htmlBody;
+}
+
+export function compileVendorCancellationCustomer(
+  name: string,
+  code: string,
+  vendorContactLink: string
+) {
+  const template = handlebars.compile(VendorCancellationCustomerTemplate);
+  const htmlBody = template({
+    name,
+    code,
+    vendorContactLink,
+  });
+  return htmlBody;
+}
+
+export function compileVendorCancellationVendor(name: string, code: string) {
+  const template = handlebars.compile(VendorCancellationVendorTemplate);
+  const htmlBody = template({
+    name,
+    code,
+  });
+  return htmlBody;
+}
+
+export function compileCustomerCancellationVendor(
+  name: string,
+  code: string,
+  confirmationRecallLink: string
+) {
+  const template = handlebars.compile(CustomerCancellationVendorTemplate);
+  const htmlBody = template({
+    name,
+    code,
+    confirmationRecallLink,
+  });
+  return htmlBody;
+}
+
+export function compileCustomerCancellationCustomer(
+  name: string,
+  code: string
+) {
+  const template = handlebars.compile(CustomerCancellationCustomerTemplate);
+  const htmlBody = template({
+    name,
+    code,
   });
   return htmlBody;
 }

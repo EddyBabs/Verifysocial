@@ -2,9 +2,15 @@
 import { getCurrentUser } from "@/data/user";
 import { database, OrderStatus } from "@/lib/database";
 import {
+  compileCustomerCancellationCustomer,
+  compileCustomerCancellationVendor,
   compileOrderDelayFlagged,
   compileRequestCancelled,
   compileRequestReceived,
+  compileVendorCancellationCustomer,
+  compileVendorCancellationVendor,
+  compileVendorExtensionCustomer,
+  compileVendorExtensionVendor,
   compileVendorRequestCancelled,
   compileVendorRequestReceived,
   sendMail,
@@ -18,8 +24,9 @@ import {
   orderDelaySchema,
 } from "@/schemas";
 import { orderSchema } from "@/schemas/auth";
-import { addDays } from "date-fns";
+import { addDays, formatDate } from "date-fns";
 import { notFound, redirect } from "next/navigation";
+
 import * as z from "zod";
 
 type orderSchemaType = z.infer<typeof orderSchema>;
@@ -215,8 +222,7 @@ export const cancelOrder = async (values: orderCancelFormSchemaType) => {
         cancelled: {
           cancelledAt: new Date(),
           reason: cancelledReason,
-          cancelledBy:
-            userSession.role === "VENDOR" ? vendorId : userSession.id,
+          cancelledBy: userSession.role === "VENDOR" ? vendorId : "USER",
         },
       },
       include: {
@@ -228,27 +234,38 @@ export const cancelOrder = async (values: orderCancelFormSchemaType) => {
         },
       },
     });
-    await Promise.all([
-      sendMail({
-        to: order.user?.email || "",
-        subject: "Order Cancelled",
-        body: compileRequestCancelled(
-          order.user?.fullname || "",
-          order.name,
-          cancelledReason
-        ),
-      }),
+    if (userSession.role === "USER") {
+      await Promise.all([
+        sendMail({
+          to: order.user?.email || "",
+          subject: "Order Cancelled",
+          body: compileCustomerCancellationCustomer(
+            order.user?.fullname || "",
+            order.code
+          ),
+          // body: compileRequestCancelled(
+          //   order.user?.fullname || "",
+          //   order.name,
+          //   cancelledReason
+          // ),
+        }),
 
-      sendMail({
-        to: order.vendor.User.email,
-        subject: "Order Cancelled",
-        body: compileVendorRequestCancelled(
-          order.name,
-          `${process.env.NEXTAUTH_URL}/order/${order.id}`,
-          cancelledReason
-        ),
-      }),
-    ]);
+        sendMail({
+          to: order.vendor.User.email,
+          subject: "Order Cancelled",
+          body: compileCustomerCancellationVendor(
+            order.vendor.User.fullname,
+            order.code,
+            `${process.env.NEXTAUTH_URL}/orders/${order.id}?customerContact=true`
+          ),
+          // body: compileVendorRequestCancelled(
+          //   order.name,
+          //   `${process.env.NEXTAUTH_URL}/orders/${order.id}`,
+          //   cancelledReason
+          // ),
+        }),
+      ]);
+    }
     return { success: "Cancelled order successfully" };
   } catch {
     return { error: "An error occured. Please try again later" };
@@ -426,7 +443,7 @@ export const userOrderConfirmation = async (
           body: compileVendorRequestCancelled(
             order.vendor.User.fullname,
             order.id,
-            `${process.env.NEXTAUTH_URL}/order/${order.id}?delayReason=true`
+            `${process.env.NEXTAUTH_URL}/orders/${order.id}?delayReason=true`
           ),
         }),
       ]);
@@ -480,7 +497,7 @@ export const userOrderConfirmation = async (
         subject: "Order Cancelled",
         body: compileVendorRequestCancelled(
           order.name,
-          `${process.env.NEXTAUTH_URL}/order/${order.id}`,
+          `${process.env.NEXTAUTH_URL}/orders/${order.id}`,
           cancelledReason
         ),
       }),
@@ -521,7 +538,11 @@ export const delayOrder = async (values: orderDelayFormSchemaType) => {
     where: { id: orderId, vendorId },
     include: {
       user: true,
-      vendor: true,
+      vendor: {
+        include: {
+          User: true,
+        },
+      },
     },
   });
 
@@ -549,6 +570,26 @@ export const delayOrder = async (values: orderDelayFormSchemaType) => {
       },
     });
 
+    await Promise.all([
+      sendMail({
+        to: order.user?.email || "",
+        subject: "Vendor Extension",
+        body: compileVendorExtensionCustomer(
+          order.user?.fullname || "",
+          order.code,
+          order.vendor.businessName || "",
+          reason,
+          formatDate(deliveryExtension, "PPP")
+        ),
+      }),
+
+      sendMail({
+        to: order.vendor.User.email || "",
+        subject: "Vendor Extension",
+        body: compileVendorExtensionVendor(order.vendor.User.fullname),
+      }),
+    ]);
+
     return { success: "Rescheduled Order successfully" };
   }
   if (hasPaid) {
@@ -558,21 +599,88 @@ export const delayOrder = async (values: orderDelayFormSchemaType) => {
         vendorId,
       },
       data: {
-        fraudulent: true,
-        flaggedBy: "system",
-        fraudReason: "Has Paid and not delivering products",
-        fraudFlaggedAt: new Date(),
+        status: "CANCELLED",
+        cancelled: {
+          cancelledAt: new Date(),
+          reason: reason,
+          cancelledBy: userSession.role === "VENDOR" ? vendorId : "USER",
+        },
       },
+
+      // data: {
+      //   fraudulent: true,
+      //   flaggedBy: "system",
+      //   fraudReason: "Has Paid and not delivering products",
+      //   fraudFlaggedAt: new Date(),
+      // },
     });
-    await sendMail({
-      to: order.user?.email || "",
-      subject: "Order has been flagged",
-      body: compileOrderDelayFlagged(order.user?.fullname || ""),
-    });
+
+    // await sendMail({
+    //   to: order.user?.email || "",
+    //   subject: "Order has been flagged",
+    //   body: compileOrderDelayFlagged(order.user?.fullname || ""),
+    // });
+
+    await Promise.all([
+      sendMail({
+        to: order.user?.email || "",
+        subject: "Order Cancellation",
+        body: compileVendorCancellationCustomer(
+          order.user?.fullname || "",
+          order.code,
+          `${process.env.NEXTAUTH_URL}/orders/${order.id}?vendorContact=true`
+        ),
+      }),
+
+      sendMail({
+        to: order.vendor.User.email,
+        subject: "Order Cancellation",
+
+        body: compileVendorCancellationVendor(
+          order.vendor.User.fullname,
+          order.code
+        ),
+      }),
+    ]);
     return {
-      error:
-        "You are to refund the customer within 24hrs unless his profile will be reported and disabled",
+      success: "Order cancelled",
     };
   }
-  return { error: "Unable to update order" };
+
+  await database.order.update({
+    where: {
+      id: order.id,
+      vendorId,
+    },
+    data: {
+      status: "CANCELLED",
+      cancelled: {
+        cancelledAt: new Date(),
+        reason: reason,
+        cancelledBy: userSession.role === "VENDOR" ? vendorId : "USER",
+      },
+    },
+  });
+
+  await Promise.all([
+    sendMail({
+      to: order.user?.email || "",
+      subject: "Order Cancellation",
+      body: compileVendorCancellationCustomer(
+        order.user?.fullname || "",
+        order.code,
+        `${process.env.NEXTAUTH_URL}/orders/${order.id}?vendorContact=true`
+      ),
+    }),
+
+    sendMail({
+      to: order.vendor.User.email,
+      subject: "Order Cancellation",
+      body: compileVendorCancellationVendor(
+        order.vendor.User.fullname,
+        order.code
+      ),
+    }),
+  ]);
+  return { success: "Order cancelled" };
 };

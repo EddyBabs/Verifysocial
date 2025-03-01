@@ -56,8 +56,8 @@ export async function GET(req: Request) {
           subject: "Order Pending delivery - Action required",
           body: compileVendorOrderDeliveryConfirmation(
             order.vendor.User.fullname,
-            order.id,
-            `${process.env.NEXTAUTH_URL}/orders/${order.id}`
+            order.code,
+            `${process.env.NEXTAUTH_URL}/orders/${order.id}?delayReason=true`
           ),
         });
       })

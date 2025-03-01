@@ -45,6 +45,7 @@ const REASONS = [
   "Logistics",
   "Customer asked me to delay",
   "Goods altered in transit",
+  "Goods not available",
 ];
 
 const OrderDelay = ({ orderId }: { orderId: string }) => {

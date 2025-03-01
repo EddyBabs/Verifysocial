@@ -199,11 +199,16 @@ export const orderDelayFlagged = `
                                 text-align: left;
                               "
                             >
-                             We are sorry that you're experiencing ………
+                            We are sorry that this request ID {{code}} is not completed 
                             </p>
                             <p>
-                             Please be informed that the funds will be reversed and that an email will be sent for you to confirm. This is receiving urgent priority, your satisfaction is our concern
+                            Please be informed that payment of made will be reversed by the vendor and that an email will be sent for you to confirm
                             </p>
+                            <p>
+                            Kindly note that this is receiving urgent priority, your satisfaction is our greatest concern
+                            </p>
+                            <br />
+                            <br />
                             <p>
                               Thank you for choosing Verify Social as your trusted entity
                             </p>

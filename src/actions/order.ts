@@ -208,7 +208,7 @@ export const cancelOrder = async (values: orderCancelFormSchemaType) => {
     if (validatedData.error) {
       return { error: "Invalid fields" };
     }
-    const { orderId, reason, otherReason } = validatedData.data;
+    const { orderId, reason, otherReason, hasPaid } = validatedData.data;
     if (reason === "Other" && !otherReason)
       return { error: "Other reason is required" };
 
@@ -224,6 +224,16 @@ export const cancelOrder = async (values: orderCancelFormSchemaType) => {
           reason: cancelledReason,
           cancelledBy: userSession.role === "VENDOR" ? vendorId : "USER",
         },
+        ...(userSession.role === "USER"
+          ? {
+              userPaymentConfirmation: hasPaid,
+            }
+          : {}),
+        ...(userSession.role === "VENDOR"
+          ? {
+              vendorPaymentConfirmation: hasPaid,
+            }
+          : {}),
       },
       include: {
         user: true,
@@ -235,36 +245,58 @@ export const cancelOrder = async (values: orderCancelFormSchemaType) => {
       },
     });
     if (userSession.role === "USER") {
-      await Promise.all([
-        sendMail({
-          to: order.user?.email || "",
-          subject: "Order Cancelled",
-          body: compileCustomerCancellationCustomer(
-            order.user?.fullname || "",
-            order.code
-          ),
-          // body: compileRequestCancelled(
-          //   order.user?.fullname || "",
-          //   order.name,
-          //   cancelledReason
-          // ),
-        }),
+      if (hasPaid) {
+        await Promise.all([
+          sendMail({
+            to: order.user?.email || "",
+            subject: "Order has been flagged",
+            body: compileOrderDelayFlagged(
+              order.user?.fullname || "",
+              order.code
+            ),
+          }),
+          sendMail({
+            to: order.vendor.User.email,
+            subject: "",
+            body: compileVendorRequestCancelled(
+              order.vendor.User.fullname,
+              order.id,
+              `${process.env.NEXTAUTH_URL}/orders/${order.id}?delayReason=true`
+            ),
+          }),
+        ]);
+      } else {
+        await Promise.all([
+          sendMail({
+            to: order.user?.email || "",
+            subject: "Order Cancelled",
+            body: compileCustomerCancellationCustomer(
+              order.user?.fullname || "",
+              order.code
+            ),
+            // body: compileRequestCancelled(
+            //   order.user?.fullname || "",
+            //   order.name,
+            //   cancelledReason
+            // ),
+          }),
 
-        sendMail({
-          to: order.vendor.User.email,
-          subject: "Order Cancelled",
-          body: compileCustomerCancellationVendor(
-            order.vendor.User.fullname,
-            order.code,
-            `${process.env.NEXTAUTH_URL}/orders/${order.id}?customerContact=true`
-          ),
-          // body: compileVendorRequestCancelled(
-          //   order.name,
-          //   `${process.env.NEXTAUTH_URL}/orders/${order.id}`,
-          //   cancelledReason
-          // ),
-        }),
-      ]);
+          sendMail({
+            to: order.vendor.User.email,
+            subject: "Order Cancelled",
+            body: compileCustomerCancellationVendor(
+              order.vendor.User.fullname,
+              order.code,
+              `${process.env.NEXTAUTH_URL}/orders/${order.id}?customerContact=true`
+            ),
+            // body: compileVendorRequestCancelled(
+            //   order.name,
+            //   `${process.env.NEXTAUTH_URL}/orders/${order.id}`,
+            //   cancelledReason
+            // ),
+          }),
+        ]);
+      }
     }
     return { success: "Cancelled order successfully" };
   } catch {
@@ -431,22 +463,6 @@ export const userOrderConfirmation = async (
     if (madePayment === "yes") {
       // Send Email calming the customer while warning the vendor
 
-      await Promise.all([
-        sendMail({
-          to: order.user?.email || "",
-          subject: "Order has been flagged",
-          body: compileOrderDelayFlagged(order.user?.fullname || ""),
-        }),
-        sendMail({
-          to: order.vendor.User.email,
-          subject: "",
-          body: compileVendorRequestCancelled(
-            order.vendor.User.fullname,
-            order.id,
-            `${process.env.NEXTAUTH_URL}/orders/${order.id}?delayReason=true`
-          ),
-        }),
-      ]);
       await database.order.update({
         where: {
           id: orderId,
@@ -462,6 +478,26 @@ export const userOrderConfirmation = async (
           },
         },
       });
+
+      await Promise.all([
+        sendMail({
+          to: order.user?.email || "",
+          subject: "Order has been flagged",
+          body: compileOrderDelayFlagged(
+            order.user?.fullname || "",
+            order.code
+          ),
+        }),
+        sendMail({
+          to: order.vendor.User.email,
+          subject: "",
+          body: compileVendorRequestCancelled(
+            order.vendor.User.fullname,
+            order.id,
+            `${process.env.NEXTAUTH_URL}/orders/${order.id}?delayReason=true`
+          ),
+        }),
+      ]);
 
       return { success: "An email will be sent tomorrow for confirmation" };
     }

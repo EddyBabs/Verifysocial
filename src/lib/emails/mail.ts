@@ -165,23 +165,24 @@ export function compileVendorOrderDeliveryConfirmation(
   return htmlBody;
 }
 
-export function compileOrderDelayFlagged(name: string) {
+export function compileOrderDelayFlagged(name: string, code: string) {
   const template = handlebars.compile(orderDelayFlagged);
   const htmlBody = template({
     name,
+    code,
   });
   return htmlBody;
 }
 
 export function compileVendorOrderDelayFlagged(
   name: string,
-  orderNumber: string,
+  code: string,
   verifyOrderLink: string
 ) {
   const template = handlebars.compile(compileVendorOrderDelayFlagged);
   const htmlBody = template({
     name,
-    orderNumber,
+    code,
     verifyOrderLink,
   });
   return htmlBody;

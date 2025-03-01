@@ -30,13 +30,17 @@ const Page = async ({ params }: { params: { orderId: string } }) => {
             </Badge>
           </div>
         </div>
+        <div className="flex items-center gap-1">
+          <h2>Order Code:</h2>
+          <h4 className="text-lg font-bold uppercase">{order.code}</h4>
+        </div>
         <h2>Amount:</h2>
         <h4>{order.amountValue}</h4>
         <h2>Delivery Period</h2>
         <h4>{formatDate(order.deliveryPeriod, "PPP")}</h4>
 
         <div className="flex items-center gap-2">
-          {["PROCESSING"].includes(order.status) && (
+          {user?.role === "USER" && ["PROCESSING"].includes(order.status) && (
             <OrderCancel orderId={order.id} />
           )}
           {user?.role === "VENDOR" && <OrderDelay orderId={order.id} />}

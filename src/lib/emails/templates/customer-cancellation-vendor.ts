@@ -200,8 +200,6 @@ export const CustomerCancellationVendorTemplate = `
                               "
                             >
                             Kindly note that your customer initiated a recall to the request ID {{code}} with the stated reason: <b>"{{reason }}"</b>
-
-                          
                             </p>
                             <p>
                               Kindly fill the link below to confirm the recall
@@ -212,7 +210,6 @@ export const CustomerCancellationVendorTemplate = `
                             <br />
                             <br />
                             <p>Thank you for choosing Verify Social</p>
-
                             <p
                               style="
                                 box-sizing: border-box;

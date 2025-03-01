@@ -199,14 +199,11 @@ export const orderDelayFlagged = `
                                 text-align: left;
                               "
                             >
-                              Kindly note that the order
-                              <b>#{{orderNumber}}</b> has not been delivered as
-                              at the agreed time and date
+                           Kindly note that your customer initiated a recall to the request ID {{code}} with the stated reason
                             </p>
 
                             <p>
-                              Kindly fill the link to let us know why and how we
-                              can salvage the relationship
+                             The customer also indicated that they have made payment to you. In good faith, kindly process a reversal to your customer and fill the link below afterwards after completion
                             </p>
 
                             <table
@@ -267,6 +264,7 @@ export const orderDelayFlagged = `
                                 </tr>
                               </tbody>
                             </table>
+                            <br />
                             <p>
                               Thank you for choosing Verify Social as your
                               trusted entity
@@ -286,8 +284,7 @@ export const orderDelayFlagged = `
                                 text-align: left;
                               "
                             >
-                              Best Regards,<br />
-                              From verify social
+                              Best Regards
                             </p>
                           </td>
                         </tr>

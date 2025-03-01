@@ -67,6 +67,8 @@ export const orderCancelFormSchema = z
   .object({
     orderId: z.string().min(12, "Invalid order"),
     reason: z.string(),
+    hasPaid: z.boolean(),
+    cancellationConfirm: z.boolean(),
     otherReason: z.string().optional(),
   })
   .refine(

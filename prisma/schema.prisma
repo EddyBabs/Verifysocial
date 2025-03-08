@@ -111,28 +111,33 @@ enum OrderStatus {
 }
 
 model Order {
-  id                        String                 @id @default(auto()) @map("_id") @db.ObjectId
-  code                      String                 @unique
-  status                    OrderStatus            @default(PENDING)
-  vendorId                  String                 @db.ObjectId
-  userId                    String?                @db.ObjectId
-  user                      User?                  @relation(references: [id], fields: [userId])
-  name                      String
-  amountValue               Float                  @default(0)
-  minAmount                 Float
-  maxAmount                 Float
-  review                    Review?
-  deliveryPeriod            DateTime
-  returnPeriod              Int
-  quantity                  Int
-  userPaymentConfirmation   Boolean                @default(false)
-  vendorPaymentConfirmation Boolean                @default(false)
-  vendor                    Vendor                 @relation(references: [id], fields: [vendorId])
-  orderExtension            OrderExtension[]
-  createdAt                 DateTime               @default(now()) @map("created_at")
-  updatedAt                 DateTime               @updatedAt @map("updated_at")
-  cancelled                 OrderCancel?
-  vendorOrderExtension      vendorOrderExtension[]
+  id                         String                 @id @default(auto()) @map("_id") @db.ObjectId
+  code                       String                 @unique
+  status                     OrderStatus            @default(PENDING)
+  vendorId                   String                 @db.ObjectId
+  userId                     String?                @db.ObjectId
+  user                       User?                  @relation(references: [id], fields: [userId])
+  name                       String
+  amountValue                Float                  @default(0)
+  minAmount                  Float
+  maxAmount                  Float
+  review                     Review?
+  deliveryPeriod             DateTime
+  returnPeriod               Int
+  quantity                   Int
+  resolved                   Boolean                @default(false)
+  userDeliveryConfirmation   Boolean                @default(false)
+  vendorDeliveryConfirmation Boolean                @default(false)
+  userPaymentConfirmation    Boolean                @default(false)
+  vendorPaymentConfirmation  Boolean                @default(false)
+  userResolvedConfirmation   Boolean                @default(false)
+  vendorResolvedConfirmation Boolean                @default(false)
+  vendor                     Vendor                 @relation(references: [id], fields: [vendorId])
+  orderExtension             OrderExtension[]
+  createdAt                  DateTime               @default(now()) @map("created_at")
+  updatedAt                  DateTime               @updatedAt @map("updated_at")
+  cancelled                  OrderCancel?
+  vendorOrderExtension       vendorOrderExtension[]
 
   // Fraudulent Fields
   fraudulent     Boolean   @default(false) // Flag for fraud

@@ -59,6 +59,17 @@ export const orderConfirmationSchema = z
     }
   );
 
+export const vendorCustomerContactSchema = z.object({
+  orderId: z.string().min(10, "Invalid order id"),
+  resolved: z.boolean(),
+  customerPayment: z.boolean(),
+  customerContact: z.enum(["yes", "no"]),
+});
+
+export type vendorCustomerContactSchemaType = z.infer<
+  typeof vendorCustomerContactSchema
+>;
+
 export type orderConfirmationSchemaType = z.infer<
   typeof orderConfirmationSchema
 >;

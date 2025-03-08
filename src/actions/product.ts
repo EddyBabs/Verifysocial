@@ -7,7 +7,6 @@ import { database } from "@/lib/database";
 export const uploadProductImage = async (formData: FormData) => {
   const user = await getCurrentUser();
 
-  console.log("Uploading");
   const vendor = await database.vendor.findUnique({
     where: { userId: user?.id },
   });
@@ -16,7 +15,6 @@ export const uploadProductImage = async (formData: FormData) => {
   }
   const productUrl = await uploadFileToServer(formData);
 
-  console.log({ productUrl });
   if (!productUrl) {
     return { error: "Could not upload product" };
   }

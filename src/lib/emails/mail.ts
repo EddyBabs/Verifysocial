@@ -16,6 +16,7 @@ import { VendorCancellationCustomerTemplate } from "./templates/vendor-cancellat
 import { VendorCancellationVendorTemplate } from "./templates/vendor-cancellation-vendor";
 import { CustomerCancellationVendorTemplate } from "./templates/customer-cancellation-vendor";
 import { CustomerCancellationCustomerTemplate } from "./templates/customer-cancellation-customer";
+import { VendorPaymentReversalCustomerTemplate } from "./templates/vendor-payment-reversal-customer";
 // import { welcomeTemplate } from "./templates/welcome";
 
 export async function sendMail({
@@ -239,6 +240,7 @@ export function compileVendorCancellationVendor(name: string, code: string) {
 
 export function compileCustomerCancellationVendor(
   name: string,
+  reason: string,
   code: string,
   confirmationRecallLink: string
 ) {
@@ -246,6 +248,7 @@ export function compileCustomerCancellationVendor(
   const htmlBody = template({
     name,
     code,
+    reason,
     confirmationRecallLink,
   });
   return htmlBody;
@@ -256,6 +259,18 @@ export function compileCustomerCancellationCustomer(
   code: string
 ) {
   const template = handlebars.compile(CustomerCancellationCustomerTemplate);
+  const htmlBody = template({
+    name,
+    code,
+  });
+  return htmlBody;
+}
+
+export function compileVendorPaymentReversalCustomer(
+  name: string,
+  code: string
+) {
+  const template = handlebars.compile(VendorPaymentReversalCustomerTemplate);
   const htmlBody = template({
     name,
     code,

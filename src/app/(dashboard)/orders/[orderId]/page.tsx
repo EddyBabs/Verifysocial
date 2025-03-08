@@ -6,6 +6,7 @@ import { formatDate } from "date-fns";
 import OrderCancel from "./order-cancel";
 import OrderDelay from "./order-delay";
 import OrderModal from "./order-modal";
+import OrderVendorCustomerContact from "./order-vendor-customer-contact";
 
 const Page = async ({ params }: { params: { orderId: string } }) => {
   const user = await getCurrentUser();
@@ -44,6 +45,9 @@ const Page = async ({ params }: { params: { orderId: string } }) => {
             <OrderCancel orderId={order.id} />
           )}
           {user?.role === "VENDOR" && <OrderDelay orderId={order.id} />}
+          {user?.role === "VENDOR" && (
+            <OrderVendorCustomerContact orderId={order.id} />
+          )}
         </div>
       </div>
       {user?.role === "USER" && (

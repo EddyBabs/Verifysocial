@@ -199,9 +199,20 @@ export const CustomerCancellationVendorTemplate = `
                                 text-align: left;
                               "
                             >
-                            Kindly note that your customer initiated a recall to the request ID {{code}} with the stated reason: <b>"{{reason }}"</b>
+                            Kindly note that your customer initiated a recall to the request ID <b>"{{code}}"</b> with the stated reason: <b>"{{reason }}"</b>
                             </p>
-                            <p>
+                            <p  style="
+                                box-sizing: border-box;
+                                font-family: -apple-system, BlinkMacSystemFont,
+                                  'Segoe UI', Roboto, Helvetica, Arial,
+                                  sans-serif, 'Apple Color Emoji',
+                                  'Segoe UI Emoji', 'Segoe UI Symbol';
+                                position: relative;
+                                font-size: 16px;
+                                line-height: 1.5em;
+                                margin-top: 0;
+                                text-align: left;
+                              ">
                               Kindly fill the link below to confirm the recall
                             </p>
                             <div>
@@ -209,7 +220,18 @@ export const CustomerCancellationVendorTemplate = `
                             </div>
                             <br />
                             <br />
-                            <p>Thank you for choosing Verify Social</p>
+                            <p  style="
+                                box-sizing: border-box;
+                                font-family: -apple-system, BlinkMacSystemFont,
+                                  'Segoe UI', Roboto, Helvetica, Arial,
+                                  sans-serif, 'Apple Color Emoji',
+                                  'Segoe UI Emoji', 'Segoe UI Symbol';
+                                position: relative;
+                                font-size: 16px;
+                                line-height: 1.5em;
+                                margin-top: 0;
+                                text-align: left;
+                              ">Thank you for choosing Verify Social</p>
                             <p
                               style="
                                 box-sizing: border-box;

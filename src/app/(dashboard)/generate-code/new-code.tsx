@@ -41,7 +41,7 @@ import { Order } from "@prisma/client";
 import { formatDate } from "date-fns";
 import { CalendarIcon, Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import ViewCodeSection from "./view-code-section";
 
@@ -82,13 +82,19 @@ const NewCode = () => {
   const onSubmit = async (values: createOrderShemaType) => {
     const order = await getNewCode(values);
     if (order.success) {
-      setCodeCreated(order.success);
       reset();
+      setCodeCreated(order.success);
       router.refresh();
     } else {
       toast({ description: order.error });
     }
   };
+
+  useEffect(() => {
+    if (isOpen === false) {
+      form.reset();
+    }
+  }, [form, isOpen]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

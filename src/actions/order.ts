@@ -5,7 +5,6 @@ import {
   compileCustomerCancellationCustomer,
   compileCustomerCancellationVendor,
   compileOrderDelayFlagged,
-  compileRequestCancelled,
   compileRequestReceived,
   compileVendorCancellationCustomer,
   compileVendorCancellationVendor,
@@ -244,11 +243,15 @@ export const cancelOrder = async (values: orderCancelFormSchemaType) => {
         },
       },
     });
+
+    // Customer Outright Cancellation
     if (userSession.role === "USER") {
+      // Order Flagged
       if (hasPaid) {
         await Promise.all([
           sendMail({
-            to: order.user?.email || "",
+            // to: order.user?.email || "",
+            to: "emeroleikenna123@gmail.com",
             subject: "Order has been flagged",
             body: compileOrderDelayFlagged(
               order.user?.fullname || "",
@@ -257,7 +260,7 @@ export const cancelOrder = async (values: orderCancelFormSchemaType) => {
           }),
           sendMail({
             to: order.vendor.User.email,
-            subject: "",
+            subject: "Order has been flagged",
             body: compileVendorRequestCancelled(
               order.vendor.User.fullname,
               order.id,
@@ -266,6 +269,7 @@ export const cancelOrder = async (values: orderCancelFormSchemaType) => {
           }),
         ]);
       } else {
+        // Order Cancelled
         await Promise.all([
           sendMail({
             to: order.user?.email || "",
@@ -274,11 +278,6 @@ export const cancelOrder = async (values: orderCancelFormSchemaType) => {
               order.user?.fullname || "",
               order.code
             ),
-            // body: compileRequestCancelled(
-            //   order.user?.fullname || "",
-            //   order.name,
-            //   cancelledReason
-            // ),
           }),
 
           sendMail({
@@ -287,13 +286,9 @@ export const cancelOrder = async (values: orderCancelFormSchemaType) => {
             body: compileCustomerCancellationVendor(
               order.vendor.User.fullname,
               order.code,
+              reason || otherReason || "",
               `${process.env.NEXTAUTH_URL}/orders/${order.id}?customerContact=true`
             ),
-            // body: compileVendorRequestCancelled(
-            //   order.name,
-            //   `${process.env.NEXTAUTH_URL}/orders/${order.id}`,
-            //   cancelledReason
-            // ),
           }),
         ]);
       }
@@ -304,6 +299,7 @@ export const cancelOrder = async (values: orderCancelFormSchemaType) => {
   }
 };
 
+// Customer Cancellation
 export const userOrderConfirmation = async (
   values: orderConfirmationSchemaType
 ) => {
@@ -333,6 +329,7 @@ export const userOrderConfirmation = async (
       where: { id: orderId, userId: userSession.id },
       data: {
         status: "COMPLETED",
+        userDeliveryConfirmation: true,
       },
       include: {
         vendor: {
@@ -433,9 +430,9 @@ export const userOrderConfirmation = async (
     if (!order) {
       return { error: "Invalid Order" };
     }
-    if (order.orderExtension.length >= 2) {
-      return { error: "You have reached the maximum updates" };
-    }
+    // if (order.orderExtension.length >= 2) {
+    //   return { error: "You have reached the maximum updates" };
+    // }
     if (orderExtend === "yes") {
       if (!deliveryExtension) {
         return { error: "Extension delivery date is required" };
@@ -490,7 +487,7 @@ export const userOrderConfirmation = async (
         }),
         sendMail({
           to: order.vendor.User.email,
-          subject: "",
+          subject: "Order has been flagged",
           body: compileVendorRequestCancelled(
             order.vendor.User.fullname,
             order.id,
@@ -501,6 +498,8 @@ export const userOrderConfirmation = async (
 
       return { success: "An email will be sent tomorrow for confirmation" };
     }
+
+    // Outright Cancellation of Customer
 
     const cancelledReason = "Long wait time";
     await database.order.update({
@@ -521,20 +520,20 @@ export const userOrderConfirmation = async (
       sendMail({
         to: order.user?.email || "",
         subject: "Order Cancelled",
-        body: compileRequestCancelled(
+        body: compileCustomerCancellationCustomer(
           order.user?.fullname || "",
-          order.name,
-          cancelledReason
+          order.code
         ),
       }),
 
       sendMail({
         to: order.vendor.User.email,
         subject: "Order Cancelled",
-        body: compileVendorRequestCancelled(
-          order.name,
-          `${process.env.NEXTAUTH_URL}/orders/${order.id}`,
-          cancelledReason
+        body: compileCustomerCancellationVendor(
+          order.vendor.User.fullname,
+          cancelledReason,
+          order.code,
+          `${process.env.NEXTAUTH_URL}/orders/${order.id}?customerContact=true`
         ),
       }),
     ]);

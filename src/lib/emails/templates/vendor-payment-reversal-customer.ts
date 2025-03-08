@@ -1,6 +1,6 @@
 import { logoTemplate } from "../partials/logo";
 
-export const CustomerCancellationCustomerTemplate = `
+export const VendorPaymentReversalCustomerTemplate = `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -185,46 +185,24 @@ export const CustomerCancellationCustomerTemplate = `
                               Dear {{name}}!
                             </h1>
 
-                            <p
-                              style="
-                                box-sizing: border-box;
-                                font-family: -apple-system, BlinkMacSystemFont,
-                                  'Segoe UI', Roboto, Helvetica, Arial,
-                                  sans-serif, 'Apple Color Emoji',
-                                  'Segoe UI Emoji', 'Segoe UI Symbol';
-                                position: relative;
-                                font-size: 16px;
-                                line-height: 1.5em;
-                                margin-top: 0;
-                                text-align: left;
-                              "
-                            >
-                          We understand your reason to recall the request ID ({{code}})    
+                            <p>
+                             We are pleased to inform you that your payment for order <b>"{{code}}"</b> has been reversed successfully
                             </p>
                             <p>
-                              Kindly note that your satisfaction is our greatest concern
+                             Your satisfaction is our greatest concern.
                             </p>
-                           <p>
-                           Kindly send an email to <a href="mailto:support@verifysocial.com">support@verifysocial.com</a> for any enquiries and complaints and we will respond to you in less than 24hrs
-                           </p>
+                           
+                            <p>
+                            Kindly send an email to <a href="mailto:support@verifysocial.com">support@verifysocial.com</a> for any enquiries and complaints and we will respond to you in less than 24hrs
+                            </p>
                             <br />
                             <br />
-                            <p>Thank you for choosing Verify Social as your trusted entity</p>
+                            <p>
+                              Thank you for choosing Verify Social as your
+                              trusted entity
+                            </p>
 
-                            <p
-                              style="
-                                box-sizing: border-box;
-                                font-family: -apple-system, BlinkMacSystemFont,
-                                  'Segoe UI', Roboto, Helvetica, Arial,
-                                  sans-serif, 'Apple Color Emoji',
-                                  'Segoe UI Emoji', 'Segoe UI Symbol';
-                                position: relative;
-                                font-size: 16px;
-                                line-height: 1.5em;
-                                margin-top: 0;
-                                text-align: left;
-                              "
-                            >
+                            <p>
                               Best Regards,<br />
                               From verify social
                             </p>
@@ -314,5 +292,4 @@ export const CustomerCancellationCustomerTemplate = `
     </table>
   </body>
 </html>
-
 `;

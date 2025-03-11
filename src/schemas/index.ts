@@ -45,6 +45,9 @@ export const orderConfirmationSchema = z
     vendorContact: z.string().optional(),
     orderExtend: z.string(),
     madePayment: z.string(),
+    extensionReason: z.string().optional(),
+    cancellationReason: z.string().optional(),
+    otherReason: z.string().optional(),
   })
   .refine(
     (data) => {
@@ -120,5 +123,3 @@ export const orderDelaySchema = z
   );
 
 export type orderDelayFormSchemaType = z.infer<typeof orderDelaySchema>;
-
-// export type

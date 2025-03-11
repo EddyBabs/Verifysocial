@@ -85,7 +85,7 @@ const OrderDelay = ({ orderId }: { orderId: string }) => {
     <div>
       <Dialog open={open} onOpenChange={() => setOpen((prev) => !prev)}>
         <DialogTrigger asChild>
-          <Button className="bg-destructive">Request Delay</Button>
+          <Button className="bg-destructive">Edit Order</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>

@@ -174,8 +174,6 @@ model OrderExtension {
   hasMadePayment       Boolean?
   previousDeliveryDate DateTime?
   createdAt            DateTime  @default(now())
-
-  @@unique([orderId, previousDeliveryDate]) // Ensures no duplicate extensions for the same date
 }
 
 model KYCCredential {

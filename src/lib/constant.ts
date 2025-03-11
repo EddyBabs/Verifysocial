@@ -63,3 +63,23 @@ export const getSideBar = (user: getSidebarType) => {
         ]),
   ];
 };
+
+export const constants = {
+  CANCELLATION_REASONS: [
+    "Not Satisfied With Service",
+    "Not Satisfied With Agreement",
+    "Vendor asked me to cancel",
+    "Vendor misrepresentation",
+    "Suspected Fraud",
+    "Not interested anymore",
+    "Found another vendor",
+    "Long wait time",
+    "Other",
+  ],
+  EXTENSION_REASONS: [
+    "Logistics",
+    "Customer asked me to delay",
+    "Goods altered in transit",
+    "Goods not available",
+  ],
+};

@@ -17,6 +17,8 @@ import { VendorCancellationVendorTemplate } from "./templates/vendor-cancellatio
 import { CustomerCancellationVendorTemplate } from "./templates/customer-cancellation-vendor";
 import { CustomerCancellationCustomerTemplate } from "./templates/customer-cancellation-customer";
 import { VendorPaymentReversalCustomerTemplate } from "./templates/vendor-payment-reversal-customer";
+import { CustomerExtensionCustomerTemplate } from "./templates/customer-extension-customer";
+import { CustomerExtensionVendorTemplate } from "./templates/customer-extension-vendor";
 // import { welcomeTemplate } from "./templates/welcome";
 
 export async function sendMail({
@@ -185,6 +187,33 @@ export function compileVendorOrderDelayFlagged(
     name,
     code,
     verifyOrderLink,
+  });
+  return htmlBody;
+}
+
+// Customer
+export function compileCustomerExtensionCustomer(
+  name: string,
+  extendedDate: string
+) {
+  const template = handlebars.compile(CustomerExtensionCustomerTemplate);
+  const htmlBody = template({
+    name,
+    extendedDate,
+  });
+  return htmlBody;
+}
+
+export function compileCustomerExtensionVendor(
+  vendorName: string,
+  customerName: string,
+  extendedReason: string
+) {
+  const template = handlebars.compile(CustomerExtensionVendorTemplate);
+  const htmlBody = template({
+    vendorName,
+    customerName,
+    extendedReason,
   });
   return htmlBody;
 }

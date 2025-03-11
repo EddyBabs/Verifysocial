@@ -4,6 +4,8 @@ import { database, OrderStatus } from "@/lib/database";
 import {
   compileCustomerCancellationCustomer,
   compileCustomerCancellationVendor,
+  compileCustomerExtensionCustomer,
+  compileCustomerExtensionVendor,
   compileOrderDelayFlagged,
   compileRequestReceived,
   compileVendorCancellationCustomer,
@@ -322,6 +324,8 @@ export const userOrderConfirmation = async (
     deliveryExtension,
     vendorContact,
     madePayment,
+    extensionReason,
+    cancellationReason,
   } = validatedData.data;
 
   if (received === "yes") {
@@ -330,6 +334,7 @@ export const userOrderConfirmation = async (
       data: {
         status: "COMPLETED",
         userDeliveryConfirmation: true,
+        resolved: true,
       },
       include: {
         vendor: {
@@ -437,28 +442,50 @@ export const userOrderConfirmation = async (
       if (!deliveryExtension) {
         return { error: "Extension delivery date is required" };
       }
+      if (!extensionReason) {
+        return { error: "Extension reason is required" };
+      }
       await database.order.update({
         where: {
           id: orderId,
         },
         data: {
           deliveryPeriod: deliveryExtension,
-
           orderExtension: {
             create: {
               previousDeliveryDate: order.deliveryPeriod,
               hasBeenContacted: vendorContact === "yes" ? true : false,
-              // newDeliveryDate: deliveryExtension,
             },
           },
         },
       });
 
+      // Send Email  Order Extended
+      await Promise.all([
+        sendMail({
+          to: order.user?.email || "",
+          subject: "Order has been extended",
+          body: compileCustomerExtensionCustomer(
+            order.user?.fullname || "",
+            formatDate(deliveryExtension, "PPP")
+          ),
+        }),
+        sendMail({
+          to: order.vendor.User.email,
+          subject: "Order has been extended",
+          body: compileCustomerExtensionVendor(
+            order.vendor.User.fullname,
+            order.user?.fullname || "",
+            extensionReason
+          ),
+        }),
+      ]);
+
       return { success: "Order has been rescheduled successfully" };
     }
 
     if (madePayment === "yes") {
-      // Send Email calming the customer while warning the vendor
+      // Send Email Order flagged calming the customer while warning the vendor
 
       await database.order.update({
         where: {
@@ -531,7 +558,7 @@ export const userOrderConfirmation = async (
         subject: "Order Cancelled",
         body: compileCustomerCancellationVendor(
           order.vendor.User.fullname,
-          cancelledReason,
+          cancellationReason || cancelledReason,
           order.code,
           `${process.env.NEXTAUTH_URL}/orders/${order.id}?customerContact=true`
         ),

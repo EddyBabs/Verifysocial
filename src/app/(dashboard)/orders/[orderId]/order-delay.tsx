@@ -38,7 +38,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { formatDate } from "date-fns";
 import { CalendarIcon, Loader } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useForm, useFormContext } from "react-hook-form";
 
 const REASONS = [
@@ -93,7 +93,7 @@ const OrderDelay = ({ orderId }: { orderId: string }) => {
           </DialogHeader>
           <Form {...form}>
             <form method="POST" onSubmit={form.handleSubmit(onSubmit)}>
-              <OrderDelayCondition />
+              <OrderDelayCondition setOpen={setOpen} />
             </form>
           </Form>
         </DialogContent>
@@ -102,14 +102,31 @@ const OrderDelay = ({ orderId }: { orderId: string }) => {
   );
 };
 
-const OrderDelayCondition = () => {
+const OrderDelayCondition = ({
+  setOpen,
+}: {
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}) => {
   const {
     control,
     setValue,
     watch,
+    handleSubmit,
     formState: { isSubmitting },
   } = useFormContext<orderDelayFormSchemaType>();
+  const router = useRouter();
   const extend = watch("extend");
+
+  const onSubmit = async (values: any) => {
+    const response = await delayOrder(values);
+    if (response.error) {
+      toast({ description: response.error, variant: "destructive" });
+    } else {
+      toast({ description: response.success });
+      router.refresh();
+      setOpen(false);
+    }
+  };
 
   const [step, setStep] = useState(1);
 
@@ -192,14 +209,18 @@ const OrderDelayCondition = () => {
             type="button"
             onClick={() => {
               setValue("hasPaid", true);
+              handleSubmit(onSubmit)();
             }}
+            disabled={isSubmitting}
           >
             Yes
           </Button>
           <Button
             type="button"
+            disabled={isSubmitting}
             onClick={() => {
               setValue("hasPaid", false);
+              handleSubmit(onSubmit)();
             }}
           >
             No

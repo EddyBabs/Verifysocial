@@ -567,6 +567,12 @@ export const userOrderConfirmation = async (
       }),
 
       sendMail({
+        to: order.user?.email || "",
+        subject: "Order Satisfaction",
+        body: compileSatisfactionEmail(order.user?.fullname || ""),
+      }),
+
+      sendMail({
         to: order.vendor.User.email,
         subject: "Order Cancelled",
         body: compileCustomerCancellationVendor(
@@ -575,6 +581,12 @@ export const userOrderConfirmation = async (
           order.code,
           `${process.env.NEXTAUTH_URL}/orders/${order.id}?customerContact=true`
         ),
+      }),
+
+      sendMail({
+        to: order.vendor.User.email,
+        subject: "Order Satisfaction",
+        body: compileSatisfactionEmail(order.vendor.User.fullname),
       }),
     ]);
 

@@ -78,7 +78,7 @@ export const constants = {
   ],
   EXTENSION_REASONS: [
     "Logistics",
-    "Customer asked me to delay",
+    "Vendor asked me to delay",
     "Goods altered in transit",
     "Goods not available",
   ],

@@ -1,24 +1,24 @@
-import nodemailer from "nodemailer";
 import * as handlebars from "handlebars";
-import { resetPasswordTemplate } from "./templates/reset-password";
-import { verifyEmailTemplate } from "./templates/verify-email";
+import nodemailer from "nodemailer";
 import { buisnessVerificationTemplate } from "./templates/buisness-verification";
-import { RequestReceivedTemplate } from "./templates/request-received";
-import { vendorRequestReceived } from "./templates/vendor-request-received";
-import { OrderDeliveryConfirmation } from "./templates/order-delivery-confirmation";
-import { requestCancelledTemplate } from "./templates/request-cancel";
-import { vendorRequestCancelledTemplate } from "./templates/vendor-request-canceled";
-import { orderDelayFlagged } from "./templates/order-delay-flagged";
-import { VendorOrderDeliveryConfirmation } from "./templates/vendor-order-delivery-confirmation";
-import { VendorExtensionCustomerTemplate } from "./templates/vendor-extension-customer";
-import { VendorExtensionVendorTemplate } from "./templates/vendor-extension-vendor";
-import { VendorCancellationCustomerTemplate } from "./templates/vendor-cancellation-customer";
-import { VendorCancellationVendorTemplate } from "./templates/vendor-cancellation-vendor";
-import { CustomerCancellationVendorTemplate } from "./templates/customer-cancellation-vendor";
 import { CustomerCancellationCustomerTemplate } from "./templates/customer-cancellation-customer";
-import { VendorPaymentReversalCustomerTemplate } from "./templates/vendor-payment-reversal-customer";
+import { CustomerCancellationVendorTemplate } from "./templates/customer-cancellation-vendor";
 import { CustomerExtensionCustomerTemplate } from "./templates/customer-extension-customer";
 import { CustomerExtensionVendorTemplate } from "./templates/customer-extension-vendor";
+import { orderDelayFlagged } from "./templates/order-delay-flagged";
+import { OrderDeliveryConfirmation } from "./templates/order-delivery-confirmation";
+import { requestCancelledTemplate } from "./templates/request-cancel";
+import { RequestReceivedTemplate } from "./templates/request-received";
+import { resetPasswordTemplate } from "./templates/reset-password";
+import { VendorCancellationCustomerTemplate } from "./templates/vendor-cancellation-customer";
+import { VendorCancellationVendorTemplate } from "./templates/vendor-cancellation-vendor";
+import { VendorExtensionCustomerTemplate } from "./templates/vendor-extension-customer";
+import { VendorExtensionVendorTemplate } from "./templates/vendor-extension-vendor";
+import { VendorOrderDeliveryConfirmation } from "./templates/vendor-order-delivery-confirmation";
+import { VendorPaymentReversalCustomerTemplate } from "./templates/vendor-payment-reversal-customer";
+import { vendorRequestCancelledTemplate } from "./templates/vendor-request-canceled";
+import { vendorRequestReceived } from "./templates/vendor-request-received";
+import { verifyEmailTemplate } from "./templates/verify-email";
 // import { welcomeTemplate } from "./templates/welcome";
 
 export async function sendMail({
@@ -303,6 +303,14 @@ export function compileVendorPaymentReversalCustomer(
   const htmlBody = template({
     name,
     code,
+  });
+  return htmlBody;
+}
+
+export function compileSatisfactionEmail(name: string) {
+  const template = handlebars.compile(compileSatisfactionEmail);
+  const htmlBody = template({
+    name,
   });
   return htmlBody;
 }

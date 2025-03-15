@@ -8,6 +8,7 @@ import {
   compileCustomerExtensionVendor,
   compileOrderDelayFlagged,
   compileRequestReceived,
+  compileSatisfactionEmail,
   compileVendorCancellationCustomer,
   compileVendorCancellationVendor,
   compileVendorExtensionCustomer,
@@ -407,12 +408,24 @@ export const userOrderConfirmation = async (
       }),
 
       sendMail({
+        to: order.user?.email || "",
+        subject: "Order Satisfaction",
+        body: compileSatisfactionEmail(order.user?.fullname || ""),
+      }),
+
+      sendMail({
         to: order.vendor.User.email,
         subject: "Order Completed",
         body: compileVendorRequestReceived(
           order.vendor.User.fullname,
           order.name
         ),
+      }),
+
+      sendMail({
+        to: order.vendor.User.email,
+        subject: "Order Satisfaction",
+        body: compileSatisfactionEmail(order.vendor.User.fullname),
       }),
     ]);
     return { success: "Order completed successfully" };

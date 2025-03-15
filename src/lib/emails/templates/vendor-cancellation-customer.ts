@@ -193,7 +193,7 @@ export const VendorCancellationCustomerTemplate = `
                             </p>
                            
                             <div>
-                              <a href="{{vendorContactLink}}">Has vendor contacted you</a>
+                              <a href="{{vendorContactLink}}">Click Here</a>
                             </div>
                             <br />
                             <br />

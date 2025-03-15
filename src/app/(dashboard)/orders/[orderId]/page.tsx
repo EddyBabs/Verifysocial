@@ -7,6 +7,7 @@ import OrderCancel from "./order-cancel";
 import OrderDelay from "./order-delay";
 import OrderModal from "./order-modal";
 import OrderVendorCustomerContact from "./order-vendor-customer-contact";
+import OrderCustomerVendorContact from "./order-customer-vendor-contact";
 
 const Page = async ({ params }: { params: { orderId: string } }) => {
   const user = await getCurrentUser();
@@ -50,6 +51,7 @@ const Page = async ({ params }: { params: { orderId: string } }) => {
           )}
         </div>
       </div>
+
       {user?.role === "USER" && (
         <OrderModal
           isOpen={
@@ -58,6 +60,10 @@ const Page = async ({ params }: { params: { orderId: string } }) => {
           }
           orderId={order.id}
         />
+      )}
+
+      {user?.role === "USER" && (
+        <OrderCustomerVendorContact orderId={order.id} />
       )}
     </div>
   );

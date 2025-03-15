@@ -53,3 +53,47 @@ export const vendorCustomerFeedback = async (
   }
   return { success: `Order not resolved yet` };
 };
+
+export const customerVendorFeedback = async (
+  values: vendorCustomerContactSchemaType
+) => {
+  const userSession = await getCurrentUser();
+  if (!userSession) {
+    redirect("/auth/signin");
+  }
+  if (userSession.role !== "USER") {
+    return { error: "Access Denied" };
+  }
+  const validatedField = vendorCustomerContactSchema.safeParse(values);
+  if (validatedField.error) {
+    return { error: "Invalid Fields" };
+  }
+  const { resolved, orderId, customerPayment } = validatedField.data;
+  const order = await database.order.findUnique({
+    where: { id: orderId },
+    include: { user: true },
+  });
+  if (!order) {
+    return { error: "Could not find order" };
+  }
+  if (resolved) {
+    await database.order.update({
+      where: {
+        id: orderId,
+      },
+      data: {
+        vendorPaymentConfirmation: customerPayment,
+      },
+    });
+    // await sendMail({
+    //   to: order.user?.email || "",
+    //   subject: "Order Resolved",
+    //   body: compileVendorPaymentReversalCustomer(
+    //     order.user?.fullname || "",
+    //     order.code
+    //   ),
+    // });
+    return { success: "Order has been resolved" };
+  }
+  return { success: `Order not resolved yet` };
+};

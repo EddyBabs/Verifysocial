@@ -70,7 +70,7 @@ export const customerVendorFeedback = async (
   }
   const { resolved, orderId, customerPayment } = validatedField.data;
   const order = await database.order.findUnique({
-    where: { id: orderId },
+    where: { id: orderId, userId: userSession.id },
     include: { user: true },
   });
   if (!order) {

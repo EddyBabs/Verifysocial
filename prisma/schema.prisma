@@ -138,6 +138,8 @@ model Order {
   updatedAt                  DateTime               @updatedAt @map("updated_at")
   cancelled                  OrderCancel?
   vendorOrderExtension       vendorOrderExtension[]
+  customerSatisfaction       SatisFactionData?
+  vendorSatisfaction         SatisFactionData?
 
   // Fraudulent Fields
   fraudulent     Boolean   @default(false) // Flag for fraud
@@ -146,6 +148,14 @@ model Order {
   fraudFlaggedAt DateTime? // Timestamp when flagged
 
   @@unique([code, vendorId])
+}
+
+type SatisFactionData {
+  transactionSatisfaction Int
+  rateApp                 Int
+  returnToApp             Int
+  feelSafe                Int
+  recommend               Int
 }
 
 model vendorOrderExtension {

@@ -93,6 +93,7 @@ const NewCode = () => {
   useEffect(() => {
     if (isOpen === false) {
       form.reset();
+      setCodeCreated(null);
     }
   }, [form, isOpen]);
 

@@ -385,7 +385,7 @@ export const userOrderConfirmation = async (
     const totalRating = order.vendor.rating + ratingDiff;
     const reviewCount = order.vendor.reviewCount + (existingReview ? 0 : 1);
     const averageRating = reviewCount > 0 ? totalRating / reviewCount : 0;
-
+    const surveyLink = `${process.env.NEXT_PUBLIC_SITE_URL}/orders/${order.id}?satisfactoryFeedback=true`;
     await database.vendor.update({
       where: {
         id: order.vendorId,
@@ -410,7 +410,7 @@ export const userOrderConfirmation = async (
       sendMail({
         to: order.user?.email || "",
         subject: "Order Satisfaction",
-        body: compileSatisfactionEmail(order.user?.fullname || ""),
+        body: compileSatisfactionEmail(order.user?.fullname || "", surveyLink),
       }),
 
       sendMail({
@@ -425,7 +425,7 @@ export const userOrderConfirmation = async (
       sendMail({
         to: order.vendor.User.email,
         subject: "Order Satisfaction",
-        body: compileSatisfactionEmail(order.vendor.User.fullname),
+        body: compileSatisfactionEmail(order.vendor.User.fullname, surveyLink),
       }),
     ]);
     return { success: "Order completed successfully" };
@@ -555,7 +555,7 @@ export const userOrderConfirmation = async (
         },
       },
     });
-
+    const surveyLink = `${process.env.NEXT_PUBLIC_SITE_URL}/orders/${order.id}?satisfactoryFeedback=true`;
     await Promise.all([
       sendMail({
         to: order.user?.email || "",
@@ -569,7 +569,7 @@ export const userOrderConfirmation = async (
       sendMail({
         to: order.user?.email || "",
         subject: "Order Satisfaction",
-        body: compileSatisfactionEmail(order.user?.fullname || ""),
+        body: compileSatisfactionEmail(order.user?.fullname || "", surveyLink),
       }),
 
       sendMail({
@@ -586,7 +586,7 @@ export const userOrderConfirmation = async (
       sendMail({
         to: order.vendor.User.email,
         subject: "Order Satisfaction",
-        body: compileSatisfactionEmail(order.vendor.User.fullname),
+        body: compileSatisfactionEmail(order.vendor.User.fullname, surveyLink),
       }),
     ]);
 

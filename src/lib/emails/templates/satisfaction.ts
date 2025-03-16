@@ -204,6 +204,7 @@ export const SatisfactionEmailTemplate = `
                               customer service survey
                             </p>
 
+                            <p><a href="{{surveyLink}}">Click Here</a></p>
                             <p>
                               Kindly send an email to
                               <a href="mailto:support@verifysocial.com"

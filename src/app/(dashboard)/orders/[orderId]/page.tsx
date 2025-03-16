@@ -8,6 +8,8 @@ import OrderDelay from "./order-delay";
 import OrderModal from "./order-modal";
 import OrderVendorCustomerContact from "./order-vendor-customer-contact";
 import OrderCustomerVendorContact from "./order-customer-vendor-contact";
+import OrderCustomerSatisfaction from "./order-customer-satisfaction";
+import { OrderStatus } from "@prisma/client";
 
 const Page = async ({ params }: { params: { orderId: string } }) => {
   const user = await getCurrentUser();
@@ -49,6 +51,9 @@ const Page = async ({ params }: { params: { orderId: string } }) => {
           {user?.role === "VENDOR" && (
             <OrderVendorCustomerContact orderId={order.id} />
           )}
+          {user?.role === "VENDOR" && !order.vendorSatisfaction && (
+            <OrderCustomerSatisfaction orderId={order.id} user={user} />
+          )}
         </div>
       </div>
 
@@ -65,6 +70,11 @@ const Page = async ({ params }: { params: { orderId: string } }) => {
       {user?.role === "USER" && (
         <OrderCustomerVendorContact orderId={order.id} />
       )}
+      {user?.role === "USER" &&
+        !order.customerSatisfaction &&
+        [OrderStatus.COMPLETED, OrderStatus.CANCELLED].includes(
+          order.status as any
+        ) && <OrderCustomerSatisfaction orderId={order.id} user={user} />}
     </div>
   );
 };

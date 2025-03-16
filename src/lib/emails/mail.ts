@@ -307,10 +307,11 @@ export function compileVendorPaymentReversalCustomer(
   return htmlBody;
 }
 
-export function compileSatisfactionEmail(name: string) {
+export function compileSatisfactionEmail(name: string, surveyLink: string) {
   const template = handlebars.compile(compileSatisfactionEmail);
   const htmlBody = template({
     name,
+    surveyLink,
   });
   return htmlBody;
 }

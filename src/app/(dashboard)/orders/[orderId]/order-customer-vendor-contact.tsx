@@ -73,24 +73,27 @@ const OrderCustomerVendorContact = ({ orderId }: { orderId: string }) => {
                     <Button
                       variant={"outline"}
                       type="button"
+                      disabled={isSubmitting}
                       onClick={() => setStep(1)}
                     >
                       Back
                     </Button>
                     <Button
                       type="button"
+                      disabled={isSubmitting}
                       onClick={() => {
                         setValue("customerPayment", true);
-                        setStep(3);
+                        form.handleSubmit(onSubmit)();
                       }}
                     >
                       Yes
                     </Button>
                     <Button
                       type="button"
+                      disabled={isSubmitting}
                       onClick={() => {
                         setValue("customerPayment", false);
-                        setStep(3);
+                        form.handleSubmit(onSubmit)();
                       }}
                     >
                       No

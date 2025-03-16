@@ -123,3 +123,14 @@ export const orderDelaySchema = z
   );
 
 export type orderDelayFormSchemaType = z.infer<typeof orderDelaySchema>;
+
+export const satisfactionSchema = z.object({
+  orderId: z.string().min(1, "Order Id is required"),
+  transactionSatisfaction: z.number().min(1).max(5),
+  rateApp: z.number().min(1).max(5),
+  returnToApp: z.number().min(1).max(5),
+  feelSafe: z.number().min(1).max(5),
+  recommend: z.number().min(1).max(5),
+});
+
+export type satisfactionSchemaType = z.infer<typeof satisfactionSchema>;

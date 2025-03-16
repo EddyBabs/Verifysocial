@@ -63,7 +63,6 @@ const OrderCustomerSatisfaction = ({
   const recommend = watch("recommend");
 
   const onSubmit = async (values: satisfactionSchemaType) => {
-    console.log({ values });
     if (user.role === "VENDOR") {
       const response = await vendorSatisfaction(values);
       if (response.error) {

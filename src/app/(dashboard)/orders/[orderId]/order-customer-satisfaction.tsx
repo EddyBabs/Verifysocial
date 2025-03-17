@@ -93,9 +93,12 @@ const OrderCustomerSatisfaction = ({
         <div>
           <Dialog open={open} onOpenChange={() => setOpen((prev) => !prev)}>
             <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Vendor Satisfactory Feedback</DialogTitle>
-                <DialogDescription>
+              <DialogHeader className="space-y-4">
+                <DialogTitle>
+                  {user.role === "VENDOR" ? "Vendor" : "Customer"} Satisfactory
+                  Feedback
+                </DialogTitle>
+                <DialogDescription className="mt-2">
                   Use the scale of 1-5 with 1 being the very unlikely, 2
                   unlikely, 3 not sure 4, likely and 5, very likely
                 </DialogDescription>
@@ -123,7 +126,7 @@ const OrderCustomerSatisfaction = ({
                       </div>
                     </div>
 
-                    <DialogFooter className="mt-4">
+                    <DialogFooter className="mt-4 gap-2">
                       <Button
                         variant={"outline"}
                         type="button"
@@ -137,6 +140,7 @@ const OrderCustomerSatisfaction = ({
                         disabled={
                           recommend < 1 || recommend > 5 || isSubmitting
                         }
+                        className="mt-2 md:mt-0"
                       >
                         Next{" "}
                         {isSubmitting && (
@@ -166,7 +170,7 @@ const OrderCustomerSatisfaction = ({
                       </div>
                     </div>
 
-                    <DialogFooter className="mt-4">
+                    <DialogFooter className="mt-4 gap-2">
                       <Button
                         variant={"outline"}
                         type="button"
@@ -203,7 +207,7 @@ const OrderCustomerSatisfaction = ({
                       </div>
                     </div>
 
-                    <DialogFooter className="mt-4">
+                    <DialogFooter className="mt-4 gap-2">
                       <Button
                         variant={"outline"}
                         type="button"
@@ -237,7 +241,7 @@ const OrderCustomerSatisfaction = ({
                       </div>
                     </div>
 
-                    <DialogFooter className="mt-4">
+                    <DialogFooter className="mt-4 gap-2">
                       <Button
                         variant={"outline"}
                         type="button"
@@ -275,7 +279,7 @@ const OrderCustomerSatisfaction = ({
                       </div>
                     </div>
 
-                    <DialogFooter className="mt-4">
+                    <DialogFooter className="mt-4 ">
                       <Button
                         type="button"
                         disabled={

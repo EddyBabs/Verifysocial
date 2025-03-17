@@ -358,32 +358,37 @@ export const userOrderConfirmation = async (
 
     let ratingDiff = 0;
 
+    const sanitizedRating = Math.max(rating, 0); // Ensure rating is never negative
+
     if (existingReview) {
       // Update: Calculate the difference to adjust the total rating
-      ratingDiff = rating - existingReview.rating;
+      ratingDiff = sanitizedRating - existingReview.rating;
     } else {
       // Create: Use the entire rating as the difference
-      ratingDiff = rating;
+      ratingDiff = sanitizedRating;
     }
 
     await database.review.upsert({
       where: {
-        orderId,
+        orderId: order.id,
       },
       create: {
-        orderId,
-        rating,
+        orderId: order.id,
+        rating: sanitizedRating,
         comment,
         userId: userSession.id,
         vendorId: order.vendorId,
       },
       update: {
-        rating,
+        rating: sanitizedRating,
         comment,
       },
     });
-    const totalRating = order.vendor.rating + ratingDiff;
-    const reviewCount = order.vendor.reviewCount + (existingReview ? 0 : 1);
+    const totalRating = Math.max(order.vendor.rating + ratingDiff, 0);
+    const reviewCount = Math.max(
+      order.vendor.reviewCount + (existingReview ? 0 : 1),
+      0
+    );
     const averageRating = reviewCount > 0 ? totalRating / reviewCount : 0;
     const surveyLink = `${process.env.NEXT_PUBLIC_SITE_URL}/orders/${order.id}?satisfactoryFeedback=true`;
     await database.vendor.update({
@@ -393,7 +398,7 @@ export const userOrderConfirmation = async (
       data: {
         totalRating,
         reviewCount,
-        rating: averageRating,
+        rating: Math.max(averageRating, 0),
       },
     });
     await Promise.all([

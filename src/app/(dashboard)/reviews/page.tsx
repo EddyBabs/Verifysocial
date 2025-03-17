@@ -22,7 +22,7 @@ const Page = async () => {
         </div>
         <div className="flex gap-4 items-center">
           <h1 className="font-extrabold text-6xl">
-            {user.vendor?.rating || 0}
+            {Math.max(Number(user.vendor?.rating?.toFixed(2)) || 0, 0)}
           </h1>
           <div className="space-y-4 w-full sm:w-2/6">
             <Progress value={(user?.vendor?.rating || 0) >= 5 ? 100 : 0} />

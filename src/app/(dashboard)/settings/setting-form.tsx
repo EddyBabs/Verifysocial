@@ -91,6 +91,8 @@ const SettingForm: React.FC<SettingFormProps> = ({ user }) => {
       handleMeta();
     }
   };
+
+  const DEVELOPMENT = true;
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -193,24 +195,46 @@ const SettingForm: React.FC<SettingFormProps> = ({ user }) => {
                         </Select>
                       </div>
 
-                      <div className="h-full flex items-center gap-4">
-                        <Button
-                          type="button"
-                          className={cn(
-                            "md:mt-[26px]",
-                            form.watch(`socialPlatform.${index}.username`) &&
-                              "bg-destructive"
-                          )}
-                          disabled={
-                            !!form.watch(`socialPlatform.${index}.username`) ||
-                            isPending
-                          }
-                        >
-                          {form.watch(`socialPlatform.${index}.username`)
-                            ? "Linked: " +
-                              form.watch(`socialPlatform.${index}.username`)
-                            : "Link"}
-                        </Button>
+                      <div
+                        className={cn(
+                          "h-full items-center w-full col-span-1 gap-4",
+                          { "flex ": !DEVELOPMENT }
+                        )}
+                      >
+                        {DEVELOPMENT ? (
+                          <>
+                            <Input
+                              inputClassName=""
+                              className="self-start md:mt-[24px] w-full min-w-32 max-w-44 flex-1"
+                              placeholder="Insert profile name here"
+                              {...form.register(
+                                `socialPlatform.${index}.username`
+                              )}
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <Button
+                              type="button"
+                              className={cn(
+                                "md:mt-[26px]",
+                                form.watch(
+                                  `socialPlatform.${index}.username`
+                                ) && "bg-destructive"
+                              )}
+                              disabled={
+                                !!form.watch(
+                                  `socialPlatform.${index}.username`
+                                ) || isPending
+                              }
+                            >
+                              {form.watch(`socialPlatform.${index}.username`)
+                                ? "Linked: " +
+                                  form.watch(`socialPlatform.${index}.username`)
+                                : "Link"}
+                            </Button>
+                          </>
+                        )}
                         {index > 0 && (
                           <Button
                             type="button"

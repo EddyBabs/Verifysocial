@@ -9,7 +9,7 @@ export const updateSetting = async (values: settingFormSchemaType) => {
   if (userSession?.role === "VENDOR") {
     try {
       const validatedField = settingFormSchema.parse(values);
-      const { categories, gender, phone } = validatedField;
+      const { categories, gender, phone, socialPlatform } = validatedField;
       await database.user.update({
         where: { id: userSession.id },
         data: {
@@ -18,6 +18,13 @@ export const updateSetting = async (values: settingFormSchemaType) => {
           vendor: {
             update: {
               categories,
+              // socialAccount: {
+              //   update:{
+              //     data: socialPlatform.map((platform) => ({
+              //       provider: platform.platform === "instagram" ? "Instagram"
+              //     }))
+              //   }
+              // }
             },
           },
         },

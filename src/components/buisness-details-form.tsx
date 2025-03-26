@@ -51,6 +51,8 @@ const BuisnessDetailsForm = () => {
     });
   };
 
+  const DEVELOPMENT = true;
+
   return (
     <>
       <div className="grid grid-cols-2 gap-8">
@@ -197,28 +199,41 @@ const BuisnessDetailsForm = () => {
             </div>
 
             <div className="h-full flex items-center gap-4">
-              <Button
-                type="button"
-                className={cn(
-                  "md:mt-[26px]",
-                  watch(`step2.socialPlatform.${index}.username`) &&
-                    "bg-destructive"
-                )}
-                disabled={
-                  !watch(`step2.socialPlatform.${index}.platform`) ||
-                  !!watch(`step2.socialPlatform.${index}.username`) ||
-                  isPending
-                }
-                onClick={() =>
-                  handleSocialLogin(
-                    watch(`step2.socialPlatform.${index}.platform`)
-                  )
-                }
-              >
-                {watch(`step2.socialPlatform.${index}.username`)
-                  ? "Linked: " + watch(`step2.socialPlatform.${index}.username`)
-                  : "Link"}
-              </Button>
+              {DEVELOPMENT ? (
+                <>
+                  <Input
+                    placeholder="Insert your username"
+                    className="self-start md:mt-[24px]"
+                    {...register(`step2.socialPlatform.${index}.username`)}
+                  />
+                </>
+              ) : (
+                <>
+                  <Button
+                    type="button"
+                    className={cn(
+                      "md:mt-[26px]",
+                      watch(`step2.socialPlatform.${index}.username`) &&
+                        "bg-destructive"
+                    )}
+                    disabled={
+                      !watch(`step2.socialPlatform.${index}.platform`) ||
+                      !!watch(`step2.socialPlatform.${index}.username`) ||
+                      isPending
+                    }
+                    onClick={() =>
+                      handleSocialLogin(
+                        watch(`step2.socialPlatform.${index}.platform`)
+                      )
+                    }
+                  >
+                    {watch(`step2.socialPlatform.${index}.username`)
+                      ? "Linked: " +
+                        watch(`step2.socialPlatform.${index}.username`)
+                      : "Link"}
+                  </Button>
+                </>
+              )}
               {index > 0 && (
                 <Button
                   type="button"

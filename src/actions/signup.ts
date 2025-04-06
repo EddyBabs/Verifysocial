@@ -9,10 +9,7 @@ import * as z from "zod";
 import { sendVerification } from "./send-verification";
 import { RoleType } from "@/types";
 
-export const signupAction = async (
-  values: z.infer<typeof signUpSchema>,
-  role: RoleType = "user"
-) => {
+export const signupAction = async (values: z.infer<typeof signUpSchema>) => {
   try {
     const validatedFields = signUpSchema.safeParse(values);
 
@@ -20,7 +17,10 @@ export const signupAction = async (
       return { error: "Invalid fields" };
     }
 
-    const user = await createUser(validatedFields.data, role);
+    const user = await createUser(
+      validatedFields.data,
+      validatedFields.data.role
+    );
 
     if (!user) {
       return { error: "An error occured" };

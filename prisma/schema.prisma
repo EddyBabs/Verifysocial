@@ -289,6 +289,7 @@ model Product {
   vendorId  String   @db.ObjectId
   vendor    Vendor   @relation(fields: [vendorId], references: [id])
   image     String
+  name      String?
   reviews   Review[] // Reviews on this product
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

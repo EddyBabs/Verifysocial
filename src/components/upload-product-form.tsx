@@ -28,6 +28,8 @@ import {
 } from "./ui/dialog";
 import { Progress } from "./ui/progress";
 import { Skeleton } from "./ui/skeleton";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 
 const UploadProductForm = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -37,7 +39,11 @@ const UploadProductForm = () => {
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={() => setIsOpen((prev) => (!uploading ? !prev : prev))}
+      onOpenChange={() => {
+        setIsOpen((prev) => (!uploading ? !prev : prev));
+        setUploading(false);
+        setSocialPlatform(false);
+      }}
     >
       <DialogTrigger asChild>
         <Button>Add Products</Button>
@@ -108,9 +114,14 @@ export const ChooseSocialPlatform = ({
             Select from the available media from your instagram account
           </DialogDescription>
         </DialogHeader>
+
         <div>
           <h1>Got accounts</h1>
         </div>
+
+        <DialogFooter>
+          <Button onClick={() => setSocialPlatform(false)}>Back</Button>
+        </DialogFooter>
       </>
     );
   }
@@ -164,6 +175,7 @@ export const CloudinaryUpload = ({
   const { toast } = useToast();
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
+  const [name, setName] = useState("");
   const [progress, setProgress] = useState<number>(0);
 
   const simulateProgress = () => {
@@ -176,6 +188,7 @@ export const CloudinaryUpload = ({
     setProgress(10); //
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("name", name);
 
     const progressInterval = setInterval(simulateProgress, 300);
 
@@ -196,7 +209,6 @@ export const CloudinaryUpload = ({
     } catch (error) {
       setProgress(0);
       clearInterval(progressInterval);
-      console.error("Upload failed:", error);
     } finally {
       setUploading(false);
     }
@@ -269,6 +281,16 @@ export const CloudinaryUpload = ({
               <Progress value={progress} />
             </div>
           )}
+        </div>
+
+        <div className="my-8">
+          <Label>Product Name</Label>
+          <Input
+            name="name"
+            placeholder="Add product name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
         </div>
       </div>
 

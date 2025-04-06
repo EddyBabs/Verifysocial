@@ -43,6 +43,7 @@ export const signUpSchema = z.object({
   fullname: fullNameSchema,
   email: emailSchema,
   password: passwordSchema,
+  role: z.enum(["vendor", "user"]),
   terms: z.boolean().refine((value) => value === true, {
     message: "Accept terms and conditions",
   }),

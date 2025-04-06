@@ -13,6 +13,10 @@ export const uploadProductImage = async (formData: FormData) => {
   if (!vendor) {
     return { error: "You're not a vendor" };
   }
+  const name = formData.get("name")?.toString();
+  if (!name) {
+    return { error: "Product name is required" };
+  }
   const productUrl = await uploadFileToServer(formData);
 
   if (!productUrl) {
@@ -22,6 +26,7 @@ export const uploadProductImage = async (formData: FormData) => {
   await database.product.create({
     data: {
       vendorId: vendor.id,
+      name,
       image: productUrl,
     },
   });

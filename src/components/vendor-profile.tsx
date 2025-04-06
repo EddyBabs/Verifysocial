@@ -7,7 +7,7 @@ import Image from "next/image";
 import React from "react";
 import { FiAward } from "react-icons/fi";
 import ReviewCard from "./reveiw-card";
-import { Card } from "./ui/card";
+import { Card, CardContent } from "./ui/card";
 import UploadProductForm from "./upload-product-form";
 
 export interface VendorProfileProps {
@@ -98,6 +98,11 @@ const VendorProfile: React.FC<VendorProfileProps> = async ({ user }) => {
                       alt=""
                       className="aspect-video object-contain w-full h-full max-h-64"
                     />
+                    {product.name && (
+                      <CardContent className="pt-8">
+                        <h2 className="text-lg font-medium">{product.name}</h2>
+                      </CardContent>
+                    )}
                   </Card>
                 </div>
               ))}

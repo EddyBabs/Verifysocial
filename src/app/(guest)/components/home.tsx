@@ -118,7 +118,7 @@ export default async function Home() {
               <Link href="/auth/signup" className="w-full" passHref>
                 <Button className="rounded-2xl w-full">Get Started</Button>
               </Link>
-              <Link href="/vendor/auth/signup" passHref>
+              <Link href="/signup?vendor=true" passHref>
                 <Button
                   className="rounded-2xl border-primary text-primary w-full"
                   variant={"outline"}

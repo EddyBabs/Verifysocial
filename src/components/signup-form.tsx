@@ -10,10 +10,9 @@ import { RoleType } from "@/types";
 
 type SignUpFormProps = {
   setStep: Dispatch<SetStateAction<"signup" | "verify">>;
-  role: RoleType;
 };
 
-const SignUpForm: React.FC<SignUpFormProps> = ({ setStep, role }) => {
+const SignUpForm: React.FC<SignUpFormProps> = ({ setStep }) => {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center">
       <div className="w-full max-w-md px-1 overflow-hidden">
@@ -48,7 +47,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ setStep, role }) => {
           </div>
         </div>
 
-        <SignUpEmail setStep={setStep} role={role} />
+        <SignUpEmail setStep={setStep} />
       </div>
     </div>
   );

@@ -10,5 +10,5 @@ export default function SignupPageClient() {
     return <VerifyEmailForm />;
   }
 
-  return <SignUpForm setStep={setStep} role="user" />;
+  return <SignUpForm setStep={setStep} />;
 }

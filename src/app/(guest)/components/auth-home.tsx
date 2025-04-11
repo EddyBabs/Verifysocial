@@ -29,7 +29,7 @@ const AuthHome = async () => {
         </div>
         <SearchVendors />
       </div>
-      <div className="grid grid-cols-1 gap-4">
+      <div>
         <Card className="">
           <CardHeader>
             <CardTitle>Explore</CardTitle>
@@ -75,22 +75,24 @@ const AuthHome = async () => {
 const VendorList = async () => {
   const vendors = await getVendors();
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-10">
       {vendors.map((vendor, index) => (
-        <Link href={`/vendor/${vendor.id}`} key={index}>
+        <div className="flex justify-center items-center" key={index}>
           <div className="group cursor-pointer">
-            <div className="mb-4 overflow-hidden">
-              <Image
-                src={vendor.Product?.[0]?.image || noImagePlacehoder}
-                alt=""
-                width={300}
-                height={300}
-                className="group-hover:scale-105 transition-all rounded-xl object-cover w-full h-full aspect-video overflow-hidden"
-              />
-            </div>
-            <VendorAvatar vendor={vendor} />
+            <Link href={`/vendor/${vendor.id}`}>
+              <div className="mb-4 overflow-hidden">
+                <Image
+                  src={vendor.Product?.[0]?.image || noImagePlacehoder}
+                  alt=""
+                  width={250}
+                  height={250}
+                  className="group-hover:scale-105 transition-all rounded-xl object-cover aspect-square overflow-hidden"
+                />
+              </div>
+              <VendorAvatar vendor={vendor} />
+            </Link>
           </div>
-        </Link>
+        </div>
       ))}
     </div>
   );

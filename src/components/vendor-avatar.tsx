@@ -51,7 +51,7 @@ const VendorAvatar: React.FC<VendorAvatarProps> = ({ vendor }) => {
           }
           <div className="h-4 w-[1px] bg-black"></div>
           <Star className="fill-[#FFDD55] text-[#FFDD55] h-4" />
-          {vendor?.rating} ({vendor?.reviewCount})
+          {vendor?.rating.toFixed(1)}
         </div>
       </div>
     </div>

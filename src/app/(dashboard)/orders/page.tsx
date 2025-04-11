@@ -20,7 +20,7 @@ const Page = () => {
     <div className="container">
       <div>
         <h3 className="text-2xl font-semibold">Transaction History</h3>
-        <div className="mt-4">
+        <div className="mt-4 w-full overflow-hidden">
           <TransactionTable />
         </div>
       </div>
@@ -31,7 +31,7 @@ const Page = () => {
 async function TransactionTable() {
   const orders = await fetchUserOrders();
   return (
-    <Table>
+    <Table className="w-full">
       <TableCaption>A list of your recent transactions.</TableCaption>
       <TableHeader>
         <TableRow>

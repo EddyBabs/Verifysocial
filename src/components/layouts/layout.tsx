@@ -14,11 +14,11 @@ function GuestLayout({
         <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
           {children}
         </main>
-        <footer className="bg-primary pt-32 pb-8">
-          <div className="container mx-auto text-white">
+        <footer className="bg-primary pt-32 pb-8 ">
+          <div className="container mx-auto text-white px-4 md:px-0">
             <div className="space-y-6">
               <p className="">Designed and Developed by</p>
-              <div className="flex gap-6">
+              <div className="flex-col md:flex-row flex gap-6">
                 <div className="space-x-4">
                   <Button className="bg-white text-black">Verify Social</Button>
                   <Button className="bg-green-400">Chat with Us</Button>

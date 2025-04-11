@@ -52,7 +52,7 @@ const DashboardLayout: React.FC<PropsWithChildren> = async ({ children }) => {
               </Link>
             </div>
           )}
-          <div className="block lg:hidden">
+          <div className="block lg:hidden flex-1">
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant={"ghost"} className="lg:hidden block">
@@ -61,7 +61,17 @@ const DashboardLayout: React.FC<PropsWithChildren> = async ({ children }) => {
               </SheetTrigger>
               <SheetContent side="left" className="lg:hidden block">
                 <SheetHeader>
-                  <SheetTitle>Verify Social</SheetTitle>
+                  <SheetTitle>
+                    <div>
+                      <Link
+                        href="/home"
+                        className="flex items-center justify-center gap-2 font-semibold"
+                        prefetch={false}
+                      >
+                        <Logo width={20} height={20} className="sr-only" />
+                      </Link>
+                    </div>
+                  </SheetTitle>
                 </SheetHeader>
 
                 <div className="grid gap-2 py-6">
@@ -70,6 +80,16 @@ const DashboardLayout: React.FC<PropsWithChildren> = async ({ children }) => {
               </SheetContent>
             </Sheet>
           </div>
+          <div>
+            <Link
+              href="/home"
+              className="flex items-center gap-2 font-semibold"
+              prefetch={false}
+            >
+              <Logo width={20} height={20} className="sr-only" />
+            </Link>
+          </div>
+          <div className="flex-1"></div>
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
           {children}

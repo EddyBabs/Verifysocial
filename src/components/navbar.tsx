@@ -3,7 +3,7 @@ import { Menu } from "lucide-react";
 import Link from "next/link";
 import Logo from "./logo";
 import { Button } from "./ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "./ui/sheet";
 
 const Navbar = async () => {
   const currentUser = await getCurrentUser();
@@ -19,9 +19,13 @@ const Navbar = async () => {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="overflow-x-hidden">
-                {/* <Link href="/" prefetch={false}>
-                  <Logo className="sr-only" />
-                </Link> */}
+                <SheetHeader>
+                  <div className="flex items-center justify-center">
+                    <Link href="/" className="inline-flex" prefetch={false}>
+                      <Logo className="sr-only" />
+                    </Link>
+                  </div>
+                </SheetHeader>
                 <div className="grid gap-2 py-6">
                   <Link
                     href="#"
@@ -106,7 +110,7 @@ const Navbar = async () => {
                   <li>
                     <Link
                       href="/auth/signup"
-                      className="btn btn-secondary rounded-xl bg-primary text-secondary py-2 px-3 sm:px-4 btn-md"
+                      className="btn btn-secondary rounded-xl bg-primary hidden md:inline-block text-secondary py-2 px-3 sm:px-4 btn-md"
                     >
                       Sign Up
                     </Link>

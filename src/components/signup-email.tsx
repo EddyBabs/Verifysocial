@@ -24,8 +24,10 @@ type SignUpProps = z.infer<typeof signUpSchema>;
 
 const SignUpEmail = ({
   setStep,
+  selectedRole,
 }: {
   setStep: Dispatch<SetStateAction<"signup" | "verify">>;
+  selectedRole: "user" | "vendor";
 }) => {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -49,6 +51,9 @@ const SignUpEmail = ({
 
   const form = useForm<SignUpProps>({
     resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      role: selectedRole,
+    },
   });
 
   const {
@@ -81,29 +86,7 @@ const SignUpEmail = ({
             {...register("email")}
             error={errors.email?.message}
           />
-          <FormField
-            control={control}
-            name="role"
-            render={({ field }) => (
-              <FormItem>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a role" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="user">user</SelectItem>
-                    <SelectItem value="vendor">vendor</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
           <div className="relative">
             <Input
               type={passwordVisible ? "text" : "password"}

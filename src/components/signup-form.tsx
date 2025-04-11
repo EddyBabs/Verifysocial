@@ -3,16 +3,22 @@ import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React, { Dispatch, SetStateAction } from "react";
+import { BsArrowLeft } from "react-icons/bs";
 import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import SignUpEmail from "./signup-email";
-import { RoleType } from "@/types";
 
 type SignUpFormProps = {
+  selectedRole: "user" | "vendor";
   setStep: Dispatch<SetStateAction<"signup" | "verify">>;
+  setSelectedRole: (role: "user" | "vendor" | null) => void;
 };
 
-const SignUpForm: React.FC<SignUpFormProps> = ({ setStep }) => {
+const SignUpForm: React.FC<SignUpFormProps> = ({
+  setStep,
+  setSelectedRole,
+  selectedRole,
+}) => {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center">
       <div className="w-full max-w-md px-1 overflow-hidden">
@@ -26,6 +32,15 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ setStep }) => {
             <h3 className="text-2xl font-[510] -ml-1">Create an account</h3>
             <h5 className="text-lg">Select method to sign up:</h5>
           </div>
+        </div>
+        <div>
+          <Button
+            variant="ghost"
+            className="mb-4"
+            onClick={() => setSelectedRole(null)}
+          >
+            <BsArrowLeft className="mr-2" /> Back to selection
+          </Button>
         </div>
         <div className="flex gap-4 items-center justify-center">
           <Button variant={"outline"} className="w-full">
@@ -47,7 +62,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ setStep }) => {
           </div>
         </div>
 
-        <SignUpEmail setStep={setStep} />
+        <SignUpEmail setStep={setStep} selectedRole={selectedRole} />
       </div>
     </div>
   );

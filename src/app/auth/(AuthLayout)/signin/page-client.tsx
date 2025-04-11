@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import VerifyEmailForm from "../../../components/verify-email-form";
+import VerifyEmailForm from "../../../../components/verify-email-form";
 import SignInForm from "./signin-form";
 
-export default function SigninPageClient() {
+export default function SigninPage() {
   const [step, setStep] = useState<"signup" | "verify">("signup");
   if (step === "verify") {
     return <VerifyEmailForm />;

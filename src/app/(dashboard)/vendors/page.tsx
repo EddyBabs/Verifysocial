@@ -25,7 +25,7 @@ const Page = async ({
       {!vendors.length ? (
         <div className="min-h-[300px] flex items-center justify-center">
           <div>
-            <h1 className="text-2xl font-semibold">
+            <h1 className="text-2xl font-semibold text-center">
               Could not find any vendor on speficied category
             </h1>
           </div>
@@ -37,7 +37,7 @@ const Page = async ({
               <div className="group cursor-pointer border rounded-xl shadow">
                 <div className="mb-4 overflow-hidden">
                   <Image
-                    src={vendor.Product?.[0].image || noImagePlacehoder}
+                    src={vendor.Product?.[0]?.image || noImagePlacehoder}
                     alt=""
                     width={300}
                     height={300}

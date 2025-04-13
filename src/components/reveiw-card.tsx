@@ -1,14 +1,8 @@
-import { Prisma } from "@prisma/client";
-import Ratings from "./ui/ratings";
+import { FeaturePrisma } from "@/types";
 import { format } from "date-fns";
+import Ratings from "./ui/ratings";
 
-const ReviewCard = ({
-  review,
-}: {
-  review: Prisma.ReviewGetPayload<{
-    include: { user: { select: { fullname: true } } };
-  }>;
-}) => {
+const ReviewCard = ({ review }: { review: FeaturePrisma }) => {
   return (
     <div className="p-4 border-2 border-gray-300 rounded-lg">
       <div className="space-y-4">

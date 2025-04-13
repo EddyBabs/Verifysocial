@@ -71,8 +71,8 @@ const SidebarPanel: React.FC<SidebarPanelProps> = ({ user }) => {
                       <Collapsible key={index} className="group/collapsible">
                         <SidebarGroup>
                           <SidebarGroupLabel className="p-0" asChild>
-                            <CollapsibleTrigger>
-                              <Icon className="h-5 w-5 mr-2" />
+                            <CollapsibleTrigger className="text-[15px]">
+                              <Icon size={50} className="mr-2 h-10 w-10" />
                               {item.value}
                               <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
                             </CollapsibleTrigger>
@@ -82,7 +82,7 @@ const SidebarPanel: React.FC<SidebarPanelProps> = ({ user }) => {
                               {item.children.map((subitem: any) => (
                                 <SidebarMenuSubItem key={subitem.value}>
                                   <SidebarMenuSubButton
-                                    className="h-fit hover:cursor-pointer"
+                                    className="h-fit hover:cursor-pointer text-[0.8rem] leading-5"
                                     asChild
                                   >
                                     <Link
@@ -108,7 +108,7 @@ const SidebarPanel: React.FC<SidebarPanelProps> = ({ user }) => {
                         })}
                       >
                         <Link href={item.href}>
-                          <Icon className="h-4 w-4" />
+                          <Icon size={20} />
                           {item.value}
                         </Link>
                       </SidebarMenuButton>

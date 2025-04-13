@@ -40,7 +40,7 @@ export interface VendorProfileProps {
 
 const VendorProfile: React.FC<VendorProfileProps> = async ({ user }) => {
   const products = await getCurrentVendorProducts();
-  const reviews = await getCurrentVendorReviews();
+  const { reviews } = await getCurrentVendorReviews();
 
   return (
     <div className="pb-20">

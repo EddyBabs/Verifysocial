@@ -16,14 +16,14 @@ const Page = async ({ params }: { params: { orderId: string } }) => {
   const order = await fetchUserOrderById(params.orderId);
 
   return (
-    <div className="container">
+    <div className="container my-10">
       <div className="grid">
         <div className="flex justify-between">
           <div className="flex items-center gap-1">
             <h2>Order Title:</h2>
             <h4 className="text-lg font-bold uppercase">{order.name}</h4>
           </div>
-          <div>
+          <div className="hidden md:block">
             <Badge
               className={cn({
                 "bg-destructive hover:bg-destructive/50":
@@ -43,7 +43,18 @@ const Page = async ({ params }: { params: { orderId: string } }) => {
         <h2>Delivery Period</h2>
         <h4>{formatDate(order.deliveryPeriod, "PPP")}</h4>
 
-        <div className="flex items-center gap-2">
+        <div className="block md:hidden my-4">
+          <Badge
+            className={cn({
+              "bg-destructive hover:bg-destructive/50":
+                order.status === "CANCELLED",
+            })}
+          >
+            {order.status}
+          </Badge>
+        </div>
+
+        <div className="flex items-center gap-2 mt-4">
           {user?.role === "USER" && ["PROCESSING"].includes(order.status) && (
             <OrderCancel orderId={order.id} />
           )}

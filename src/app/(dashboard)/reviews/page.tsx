@@ -6,11 +6,10 @@ import { getCurrentUserDetails } from "@/data/user";
 import { Prisma } from "@prisma/client";
 import { formatDate } from "date-fns";
 import Link from "next/link";
-import React from "react";
 
 const Page = async () => {
   const { user } = await getCurrentUserDetails();
-  const reviews = await getCurrentVendorReviews();
+  const { reviews } = await getCurrentVendorReviews();
   return (
     <div>
       <div className="space-y-4">

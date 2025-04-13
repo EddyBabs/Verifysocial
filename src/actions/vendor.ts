@@ -175,7 +175,11 @@ export const getSearchedVendors = async (value: string) => {
   return { vendors };
 };
 
-export const getVendorReviews = async (vendorId: string) => {
+export const getVendorReviews = async (
+  vendorId: string,
+  page: number = 1,
+  size: number = 6
+) => {
   const reviews = await database.review.findMany({
     where: {
       vendorId,
@@ -187,9 +191,17 @@ export const getVendorReviews = async (vendorId: string) => {
         },
       },
     },
+    skip: (page - 1) * size,
+    take: size,
   });
 
-  return reviews;
+  const totalReviews = await database.review.count({
+    where: {
+      vendorId,
+    },
+  });
+
+  return { totalReviews, reviews };
 };
 
 export const getCurrentVendorReviews = async () => {
@@ -199,6 +211,7 @@ export const getCurrentVendorReviews = async () => {
       userId: user?.id,
     },
   });
+
   return await getVendorReviews(vendor?.id || "");
 };
 

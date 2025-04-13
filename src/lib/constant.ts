@@ -1,11 +1,10 @@
 import categories from "@/data/categories";
 import { UserRole } from "@prisma/client";
-import { HomeIcon } from "@radix-ui/react-icons";
 import { CiSettings } from "react-icons/ci";
-import { FaBarcode, FaHistory } from "react-icons/fa";
+import { FaBarcode } from "react-icons/fa";
 import { IoMdAnalytics } from "react-icons/io";
-import { MdOutlineCategory } from "react-icons/md";
-import { VscPreview } from "react-icons/vsc";
+import { MdOutlineCategory, MdHistory } from "react-icons/md";
+import { VscHome, VscPreview } from "react-icons/vsc";
 
 type getSidebarType = { role: UserRole };
 export const getSideBar = (user: getSidebarType) => {
@@ -13,7 +12,7 @@ export const getSideBar = (user: getSidebarType) => {
     ...(user.role === "VENDOR"
       ? [
           {
-            icon: HomeIcon,
+            icon: VscHome,
             href: "/",
             value: "Profile",
           },
@@ -40,7 +39,7 @@ export const getSideBar = (user: getSidebarType) => {
         ]
       : [
           {
-            icon: HomeIcon,
+            icon: VscHome,
             href: "/",
             value: "Home",
           },
@@ -56,7 +55,7 @@ export const getSideBar = (user: getSidebarType) => {
             value: "Settings",
           },
           {
-            icon: FaHistory,
+            icon: MdHistory,
             href: "/orders",
             value: "Transaction History",
           },

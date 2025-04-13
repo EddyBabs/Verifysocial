@@ -1,5 +1,4 @@
 import { getVendorAndOrder, getVendorReviews } from "@/actions/vendor";
-import ReviewCard from "@/components/reveiw-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import VendorAvatar from "@/components/vendor-avatar";
@@ -11,29 +10,41 @@ import Image from "next/image";
 import Link from "next/link";
 import { BsInstagram } from "react-icons/bs";
 import { FaFacebookSquare } from "react-icons/fa";
-import { IoLogoWhatsapp } from "react-icons/io";
 import OrderForm from "./order-form";
+import dynamic from "next/dynamic";
+const VendorReviews = dynamic(() => import("./vendor-reviews"));
 
 const VendorId = async ({
   params,
   searchParams,
 }: {
   params: { vendorId: string };
-  searchParams: { vendorcode?: string };
+  searchParams: { [key: string]: string };
 }) => {
+  const pageParam = Number(searchParams?.page || 1);
+  const currentPage = isNaN(pageParam) ? 1 : pageParam;
+  const pageSizeParam = Number(searchParams?.size || 6);
+  const size = isNaN(pageSizeParam) ? 6 : pageSizeParam;
+
   const { user } = await getCurrentUserDetails();
   const { vendor, order } = await getVendorAndOrder(
     params.vendorId,
     searchParams
   );
-  const reviews = await getVendorReviews(params.vendorId);
+
+  const { reviews, totalReviews } = await getVendorReviews(
+    params.vendorId,
+    currentPage,
+    size
+  );
+
   return (
     <div>
       <div className="mb-8 space-y-4">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl sm:text-4xl font-bold">Vendors</h1>
           <Link href="/reviews">
-            <Button className="text-xl font-semibold md:px-8 md:py-6 rounded-xl">
+            <Button className="md:text-xl font-semibold md:px-8 md:py-6 rounded-xl bg-gradient-to-r from-[#003399] to-[#87B077]">
               View All Review
             </Button>
           </Link>
@@ -124,21 +135,12 @@ const VendorId = async ({
             </div>
           </CardContent>
         </Card>
-        <Card className="col-span-2">
-          <CardContent className="p-4">
-            <div className="space-y-6">
-              <h1 className="text-2xl font-semibold">Reviews</h1>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">
-                {/* {Array.from({ length: 3 }, (_, index) => (
-                  <ReviewCard key={index} />
-                ))} */}
-                {reviews.map((review) => (
-                  <ReviewCard key={review.id} review={review} />
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <VendorReviews
+          reviews={reviews}
+          page={currentPage}
+          totalCount={totalReviews}
+          size={size}
+        />
       </div>
       {order && order.status === "PENDING" && !order.userId && (
         <OrderForm user={user} order={order} />

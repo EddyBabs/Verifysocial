@@ -24,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { currencyFormat } from "@/lib/utils";
 
 export default function WalletPage() {
   return (
@@ -42,7 +43,7 @@ export default function WalletPage() {
             <CardDescription>Funds available for withdrawal</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">$3,300.00</div>
+            <div className="text-3xl font-bold">{currencyFormat(3300.0)}</div>
           </CardContent>
           <CardFooter>
             <Button className="w-full">Withdraw Funds</Button>
@@ -56,7 +57,7 @@ export default function WalletPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">$1,250.00</div>
+            <div className="text-3xl font-bold">{currencyFormat(1250.0)}</div>
           </CardContent>
           <CardFooter>
             <Button variant="outline" className="w-full">
@@ -70,7 +71,7 @@ export default function WalletPage() {
             <CardDescription>Lifetime earnings on platform</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">$24,780.00</div>
+            <div className="text-3xl font-bold">{currencyFormat(24780.0)}</div>
           </CardContent>
           <CardFooter>
             <Button variant="outline" className="w-full">

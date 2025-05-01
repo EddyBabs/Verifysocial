@@ -64,17 +64,17 @@ export default function RootLayout({
       <body
         className={`${jakarta.variable} ${montserrat_alternates.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider
+        {/* <ThemeProvider
           defaultTheme="light"
           attribute="class"
           enableSystem={false}
-        >
-          {children}
-          <Toaster />
-          <Suspense>
-            <InstagramCallback />
-          </Suspense>
-        </ThemeProvider>
+        > */}
+        {children}
+        <Toaster />
+        <Suspense>
+          <InstagramCallback />
+        </Suspense>
+        {/* </ThemeProvider> */}
       </body>
     </html>
   );

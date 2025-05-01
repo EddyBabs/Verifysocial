@@ -2,18 +2,21 @@ import { fetchUserOrderById } from "@/actions/order";
 import { Badge } from "@/components/ui/badge";
 import { getCurrentUser } from "@/data/user";
 import { cn } from "@/lib/utils";
+import { OrderStatus } from "@prisma/client";
 import { formatDate } from "date-fns";
+import dynamic from "next/dynamic";
 import OrderCancel from "./order-cancel";
+import OrderCustomerSatisfaction from "./order-customer-satisfaction";
+import OrderCustomerVendorContact from "./order-customer-vendor-contact";
 import OrderDelay from "./order-delay";
 import OrderModal from "./order-modal";
 import OrderVendorCustomerContact from "./order-vendor-customer-contact";
-import OrderCustomerVendorContact from "./order-customer-vendor-contact";
-import OrderCustomerSatisfaction from "./order-customer-satisfaction";
-import { OrderStatus } from "@prisma/client";
+const OrderPayment = dynamic(() => import("./order-payment"));
 
-const Page = async ({ params }: { params: { orderId: string } }) => {
+const Page = async ({ params }: { params: Promise<{ orderId: string }> }) => {
   const user = await getCurrentUser();
-  const order = await fetchUserOrderById(params.orderId);
+  const { orderId } = await params;
+  const order = await fetchUserOrderById(orderId);
 
   return (
     <div className="container my-10">
@@ -23,7 +26,7 @@ const Page = async ({ params }: { params: { orderId: string } }) => {
             <h2>Order Title:</h2>
             <h4 className="text-lg font-bold uppercase">{order.name}</h4>
           </div>
-          <div className="hidden md:block">
+          <div className="flex-row gap-1 hidden md:flex item-center">
             <Badge
               className={cn({
                 "bg-destructive hover:bg-destructive/50":
@@ -32,6 +35,7 @@ const Page = async ({ params }: { params: { orderId: string } }) => {
             >
               {order.status}
             </Badge>
+            <OrderPayment order={order} user={user} />
           </div>
         </div>
         <div className="flex items-center gap-1">
@@ -44,6 +48,7 @@ const Page = async ({ params }: { params: { orderId: string } }) => {
         <h4>{formatDate(order.deliveryPeriod, "PPP")}</h4>
 
         <div className="block md:hidden my-4">
+          <OrderPayment order={order} user={user} />
           <Badge
             className={cn({
               "bg-destructive hover:bg-destructive/50":

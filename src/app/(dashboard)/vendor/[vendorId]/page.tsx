@@ -18,22 +18,24 @@ const VendorId = async ({
   params,
   searchParams,
 }: {
-  params: { vendorId: string };
-  searchParams: { [key: string]: string };
+  params: Promise<{ vendorId: string }>;
+  searchParams: Promise<{ [key: string]: string }>;
 }) => {
-  const pageParam = Number(searchParams?.page || 1);
+  const { vendorId } = await params;
+  const searchParamsValue = await searchParams;
+  const pageParam = Number(searchParamsValue?.page || 1);
   const currentPage = isNaN(pageParam) ? 1 : pageParam;
-  const pageSizeParam = Number(searchParams?.size || 6);
+  const pageSizeParam = Number(searchParamsValue?.size || 6);
   const size = isNaN(pageSizeParam) ? 6 : pageSizeParam;
 
   const { user } = await getCurrentUserDetails();
   const { vendor, order } = await getVendorAndOrder(
-    params.vendorId,
-    searchParams
+    vendorId,
+    searchParamsValue
   );
 
   const { reviews, totalReviews } = await getVendorReviews(
-    params.vendorId,
+    vendorId,
     currentPage,
     size
   );

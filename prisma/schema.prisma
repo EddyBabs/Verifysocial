@@ -32,8 +32,8 @@ model Address {
 }
 
 model User {
-  id            String      @id @default(auto()) @map("_id") @db.ObjectId
-  email         String      @unique
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  email         String        @unique
   fullname      String
   emailVerified DateTime?
   phone         String?
@@ -41,23 +41,45 @@ model User {
   provider      String?
   image         String?
   gender        GenderType?
-  campaign      Boolean     @default(false)
-  anonymous     Boolean     @default(false)
-  role          UserRole    @default(USER)
+  campaign      Boolean       @default(false)
+  anonymous     Boolean       @default(false)
+  role          UserRole      @default(USER)
   accounts      Account[]
   sessions      Session[]
   vendor        Vendor?
   address       Address?
   orders        Order[]
+  transactions  Transaction[]
   reviews       Review[]
-  createdAt     DateTime    @default(now()) @map("created_at")
-  updatedAt     DateTime    @updatedAt @map("updated_at")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
 }
 
 enum SocialPlatforms {
   FACEBOOK
   INSTAGRAM
   TWITTER
+}
+
+model Transaction {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.ObjectId
+
+  reference String            @unique
+  amount    Float
+  channel   String?
+  currency  String
+  status    TransactionStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
 }
 
 model socialAccount {
@@ -134,6 +156,7 @@ model Order {
   vendorResolvedConfirmation Boolean                @default(false)
   vendor                     Vendor                 @relation(references: [id], fields: [vendorId])
   orderExtension             OrderExtension[]
+  paymentStatus              PaymentStatus          @default(PENDING)
   createdAt                  DateTime               @default(now()) @map("created_at")
   updatedAt                  DateTime               @updatedAt @map("updated_at")
   cancelled                  OrderCancel?
@@ -148,6 +171,13 @@ model Order {
   fraudFlaggedAt DateTime? // Timestamp when flagged
 
   @@unique([code, vendorId])
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  REJECTED
+  CANCELLED
 }
 
 type SatisFactionData {

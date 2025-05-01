@@ -167,10 +167,10 @@ export default async function Home() {
             <div className=" md:border-b-4 border-primary w-full">
               <div className="container mx-auto text-center">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:border-l-0 border-primary ">
-                  {offers.map((offer) => (
-                    <>
+                  {offers.map((offer, index) => (
+                  
                       <div
-                        key={offer.title}
+                        key={`${offer.title}-${index}`}
                         className="border max-w-[280px] md:max-w-none mx-auto rounded-xl md:border-l-4 hover:bg-primary hover:text-secondary md:before:w-6 md:before:h-6 md:before:absolute md:before:-left-3.5 md:before:-top-2 md:before:bg-primary before:rounded-full relative md:border-primary p-5 pb-10"
                       >
                         <div className="flex items-center justify-center mb-4">
@@ -181,7 +181,7 @@ export default async function Home() {
                         </h1>
                         <p>{offer.description}</p>
                       </div>
-                    </>
+                    
                   ))}
                 </div>
               </div>

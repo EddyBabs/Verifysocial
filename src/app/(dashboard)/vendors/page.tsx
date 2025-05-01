@@ -9,9 +9,9 @@ import noImagePlacehoder from "@/assets/images/no-image-placehoder.webp";
 const Page = async ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const category = searchParams?.category;
+  const category = (await searchParams)?.category;
   const vendors = await getPaginatedVendors(category);
   return (
     <div>

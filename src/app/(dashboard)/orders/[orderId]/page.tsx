@@ -11,11 +11,12 @@ import OrderCustomerVendorContact from "./order-customer-vendor-contact";
 import OrderDelay from "./order-delay";
 import OrderModal from "./order-modal";
 import OrderVendorCustomerContact from "./order-vendor-customer-contact";
-const OrderPayment = dynamic(() => import("./order-payment"), { ssr: false });
+const OrderPayment = dynamic(() => import("./order-payment"));
 
-const Page = async ({ params }: { params: { orderId: string } }) => {
+const Page = async ({ params }: { params: Promise<{ orderId: string }> }) => {
   const user = await getCurrentUser();
-  const order = await fetchUserOrderById(params.orderId);
+  const { orderId } = await params;
+  const order = await fetchUserOrderById(orderId);
 
   return (
     <div className="container my-10">

@@ -5,6 +5,7 @@ import { FaBarcode } from "react-icons/fa";
 import { IoMdAnalytics } from "react-icons/io";
 import { MdOutlineCategory, MdHistory } from "react-icons/md";
 import { VscHome, VscPreview } from "react-icons/vsc";
+import { FaWallet } from "react-icons/fa6";
 
 type getSidebarType = { role: UserRole };
 export const getSideBar = (user: getSidebarType) => {
@@ -20,6 +21,11 @@ export const getSideBar = (user: getSidebarType) => {
             icon: VscPreview,
             href: "/reviews",
             value: "Reviews",
+          },
+          {
+            icon: FaWallet,
+            href: "/wallet",
+            value: "Wallet",
           },
           {
             icon: IoMdAnalytics,

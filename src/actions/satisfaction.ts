@@ -74,7 +74,7 @@ export const vendorSatisfaction = async (values: satisfactionSchemaType) => {
     feelSafe,
   } = validatedField.data;
   const order = await database.order.findUnique({
-    where: { id: orderId, vendor: { userId: userSession.id } },
+    where: { id: orderId, code: { vendor: { userId: userSession.id } } },
     include: { user: true },
   });
   if (!order) {

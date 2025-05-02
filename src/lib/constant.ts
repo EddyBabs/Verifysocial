@@ -6,6 +6,7 @@ import { IoMdAnalytics } from "react-icons/io";
 import { MdOutlineCategory, MdHistory } from "react-icons/md";
 import { VscHome, VscPreview } from "react-icons/vsc";
 import { FaWallet } from "react-icons/fa6";
+import { PiPackageDuotone } from "react-icons/pi";
 
 type getSidebarType = { role: UserRole };
 export const getSideBar = (user: getSidebarType) => {
@@ -36,6 +37,11 @@ export const getSideBar = (user: getSidebarType) => {
             icon: FaBarcode,
             href: "/generate-code",
             value: "Generate Code",
+          },
+          {
+            icon: PiPackageDuotone,
+            href: "/orders",
+            value: "Orders",
           },
           {
             icon: CiSettings,

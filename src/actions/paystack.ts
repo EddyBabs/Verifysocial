@@ -18,12 +18,15 @@ export const createChargeSession = async (code: string) => {
     throw new Error("Could not find user");
   }
 
-  const order = await database.order.findUnique({
+  const prismaCode = await database.code.findUnique({
     where: {
-      code: code,
+      value: code,
+    },
+    include: {
+      order: true,
     },
   });
-
+  const order = prismaCode?.order;
   try {
     if (!order) {
       return { error: "Order does not exist" };
@@ -89,6 +92,7 @@ export const verifyTransaction = async (trxRef: string) => {
 
       let order = await database.order.findUnique({
         where: { id: orderId },
+        include: { code: true },
       });
       if (!order || !order.amountValue) {
         return { error: "Could not find plan" };
@@ -113,6 +117,18 @@ export const verifyTransaction = async (trxRef: string) => {
         where: { id: order.id, userId: user.id },
         data: {
           paymentStatus: "SUCCESS",
+        },
+        include: {
+          code: true,
+        },
+      });
+      await database.vendor.update({
+        where: {
+          id: order.code.vendorId,
+        },
+        data: {
+          availableBalance: { increment: paystackResponse.amount / 100 },
+          totalBalance: { increment: paystackResponse.amount / 100 },
         },
       });
 

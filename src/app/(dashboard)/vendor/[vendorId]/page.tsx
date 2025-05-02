@@ -1,4 +1,4 @@
-import { getVendorAndOrder, getVendorReviews } from "@/actions/vendor";
+import { getVendorAndCode, getVendorReviews } from "@/actions/vendor";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import VendorAvatar from "@/components/vendor-avatar";
@@ -6,12 +6,12 @@ import VendorSearchInput from "@/components/vendor-search-input";
 import { getCurrentUserDetails } from "@/data/user";
 import RateVendor from "@/screens/rating-modal";
 import { Search } from "lucide-react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { BsInstagram } from "react-icons/bs";
 import { FaFacebookSquare } from "react-icons/fa";
 import OrderForm from "./order-form";
-import dynamic from "next/dynamic";
 const VendorReviews = dynamic(() => import("./vendor-reviews"));
 
 const VendorId = async ({
@@ -29,10 +29,7 @@ const VendorId = async ({
   const size = isNaN(pageSizeParam) ? 6 : pageSizeParam;
 
   const { user } = await getCurrentUserDetails();
-  const { vendor, order } = await getVendorAndOrder(
-    vendorId,
-    searchParamsValue
-  );
+  const { vendor, code } = await getVendorAndCode(vendorId, searchParamsValue);
 
   const { reviews, totalReviews } = await getVendorReviews(
     vendorId,
@@ -63,9 +60,9 @@ const VendorId = async ({
             <div className="space-y-6">
               <div className="flex justify-between">
                 <VendorAvatar vendor={vendor} />
-                {order && (
+                {code && (
                   <div>
-                    <RateVendor order={order} />
+                    <RateVendor code={code} />
                   </div>
                 )}
               </div>
@@ -144,8 +141,8 @@ const VendorId = async ({
           size={size}
         />
       </div>
-      {order && order.status === "PENDING" && !order.userId && (
-        <OrderForm user={user} order={order} />
+      {code?.order && code.order.status === "PENDING" && !code.order.userId && (
+        <OrderForm user={user} order={code.order as any} />
       )}
     </div>
   );

@@ -1,23 +1,10 @@
 import { vendorGetCodes } from "@/actions/code";
-import { Button } from "@/components/ui/button";
+import CodeTable from "@/components/code/code-table";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { formatDate } from "date-fns";
-import { BsEye } from "react-icons/bs";
 import NewCode from "./new-code";
-import { currencyFormat } from "@/lib/utils";
-import Link from "next/link";
 
 const Page = async () => {
+  const codes = await vendorGetCodes();
   return (
     <div className="container">
       <div className="space-y-14 ">
@@ -40,67 +27,12 @@ const Page = async () => {
         <div>
           <h3 className="text-2xl font-semibold">View Latest Codes</h3>
           <div className="mt-4">
-            <TableDemo />
+            <CodeTable codes={codes} />
           </div>
         </div>
       </div>
     </div>
   );
 };
-
-async function TableDemo() {
-  const orders = await vendorGetCodes();
-  return (
-    <Table>
-      <TableCaption>A list of your recent codes.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[200px]">Codes</TableHead>
-          <TableHead className="w-[200px]">Status</TableHead>
-          <TableHead>Delivery Date</TableHead>
-          <TableHead className="text-right min-w-[50px]">Min Amount</TableHead>
-          <TableHead className="text-right min-w-[50px]">Max Amount</TableHead>
-          <TableHead className="text-right w-[100px]">Action</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {orders.map((order) => (
-          <TableRow key={order.id}>
-            <TableCell className="font-medium">{order.code}</TableCell>
-            <TableCell>{order.status}</TableCell>
-            <TableCell>
-              {order.deliveryPeriod && formatDate(order.deliveryPeriod, "PPP")}
-            </TableCell>
-            <TableCell className="text-right">
-              {currencyFormat(order.minAmount)}
-            </TableCell>
-            <TableCell className="text-right">
-              {currencyFormat(order.maxAmount)}
-            </TableCell>
-            <TableCell className="text-right">
-              <Link href={`/orders/${order.id}`}>
-                <Button variant={"ghost"}>
-                  <BsEye />
-                </Button>
-              </Link>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-      {/* <TableFooter>
-        <TableRow>
-          <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">
-            {currencyFormat(
-              orders.reduce((sum, order) => {
-                return sum + Number(order.minAmount);
-              }, 0)
-            )}
-          </TableCell>
-        </TableRow>
-      </TableFooter> */}
-    </Table>
-  );
-}
 
 export default Page;

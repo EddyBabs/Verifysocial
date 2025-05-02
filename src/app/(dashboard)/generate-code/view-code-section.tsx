@@ -1,8 +1,8 @@
-import { Order } from "@prisma/client";
+import { Code } from "@prisma/client";
 import QRCode from "react-qr-code";
 import GenerateCodeSection from "./generate-code-section";
 
-const ViewCodeSection = ({ order }: { order: Order }) => {
+const ViewCodeSection = ({ code }: { code: Code }) => {
   return (
     <div>
       <div>
@@ -18,11 +18,11 @@ const ViewCodeSection = ({ order }: { order: Order }) => {
             <QRCode
               size={256}
               style={{ height: "auto", maxWidth: 400, width: "100%" }}
-              value={order.code}
+              value={code.value}
               viewBox={`0 0 256 256`}
             />
           </div>
-          <GenerateCodeSection order={order} />
+          <GenerateCodeSection code={code} />
         </div>
       </div>
     </div>

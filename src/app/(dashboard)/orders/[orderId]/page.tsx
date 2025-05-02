@@ -8,13 +8,13 @@ import dynamic from "next/dynamic";
 import OrderCancel from "./order-cancel";
 import OrderCustomerSatisfaction from "./order-customer-satisfaction";
 import OrderCustomerVendorContact from "./order-customer-vendor-contact";
-import OrderDelay from "./order-delay";
 import OrderModal from "./order-modal";
-import OrderVendorCustomerContact from "./order-vendor-customer-contact";
+import VendorOrderPage from "./vendor-order-page";
 const OrderPayment = dynamic(() => import("./order-payment"));
 
 const Page = async ({ params }: { params: Promise<{ orderId: string }> }) => {
   const user = await getCurrentUser();
+  if (user?.role === "VENDOR") return <VendorOrderPage params={params} />;
   const { orderId } = await params;
   const order = await fetchUserOrderById(orderId);
 
@@ -24,7 +24,7 @@ const Page = async ({ params }: { params: Promise<{ orderId: string }> }) => {
         <div className="flex justify-between">
           <div className="flex items-center gap-1">
             <h2>Order Title:</h2>
-            <h4 className="text-lg font-bold uppercase">{order.name}</h4>
+            <h4 className="text-lg font-bold uppercase">{order.code.name}</h4>
           </div>
           <div className="flex-row gap-1 hidden md:flex item-center">
             <Badge
@@ -40,12 +40,12 @@ const Page = async ({ params }: { params: Promise<{ orderId: string }> }) => {
         </div>
         <div className="flex items-center gap-1">
           <h2>Order Code:</h2>
-          <h4 className="text-lg font-bold uppercase">{order.code}</h4>
+          <h4 className="text-lg font-bold uppercase">{order.code.value}</h4>
         </div>
         <h2>Amount:</h2>
         <h4>{order.amountValue}</h4>
         <h2>Delivery Period</h2>
-        <h4>{formatDate(order.deliveryPeriod, "PPP")}</h4>
+        <h4>{formatDate(order.code.deliveryPeriod, "PPP")}</h4>
 
         <div className="block md:hidden my-4">
           <OrderPayment order={order} user={user} />
@@ -63,20 +63,20 @@ const Page = async ({ params }: { params: Promise<{ orderId: string }> }) => {
           {user?.role === "USER" && ["PROCESSING"].includes(order.status) && (
             <OrderCancel orderId={order.id} />
           )}
-          {user?.role === "VENDOR" && <OrderDelay orderId={order.id} />}
+          {/* {user?.role === "VENDOR" && <OrderDelay orderId={order.id} />}
           {user?.role === "VENDOR" && (
             <OrderVendorCustomerContact orderId={order.id} />
           )}
           {user?.role === "VENDOR" && !order.vendorSatisfaction && (
             <OrderCustomerSatisfaction orderId={order.id} user={user} />
-          )}
+          )} */}
         </div>
       </div>
 
       {user?.role === "USER" && (
         <OrderModal
           isOpen={
-            order.deliveryPeriod.getTime() < new Date().getTime() &&
+            order.code.deliveryPeriod.getTime() < new Date().getTime() &&
             order.status === "PROCESSING"
           }
           orderId={order.id}

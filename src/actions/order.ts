@@ -1,6 +1,6 @@
 "use server";
 import { getCurrentUser } from "@/data/user";
-import { database, OrderStatus } from "@/lib/database";
+import { CodeStatus, database, OrderStatus } from "@/lib/database";
 import {
   compileCustomerCancellationCustomer,
   compileCustomerCancellationVendor,
@@ -35,23 +35,37 @@ type orderSchemaType = z.infer<typeof orderSchema>;
 
 export const fillOrder = async (values: orderSchemaType) => {
   const userSession = await getCurrentUser();
+  if (!userSession?.id) {
+    return { error: "Access Denied" };
+  }
   const validatedFields = orderSchema.safeParse(values);
   if (validatedFields.error) {
     return { error: "Invalid Fields" };
   }
+
   const validatedData = validatedFields.data;
-  const updateOrder = await database.order.findUnique({
+  const code = await database.code.findUnique({
     where: {
-      code: validatedData.code,
-      status: OrderStatus.PENDING,
+      value: validatedData.code,
+      status: CodeStatus.PENDING,
+    },
+    include: {
+      order: {
+        select: {
+          id: true,
+          user: true,
+          userId: true,
+        },
+      },
     },
   });
-  if (!updateOrder) {
+
+  if (!code) {
     return { error: "Order does not exist" };
   }
 
-  if (updateOrder.userId) {
-    if (updateOrder.userId !== userSession?.id)
+  if (code.order) {
+    if (code.order.userId !== userSession?.id)
       return {
         error:
           "This order has already been used by another customer. Please request for a new code.",
@@ -61,29 +75,29 @@ export const fillOrder = async (values: orderSchemaType) => {
 
   const { value, date } = validatedData;
 
-  if (value < updateOrder.minAmount || value > updateOrder.maxAmount) {
+  if (value < code.minAmount || value > code.maxAmount) {
     return { error: "Order value does not correlate with the vendor" };
   }
 
-  if (
-    new Date(date).getTime() != new Date(updateOrder.deliveryPeriod).getTime()
-  ) {
+  if (new Date(date).getTime() != new Date(code.deliveryPeriod).getTime()) {
     return { error: "Delivery date does not correlate with the vendor" };
   }
 
-  const order = await database.order.update({
-    where: {
-      id: updateOrder.id,
-    },
+  const order = await database.order.create({
     data: {
       amountValue: value,
-      userId: userSession?.id,
+      userId: userSession.id,
       status: OrderStatus.PROCESSING,
+      codeId: code.id,
     },
     include: {
-      vendor: {
+      code: {
         include: {
-          User: true,
+          vendor: {
+            include: {
+              User: true,
+            },
+          },
         },
       },
     },
@@ -96,17 +110,17 @@ export const fillOrder = async (values: orderSchemaType) => {
           subject: "Request Received",
           body: compileRequestReceived(
             userSession.fullname,
-            order.name,
-            `${process.env.NEXTAUTH_URL}/vendor/${order.vendorId}?vendorCode=${order.code}`
+            order.code.name,
+            `${process.env.NEXTAUTH_URL}/vendor/${order.code.vendorId}?vendorCode=${order.code}`
           ),
         }),
 
         sendMail({
-          to: order.vendor.User.email,
+          to: order.code.vendor.User.email,
           subject: "Request Confirmed",
           body: compileVendorRequestReceived(
-            order.vendor.User.fullname,
-            order.name
+            order.code.vendor.User.fullname,
+            order.code.name
           ),
         }),
       ]);
@@ -116,34 +130,98 @@ export const fillOrder = async (values: orderSchemaType) => {
   return { error: "Unable to process order" };
 };
 
+export const fetchVendorOrderOVerview = async () => {
+  const userSession = await getCurrentUser();
+  if (!userSession?.id) {
+    return { error: "Access Denied" };
+  }
+  const vendor = await database.vendor.findUnique({
+    where: { userId: userSession.id },
+  });
+  if (!vendor) {
+    return { error: "Access Denied" };
+  }
+
+  const [totalOrders, pendingOrders, processingOrders, completedOrders] =
+    await Promise.all([
+      database.order.count({
+        where: {
+          code: {
+            vendorId: vendor.id,
+          },
+        },
+      }),
+      database.order.count({
+        where: {
+          code: {
+            vendorId: vendor.id,
+            status: "PENDING",
+          },
+        },
+      }),
+      database.order.count({
+        where: {
+          code: {
+            vendorId: vendor.id,
+            status: "PROCESSING",
+          },
+        },
+      }),
+      database.order.count({
+        where: {
+          code: {
+            vendorId: vendor.id,
+            status: "COMPLETED",
+          },
+        },
+      }),
+    ]);
+
+  return { totalOrders, pendingOrders, processingOrders, completedOrders };
+};
+
+export const fetchVendorOrders = async () => {
+  const userSession = await getCurrentUser();
+  const vendor = await database.vendor.findUnique({
+    where: { userId: userSession?.id },
+  });
+  if (!vendor?.id) {
+    return [];
+  }
+  const orders = await database.order.findMany({
+    where: {
+      code: {
+        vendorId: vendor.id,
+      },
+    },
+    include: {
+      user: {
+        select: {
+          fullname: true,
+        },
+      },
+    },
+  });
+  return orders;
+};
+
 export const fetchUserOrders = async () => {
   const userSession = await getCurrentUser();
   if (!userSession?.id) {
     return [];
   }
 
-  let vendorId = "";
-  if (userSession.role === "VENDOR") {
-    const vendor = await database.vendor.findUnique({
-      where: {
-        userId: userSession.id,
-      },
-    });
-    if (!vendor) {
-      redirect("/auth/signin");
-    }
-    vendorId = vendor.id;
-  }
-
   const orders = await database.order.findMany({
     where: {
-      ...(userSession.role === "VENDOR"
-        ? {
-            vendorId,
-          }
-        : {
-            userId: userSession.id,
-          }),
+      userId: userSession.id,
+    },
+    include: {
+      code: {
+        select: {
+          value: true,
+          deliveryPeriod: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -179,6 +257,16 @@ export const fetchUserOrderById = async (orderId: string) => {
         : {
             userId: userSession.id,
           }),
+    },
+    include: {
+      code: {
+        select: {
+          name: true,
+          minAmount: true,
+          deliveryPeriod: true,
+          value: true,
+        },
+      },
     },
   });
 
@@ -239,9 +327,13 @@ export const cancelOrder = async (values: orderCancelFormSchemaType) => {
       },
       include: {
         user: true,
-        vendor: {
+        code: {
           include: {
-            User: true,
+            vendor: {
+              include: {
+                User: true,
+              },
+            },
           },
         },
       },
@@ -258,14 +350,14 @@ export const cancelOrder = async (values: orderCancelFormSchemaType) => {
             subject: "Order has been flagged",
             body: compileOrderDelayFlagged(
               order.user?.fullname || "",
-              order.code
+              order.code.value
             ),
           }),
           sendMail({
-            to: order.vendor.User.email,
+            to: order.code.vendor.User.email,
             subject: "Order has been flagged",
             body: compileVendorRequestCancelled(
-              order.vendor.User.fullname,
+              order.code.vendor.User.fullname,
               order.id,
               `${process.env.NEXTAUTH_URL}/orders/${order.id}?delayReason=true`
             ),
@@ -279,16 +371,16 @@ export const cancelOrder = async (values: orderCancelFormSchemaType) => {
             subject: "Order Cancelled",
             body: compileCustomerCancellationCustomer(
               order.user?.fullname || "",
-              order.code
+              order.code.value
             ),
           }),
 
           sendMail({
-            to: order.vendor.User.email,
+            to: order.code.vendor.User.email,
             subject: "Order Cancelled",
             body: compileCustomerCancellationVendor(
-              order.vendor.User.fullname,
-              order.code,
+              order.code.vendor.User.fullname,
+              order.code.value,
               reason || otherReason || "",
               `${process.env.NEXTAUTH_URL}/orders/${order.id}?customerContact=true`
             ),
@@ -338,12 +430,16 @@ export const userOrderConfirmation = async (
         resolved: true,
       },
       include: {
-        vendor: {
-          select: {
-            User: true,
-            id: true,
-            rating: true,
-            reviewCount: true,
+        code: {
+          include: {
+            vendor: {
+              select: {
+                User: true,
+                id: true,
+                rating: true,
+                reviewCount: true,
+              },
+            },
           },
         },
         user: true,
@@ -377,23 +473,23 @@ export const userOrderConfirmation = async (
         rating: sanitizedRating,
         comment,
         userId: userSession.id,
-        vendorId: order.vendorId,
+        vendorId: order.code.vendorId,
       },
       update: {
         rating: sanitizedRating,
         comment,
       },
     });
-    const totalRating = Math.max(order.vendor.rating + ratingDiff, 0);
+    const totalRating = Math.max(order.code.vendor.rating + ratingDiff, 0);
     const reviewCount = Math.max(
-      order.vendor.reviewCount + (existingReview ? 0 : 1),
+      order.code.vendor.reviewCount + (existingReview ? 0 : 1),
       0
     );
     const averageRating = reviewCount > 0 ? totalRating / reviewCount : 0;
     const surveyLink = `${process.env.NEXT_PUBLIC_SITE_URL}/orders/${order.id}?satisfactoryFeedback=true`;
     await database.vendor.update({
       where: {
-        id: order.vendorId,
+        id: order.code.vendorId,
       },
       data: {
         totalRating,
@@ -407,7 +503,7 @@ export const userOrderConfirmation = async (
         subject: "Order Completed",
         body: compileRequestReceived(
           order.user?.fullname || "",
-          order.name,
+          order.code.name,
           `${process.env.NEXTAUTH_URL}/orders/${order.id}`
         ),
       }),
@@ -419,18 +515,21 @@ export const userOrderConfirmation = async (
       }),
 
       sendMail({
-        to: order.vendor.User.email,
+        to: order.code.vendor.User.email,
         subject: "Order Completed",
         body: compileVendorRequestReceived(
-          order.vendor.User.fullname,
-          order.name
+          order.code.vendor.User.fullname,
+          order.code.name
         ),
       }),
 
       sendMail({
-        to: order.vendor.User.email,
+        to: order.code.vendor.User.email,
         subject: "Order Satisfaction",
-        body: compileSatisfactionEmail(order.vendor.User.fullname, surveyLink),
+        body: compileSatisfactionEmail(
+          order.code.vendor.User.fullname,
+          surveyLink
+        ),
       }),
     ]);
     return { success: "Order completed successfully" };
@@ -438,12 +537,16 @@ export const userOrderConfirmation = async (
     const order = await database.order.findUnique({
       where: { id: orderId },
       include: {
-        vendor: {
-          select: {
-            User: true,
-            id: true,
-            rating: true,
-            reviewCount: true,
+        code: {
+          include: {
+            vendor: {
+              select: {
+                User: true,
+                id: true,
+                rating: true,
+                reviewCount: true,
+              },
+            },
           },
         },
         user: true,
@@ -468,10 +571,14 @@ export const userOrderConfirmation = async (
           id: orderId,
         },
         data: {
-          deliveryPeriod: deliveryExtension,
+          code: {
+            update: {
+              deliveryPeriod: deliveryExtension,
+            },
+          },
           orderExtension: {
             create: {
-              previousDeliveryDate: order.deliveryPeriod,
+              previousDeliveryDate: order.code.deliveryPeriod,
               hasBeenContacted: vendorContact === "yes" ? true : false,
             },
           },
@@ -489,10 +596,10 @@ export const userOrderConfirmation = async (
           ),
         }),
         sendMail({
-          to: order.vendor.User.email,
+          to: order.code.vendor.User.email,
           subject: "Order has been extended",
           body: compileCustomerExtensionVendor(
-            order.vendor.User.fullname,
+            order.code.vendor.User.fullname,
             order.user?.fullname || "",
             extensionReason
           ),
@@ -510,10 +617,14 @@ export const userOrderConfirmation = async (
           id: orderId,
         },
         data: {
-          deliveryPeriod: addDays(new Date(), 1),
+          code: {
+            update: {
+              deliveryPeriod: addDays(new Date(), 1),
+            },
+          },
           orderExtension: {
             create: {
-              previousDeliveryDate: order.deliveryPeriod,
+              previousDeliveryDate: order.code.deliveryPeriod,
               hasBeenContacted: vendorContact === "yes" ? true : false,
               hasMadePayment: true,
             },
@@ -527,14 +638,14 @@ export const userOrderConfirmation = async (
           subject: "Order has been flagged",
           body: compileOrderDelayFlagged(
             order.user?.fullname || "",
-            order.code
+            order.code.value
           ),
         }),
         sendMail({
-          to: order.vendor.User.email,
+          to: order.code.vendor.User.email,
           subject: "Order has been flagged",
           body: compileVendorRequestCancelled(
-            order.vendor.User.fullname,
+            order.code.vendor.User.fullname,
             order.id,
             `${process.env.NEXTAUTH_URL}/orders/${order.id}?delayReason=true`
           ),
@@ -567,7 +678,7 @@ export const userOrderConfirmation = async (
         subject: "Order Cancelled",
         body: compileCustomerCancellationCustomer(
           order.user?.fullname || "",
-          order.code
+          order.code.value
         ),
       }),
 
@@ -578,20 +689,23 @@ export const userOrderConfirmation = async (
       }),
 
       sendMail({
-        to: order.vendor.User.email,
+        to: order.code.vendor.User.email,
         subject: "Order Cancelled",
         body: compileCustomerCancellationVendor(
-          order.vendor.User.fullname,
+          order.code.vendor.User.fullname,
           cancellationReason || cancelledReason,
-          order.code,
+          order.code.value,
           `${process.env.NEXTAUTH_URL}/orders/${order.id}?customerContact=true`
         ),
       }),
 
       sendMail({
-        to: order.vendor.User.email,
+        to: order.code.vendor.User.email,
         subject: "Order Satisfaction",
-        body: compileSatisfactionEmail(order.vendor.User.fullname, surveyLink),
+        body: compileSatisfactionEmail(
+          order.code.vendor.User.fullname,
+          surveyLink
+        ),
       }),
     ]);
 
@@ -627,12 +741,16 @@ export const delayOrder = async (values: orderDelayFormSchemaType) => {
     validatedData.data;
 
   const order = await database.order.findUnique({
-    where: { id: orderId, vendorId },
+    where: { id: orderId, code: { vendorId } },
     include: {
       user: true,
-      vendor: {
+      code: {
         include: {
-          User: true,
+          vendor: {
+            include: {
+              User: true,
+            },
+          },
         },
       },
     },
@@ -652,11 +770,15 @@ export const delayOrder = async (values: orderDelayFormSchemaType) => {
         id: orderId,
       },
       data: {
-        deliveryPeriod: deliveryExtension,
+        code: {
+          update: {
+            deliveryPeriod: deliveryExtension,
+          },
+        },
         vendorOrderExtension: {
           create: {
             reason,
-            previousDeliveryDate: order.deliveryPeriod,
+            previousDeliveryDate: order.code.deliveryPeriod,
           },
         },
       },
@@ -668,17 +790,17 @@ export const delayOrder = async (values: orderDelayFormSchemaType) => {
         subject: "Vendor Extension",
         body: compileVendorExtensionCustomer(
           order.user?.fullname || "",
-          order.code,
-          order.vendor.businessName || "",
+          order.code.value,
+          order.code.vendor.businessName || "",
           reason,
           formatDate(deliveryExtension, "PPP")
         ),
       }),
 
       sendMail({
-        to: order.vendor.User.email || "",
+        to: order.code.vendor.User.email || "",
         subject: "Vendor Extension",
-        body: compileVendorExtensionVendor(order.vendor.User.fullname),
+        body: compileVendorExtensionVendor(order.code.vendor.User.fullname),
       }),
     ]);
 
@@ -688,7 +810,9 @@ export const delayOrder = async (values: orderDelayFormSchemaType) => {
     await database.order.update({
       where: {
         id: order.id,
-        vendorId,
+        code: {
+          vendorId,
+        },
       },
       data: {
         status: "CANCELLED",
@@ -719,18 +843,18 @@ export const delayOrder = async (values: orderDelayFormSchemaType) => {
         subject: "Order Cancellation",
         body: compileVendorCancellationCustomer(
           order.user?.fullname || "",
-          order.code,
+          order.code.value,
           `${process.env.NEXTAUTH_URL}/orders/${order.id}?vendorContact=true`
         ),
       }),
 
       sendMail({
-        to: order.vendor.User.email,
+        to: order.code.vendor.User.email,
         subject: "Order Cancellation",
 
         body: compileVendorCancellationVendor(
-          order.vendor.User.fullname,
-          order.code
+          order.code.vendor.User.fullname,
+          order.code.value
         ),
       }),
     ]);
@@ -742,7 +866,9 @@ export const delayOrder = async (values: orderDelayFormSchemaType) => {
   await database.order.update({
     where: {
       id: order.id,
-      vendorId,
+      code: {
+        vendorId,
+      },
     },
     data: {
       status: "CANCELLED",
@@ -760,17 +886,17 @@ export const delayOrder = async (values: orderDelayFormSchemaType) => {
       subject: "Order Cancellation",
       body: compileVendorCancellationCustomer(
         order.user?.fullname || "",
-        order.code,
+        order.code.value,
         `${process.env.NEXTAUTH_URL}/orders/${order.id}?vendorContact=true`
       ),
     }),
 
     sendMail({
-      to: order.vendor.User.email,
+      to: order.code.vendor.User.email,
       subject: "Order Cancellation",
       body: compileVendorCancellationVendor(
-        order.vendor.User.fullname,
-        order.code
+        order.code.vendor.User.fullname,
+        order.code.value
       ),
     }),
   ]);

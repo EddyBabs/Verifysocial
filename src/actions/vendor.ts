@@ -35,7 +35,7 @@ export async function getVendorOverallRatingWithLength(vendorId: string) {
   return { overallRating: overallRating.toFixed(2), totalReviews };
 }
 
-export const getVendorAndOrder = async (
+export const getVendorAndCode = async (
   vendorId: string,
   searchParams: { vendorcode?: string }
 ) => {
@@ -74,24 +74,38 @@ export const getVendorAndOrder = async (
     },
   });
 
-  let order;
+  let code;
 
   if (!vendor) {
     throw new Error("Could not find vendor");
   }
 
   if (searchParams.vendorcode) {
-    order = await database.order.findUnique({
+    code = await database.code.findUnique({
       where: {
-        code_vendorId: {
-          code: searchParams.vendorcode,
+        value_vendorId: {
+          value: searchParams.vendorcode,
           vendorId: vendor.id,
+        },
+      },
+      include: {
+        order: {
+          include: {
+            user: {
+              select: {
+                fullname: true,
+                email: true,
+                gender: true,
+                phone: true,
+              },
+            },
+          },
         },
       },
     });
   }
 
-  return { vendor, order };
+  return { vendor, code };
 };
 
 export const getVendors = async () => {
@@ -127,9 +141,9 @@ export const getVendors = async () => {
 };
 
 export const getSearchedVendors = async (value: string) => {
-  const order = await database.order.findFirst({
+  const code = await database.code.findFirst({
     where: {
-      code: value,
+      value,
     },
     include: {
       vendor: {
@@ -154,8 +168,8 @@ export const getSearchedVendors = async (value: string) => {
       },
     },
   });
-  if (order) {
-    return { order };
+  if (code) {
+    return { code };
   }
   const vendors = await database.vendor.findMany({
     where: {

@@ -33,7 +33,7 @@ import { cn } from "@/lib/utils";
 import { orderSchema } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PaystackPop from "@paystack/inline-js";
-import { Order, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { formatDate } from "date-fns";
 import { CalendarIcon } from "lucide-react";
@@ -54,13 +54,15 @@ const OrderForm = ({
       }>
     | undefined
     | null;
-  order: Order;
+  order: Prisma.OrderGetPayload<{
+    include: { code: { select: { value: true } } };
+  }>;
 }) => {
   const { toast } = useToast();
   const [error, setError] = useState("");
   const router = useRouter();
   const [open, setOpen] = useState(true);
-  const [openDate, setOpenDate] = useState(false);
+
   const popup = new PaystackPop();
 
   const methods = useForm<orderSchemaType>({
@@ -68,7 +70,7 @@ const OrderForm = ({
     defaultValues: {
       name: user?.fullname || "",
       email: user?.email || "",
-      code: order.code,
+      code: order.code.value,
       consent: false,
       value: 0,
     },
@@ -108,7 +110,7 @@ const OrderForm = ({
           setError(session.error);
           router.refresh();
         } else {
-          const result = await popup.resumeTransaction(session.success, config);
+          await popup.resumeTransaction(session.success, config);
         }
       } else {
         console.log({ error });

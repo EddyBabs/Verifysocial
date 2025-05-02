@@ -1,6 +1,6 @@
 "use server";
 import { getCurrentUser } from "@/data/user";
-import { database } from "@/lib/database";
+import { database, Prisma } from "@/lib/database";
 import { generateCode } from "@/lib/utils";
 import { createOrderShema, createOrderShemaType } from "@/schemas";
 import { redirect } from "next/navigation";
@@ -40,14 +40,23 @@ export const vendorGetCodes = async () => {
     redirect("/auth/signin");
   }
 
-  const orders = await database.order.findMany({
+  const codes: Prisma.CodeGetPayload<{
+    include: { order: { select: { id: true } } };
+  }>[] = await database.code.findMany({
     where: { vendorId: vendor.id },
+    include: {
+      order: {
+        select: {
+          id: true,
+        },
+      },
+    },
     orderBy: {
       createdAt: "desc",
     },
     take: 20,
   });
-  return orders;
+  return codes;
 };
 
 export const getNewCode = async (values: createOrderShemaType) => {
@@ -59,8 +68,13 @@ export const getNewCode = async (values: createOrderShemaType) => {
     redirect("/auth/login");
   }
 
-  const fraudCount = await database.order.count({
-    where: { vendorId: vendor.id, fraudulent: true },
+  const fraudCount = await database.code.count({
+    where: {
+      vendorId: vendor.id,
+      order: {
+        fraudulent: true,
+      },
+    },
   });
 
   if (fraudCount >= 3) {
@@ -70,10 +84,10 @@ export const getNewCode = async (values: createOrderShemaType) => {
   }
   const validatedData = createOrderShema.parse(values);
 
-  const order = await database.order.create({
+  const order = await database.code.create({
     data: {
       vendorId: vendor.id,
-      code: generateCode(),
+      value: generateCode(),
       status: "PENDING",
       quantity: validatedData.quantity,
       minAmount: validatedData.amount.min,

@@ -38,7 +38,7 @@ const VendorSearchInput: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({
   const [vendors, setVendors] = useState<VendorDetailsType[]>([]);
   const [focus, setFocus] = useState(false);
   const [order, setOrder] = useState<
-    Prisma.OrderGetPayload<{
+    Prisma.CodeGetPayload<{
       include: {
         vendor: {
           select: {
@@ -60,8 +60,8 @@ const VendorSearchInput: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({
       setOrder(undefined);
       setVendors([]);
       await getSearchedVendors(value).then((response) => {
-        if (response.order) {
-          setOrder(response.order);
+        if (response.code) {
+          setOrder(response.code);
         } else {
           setVendors(response.vendors);
         }
@@ -109,7 +109,7 @@ const VendorSearchInput: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({
             ) : order ? (
               <div className="">
                 <Link
-                  href={`/vendor/${order?.vendorId}?vendorcode=${order?.code}`}
+                  href={`/vendor/${order.vendorId}?vendorcode=${order.value}`}
                 >
                   <div>
                     <VendorAvatar vendor={order.vendor} />

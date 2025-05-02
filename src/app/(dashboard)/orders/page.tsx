@@ -9,13 +9,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { auth } from "@/lib/auth";
 import { currencyFormat } from "@/lib/utils";
 import { formatDate } from "date-fns";
 import Link from "next/link";
 import React from "react";
 import { BsEye } from "react-icons/bs";
+import VendorOrders from "./vendor-order";
 
-const Page = () => {
+const Page = async () => {
+  const session = await auth();
+  if (session?.user.role === "VENDOR") return <VendorOrders />;
   return (
     <div className="container">
       <div>
@@ -46,10 +50,11 @@ async function TransactionTable() {
       <TableBody>
         {orders.map((order) => (
           <TableRow key={order.id}>
-            <TableCell className="font-medium">{order.code}</TableCell>
+            <TableCell className="font-medium">{order.code.value}</TableCell>
             <TableCell>{order.status}</TableCell>
             <TableCell>
-              {order.deliveryPeriod && formatDate(order.deliveryPeriod, "PPP")}
+              {order.code.deliveryPeriod &&
+                formatDate(order.code.deliveryPeriod, "PPP")}
             </TableCell>
             <TableCell className="text-right">
               {currencyFormat(order.amountValue)}

@@ -15,22 +15,26 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { rateOrderShema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Order } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 type rateOrderValueType = z.infer<typeof rateOrderShema>;
 
-const RateVendor = ({ order }: { order: Order }) => {
+const RateVendor = ({
+  code,
+}: {
+  code: Prisma.CodeGetPayload<{ include: { order: { select: { id: true } } } }>;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   const methods = useForm<rateOrderValueType>({
     resolver: zodResolver(rateOrderShema),
     defaultValues: {
-      orderId: order.id,
+      orderId: code.order?.id,
       rating: 0,
     },
   });

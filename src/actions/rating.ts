@@ -1,7 +1,7 @@
 "use server";
 
 import { getCurrentUser } from "@/data/user";
-import { database, Prisma } from "@/lib/database";
+import { database } from "@/lib/database";
 import { rateOrderShema } from "@/schemas";
 import * as z from "zod";
 
@@ -19,7 +19,7 @@ export const reviewOrder = async (values: rateOrderValueType) => {
   const validatedData = await validateFields.data;
   const order = await database.order.findUnique({
     where: { id: validatedData.orderId },
-    include: { vendor: true },
+    include: { code: { include: { vendor: true } } },
   });
   if (!order) {
     return { error: "Invalid Order" };
@@ -49,7 +49,7 @@ export const reviewOrder = async (values: rateOrderValueType) => {
       rating: validatedData.rating,
       comment: validatedData.comment,
       userId: userSession.id,
-      vendorId: order.vendorId,
+      vendorId: order.code.vendorId,
     },
     update: {
       rating: validatedData.rating,
@@ -57,13 +57,13 @@ export const reviewOrder = async (values: rateOrderValueType) => {
     },
   });
 
-  const totalRating = order.vendor.rating + ratingDiff;
-  const reviewCount = order.vendor.reviewCount + (existingReview ? 0 : 1);
+  const totalRating = order.code.vendor.rating + ratingDiff;
+  const reviewCount = order.code.vendor.reviewCount + (existingReview ? 0 : 1);
   const averageRating = reviewCount > 0 ? totalRating / reviewCount : 0;
 
   await database.vendor.update({
     where: {
-      id: order.vendorId,
+      id: order.code.vendorId,
     },
     data: {
       totalRating,

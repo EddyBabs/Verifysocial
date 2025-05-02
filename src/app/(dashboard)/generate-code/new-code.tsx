@@ -37,7 +37,7 @@ import { toast } from "@/hooks/use-toast";
 import { cn, currencyFormat } from "@/lib/utils";
 import { createOrderShema, createOrderShemaType } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Order } from "@prisma/client";
+import { Code } from "@prisma/client";
 import { formatDate } from "date-fns";
 import { CalendarIcon, Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -58,7 +58,7 @@ const AMOUNT_RANGES = [
 const NewCode = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [codeCreated, setCodeCreated] = useState<Order | null>(null);
+  const [codeCreated, setCodeCreated] = useState<Code | null>(null);
   const form = useForm<createOrderShemaType>({
     resolver: zodResolver(createOrderShema),
     defaultValues: {
@@ -105,7 +105,7 @@ const NewCode = () => {
 
       <DialogContent className="sm:max-w-[425px]">
         {codeCreated ? (
-          <ViewCodeSection order={codeCreated} />
+          <ViewCodeSection code={codeCreated} />
         ) : (
           <Form {...form}>
             <form noValidate onSubmit={handleSubmit(onSubmit)}>

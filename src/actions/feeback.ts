@@ -26,7 +26,7 @@ export const vendorCustomerFeedback = async (
   const { resolved, orderId, customerPayment } = validatedField.data;
   const order = await database.order.findUnique({
     where: { id: orderId },
-    include: { user: true },
+    include: { user: true, code: { select: { value: true } } },
   });
   if (!order) {
     return { error: "Could not find order" };
@@ -46,7 +46,7 @@ export const vendorCustomerFeedback = async (
       subject: "Order Resolved",
       body: compileVendorPaymentReversalCustomer(
         order.user?.fullname || "",
-        order.code
+        order.code.value
       ),
     });
     return { success: "Order has been resolved" };

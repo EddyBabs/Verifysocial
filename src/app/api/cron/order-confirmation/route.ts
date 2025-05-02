@@ -15,8 +15,10 @@ export async function GET(req: Request) {
     await verifyVercelSignature(req);
     const orders = await database.order.findMany({
       where: {
-        deliveryPeriod: {
-          lte: new Date(),
+        code: {
+          deliveryPeriod: {
+            lte: new Date(),
+          },
         },
         status: "PROCESSING",
       },
@@ -27,12 +29,16 @@ export async function GET(req: Request) {
             email: true,
           },
         },
-        vendor: {
-          select: {
-            User: {
+        code: {
+          include: {
+            vendor: {
               select: {
-                email: true,
-                fullname: true,
+                User: {
+                  select: {
+                    email: true,
+                    fullname: true,
+                  },
+                },
               },
             },
           },
@@ -52,11 +58,11 @@ export async function GET(req: Request) {
         });
 
         await sendMail({
-          to: order.vendor.User.email,
+          to: order.code.vendor.User.email,
           subject: "Order Pending delivery - Action required",
           body: compileVendorOrderDeliveryConfirmation(
-            order.vendor.User.fullname,
-            order.code,
+            order.code.vendor.User.fullname,
+            order.code.value,
             `${process.env.NEXTAUTH_URL}/orders/${order.id}?delayReason=true`
           ),
         });

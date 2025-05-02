@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { ExtendedUser } from "@/types";
 import PaystackPop from "@paystack/inline-js";
-import { Order, OrderStatus } from "@prisma/client";
+import { OrderStatus, Prisma } from "@prisma/client";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
@@ -14,7 +14,9 @@ const OrderPayment = ({
   order,
   user,
 }: {
-  order: Order;
+  order: Prisma.OrderGetPayload<{
+    include: { code: { select: { value: true } } };
+  }>;
   user: ExtendedUser | undefined;
 }) => {
   const popup = new PaystackPop();
@@ -43,7 +45,7 @@ const OrderPayment = ({
   };
   const handleMakePayment = () => {
     startTransition(async () => {
-      const session = await createChargeSession(order.code);
+      const session = await createChargeSession(order.code.value);
       if (session.error) {
         toast({ description: session.error, variant: "destructive" });
       } else {

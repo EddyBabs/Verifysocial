@@ -17,3 +17,9 @@ declare module "next-auth" {
     user: ExtendedUser;
   }
 }
+
+export type Bank = {
+  code: string;
+  slug: string;
+  name: string;
+};

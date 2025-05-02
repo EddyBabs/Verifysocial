@@ -2,12 +2,72 @@
 
 import { getCurrentUser } from "@/data/user";
 import { database } from "@/lib/database";
+import { Bank } from "@/types";
 import { Prisma } from "@prisma/client";
 import axios from "axios";
 
 const secret = process.env.PAYSTACK_SECRET_KEY;
 
 const BASE_URL = "https://api.paystack.co/transaction";
+
+export const getBanks = async () => {
+  try {
+    const response = await axios.get("https://api.paystack.co/bank", {
+      headers: {
+        Authorization: `Bearer ${secret}`,
+      },
+    });
+    const data = response.data;
+    if (data.status && data.data.length) {
+      return {
+        success: data.data.map(
+          (bank: { name: string; code: string; slug: string }) => ({
+            name: bank.name,
+            code: bank.code,
+            slug: bank.slug,
+          })
+        ),
+      };
+    }
+    return { error: "Unable to fetch banks at the moment" };
+  } catch (error) {
+    // if (axios.isAxiosError(error)) {
+    //   console.dir(error.response?.data, { depth: null });
+    //   return { error: error.response?.data };
+    // }
+    // console.dir(error, { depth: null });
+    return { error: "Unable to fetch banks at the moment" };
+  }
+};
+
+export const getAccountName = async (bank: Bank, account: string) => {
+  try {
+    const response = await axios.get("https://api.paystack.co/bank/resolve", {
+      params: {
+        account_number: account,
+        bank_code: bank.code,
+      },
+      headers: {
+        Authorization: `Bearer ${secret}`,
+      },
+    });
+    const data = await response.data;
+
+    if (data.status) {
+      return {
+        success: data.data.account_name,
+      };
+    }
+    return { error: "Unable to fetch account name" };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      // console.dir(error.response?.data, { depth: null });
+      //   return { error: error.response?.data };
+    }
+
+    return { error: "Unable to fetch account name" };
+  }
+};
 
 export const createChargeSession = async (code: string) => {
   const userSession = await getCurrentUser();

@@ -1,7 +1,14 @@
 "use client";
-import { facebookLogin, instagramLogin } from "@/actions/instagram";
+import { instagramLogin } from "@/actions/instagram";
 import { updateSetting } from "@/actions/setting";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -94,184 +101,198 @@ const SettingForm: React.FC<SettingFormProps> = ({ user }) => {
 
   const DEVELOPMENT = true;
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div>
-          <div>
-            <h4 className="font-semibold text-lg">Your Profile</h4>
-            <h6>Please update your profile settings here</h6>
-          </div>
-          <div className="mt-12">
-            <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
-              <div className="">
-                <Label>Full Name</Label>
-                <Input
-                  placeholder=""
-                  {...form.register("fullname")}
-                  error={form.formState.errors.fullname?.message}
-                />
-              </div>
-
-              <div className="">
-                <Label>Phone</Label>
-                <Input
-                  placeholder=""
-                  {...form.register("phone")}
-                  error={form.formState.errors.phone?.message}
-                />
-              </div>
-
-              <div>
-                <Label>Gender</Label>
-                <Select
-                  value={form.watch(`gender`)}
-                  onValueChange={(value) => form.setValue(`gender`, value)}
-                >
-                  <SelectTrigger className="py-5">
-                    <SelectValue placeholder="Gender" />{" "}
-                  </SelectTrigger>
-                  <SelectContent>
-                    {["Male", "Female"].map((gender) => (
-                      <SelectItem value={gender.toLowerCase()} key={gender}>
-                        {gender}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {user.role === "VENDOR" && (
-                <>
+    <Card>
+      <CardHeader>
+        <CardTitle>Profile Information</CardTitle>
+        <CardDescription>
+          Update your account profile information and public details
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div>
+              <div className="mt-4">
+                <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                   <div className="">
-                    <div className="col-span-1 mb-2 sm:mb-0">
-                      <h4>Categories</h4>
-                    </div>
-                    <MultiSelect
-                      options={categories}
-                      value={form.watch("categories")}
-                      defaultValue={form.getValues("categories")}
-                      onValueChange={handleSelectCategories}
-                      className="col-span-1 sm:col-span-2 lg:col-span-3"
-                      maxCount={5}
+                    <Label>Full Name</Label>
+                    <Input
+                      placeholder=""
+                      {...form.register("fullname")}
+                      error={form.formState.errors.fullname?.message}
                     />
                   </div>
 
-                  {fields.map((field, index) => (
-                    <>
-                      <div className="col-span-1">
-                        <Label>Select social platform</Label>
+                  <div className="">
+                    <Label>Phone</Label>
+                    <Input
+                      placeholder=""
+                      {...form.register("phone")}
+                      error={form.formState.errors.phone?.message}
+                    />
+                  </div>
 
-                        <Select
-                          value={form.watch(`socialPlatform.${index}.platform`)}
-                          onValueChange={(value) =>
-                            form.setValue(
-                              `socialPlatform.${index}.platform`,
-                              value
-                            )
-                          }
-                        >
-                          <SelectTrigger className="py-5">
-                            <SelectValue />{" "}
-                          </SelectTrigger>
-                          <SelectContent>
-                            {PLATFORMS.filter((platform) => {
-                              // Ensure the platform is not in the fields array or matches the currently selected value
-                              const isAlreadySelected = fields.some(
-                                (field) => field.platform === platform.value
-                              );
-                              const isCurrentlySelected =
-                                field.platform === platform.value; // Replace 'selectedPlatform' with your actual state or logic for the current selection
-                              return !isAlreadySelected || isCurrentlySelected;
-                            }).map((platform) => (
-                              <SelectItem
-                                value={platform.value}
-                                key={platform.value}
-                                disabled={platform?.disabled}
-                              >
-                                {platform.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                  <div>
+                    <Label>Gender</Label>
+                    <Select
+                      value={form.watch(`gender`)}
+                      onValueChange={(value) => form.setValue(`gender`, value)}
+                    >
+                      <SelectTrigger className="py-5">
+                        <SelectValue placeholder="Gender" />{" "}
+                      </SelectTrigger>
+                      <SelectContent>
+                        {["Male", "Female"].map((gender) => (
+                          <SelectItem value={gender.toLowerCase()} key={gender}>
+                            {gender}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {user.role === "VENDOR" && (
+                    <>
+                      <div className="">
+                        <div className="col-span-1 mb-2 sm:mb-0">
+                          <h4>Categories</h4>
+                        </div>
+                        <MultiSelect
+                          options={categories}
+                          value={form.watch("categories")}
+                          defaultValue={form.getValues("categories")}
+                          onValueChange={handleSelectCategories}
+                          className="col-span-1 sm:col-span-2 lg:col-span-3"
+                          maxCount={5}
+                        />
                       </div>
 
-                      <div
-                        className={cn(
-                          "h-full items-center w-full col-span-1 gap-4",
-                          { "flex ": !DEVELOPMENT }
-                        )}
-                      >
-                        {DEVELOPMENT ? (
-                          <>
-                            <Input
-                              inputClassName=""
-                              className="self-start md:mt-[24px] w-full min-w-32 max-w-44 flex-1"
-                              placeholder="Insert profile name here"
-                              {...form.register(
-                                `socialPlatform.${index}.username`
+                      {fields.map((field, index) => (
+                        <>
+                          <div className="col-span-1">
+                            <Label>Select social platform</Label>
+
+                            <Select
+                              value={form.watch(
+                                `socialPlatform.${index}.platform`
                               )}
-                            />
-                          </>
-                        ) : (
-                          <>
-                            <Button
-                              type="button"
-                              className={cn(
-                                "md:mt-[26px]",
-                                form.watch(
-                                  `socialPlatform.${index}.username`
-                                ) && "bg-destructive"
-                              )}
-                              disabled={
-                                !!form.watch(
-                                  `socialPlatform.${index}.username`
-                                ) || isPending
+                              onValueChange={(value) =>
+                                form.setValue(
+                                  `socialPlatform.${index}.platform`,
+                                  value
+                                )
                               }
                             >
-                              {form.watch(`socialPlatform.${index}.username`)
-                                ? "Linked: " +
-                                  form.watch(`socialPlatform.${index}.username`)
-                                : "Link"}
-                            </Button>
-                          </>
-                        )}
-                        {index > 0 && (
-                          <Button
-                            type="button"
-                            variant={"destructive"}
-                            className="self-start md:mt-[27px]"
-                            onClick={() => remove(index)}
+                              <SelectTrigger className="py-5">
+                                <SelectValue />{" "}
+                              </SelectTrigger>
+                              <SelectContent>
+                                {PLATFORMS.filter((platform) => {
+                                  // Ensure the platform is not in the fields array or matches the currently selected value
+                                  const isAlreadySelected = fields.some(
+                                    (field) => field.platform === platform.value
+                                  );
+                                  const isCurrentlySelected =
+                                    field.platform === platform.value; // Replace 'selectedPlatform' with your actual state or logic for the current selection
+                                  return (
+                                    !isAlreadySelected || isCurrentlySelected
+                                  );
+                                }).map((platform) => (
+                                  <SelectItem
+                                    value={platform.value}
+                                    key={platform.value}
+                                    disabled={platform?.disabled}
+                                  >
+                                    {platform.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div
+                            className={cn(
+                              "h-full items-center w-full col-span-1 gap-4",
+                              { "flex ": !DEVELOPMENT }
+                            )}
                           >
-                            Remove
-                          </Button>
-                        )}
-                      </div>
+                            {DEVELOPMENT ? (
+                              <>
+                                <Input
+                                  inputClassName=""
+                                  className="self-start md:mt-[24px] w-full min-w-32 max-w-44 flex-1"
+                                  placeholder="Insert profile name here"
+                                  {...form.register(
+                                    `socialPlatform.${index}.username`
+                                  )}
+                                />
+                              </>
+                            ) : (
+                              <>
+                                <Button
+                                  type="button"
+                                  className={cn(
+                                    "md:mt-[26px]",
+                                    form.watch(
+                                      `socialPlatform.${index}.username`
+                                    ) && "bg-destructive"
+                                  )}
+                                  disabled={
+                                    !!form.watch(
+                                      `socialPlatform.${index}.username`
+                                    ) || isPending
+                                  }
+                                >
+                                  {form.watch(
+                                    `socialPlatform.${index}.username`
+                                  )
+                                    ? "Linked: " +
+                                      form.watch(
+                                        `socialPlatform.${index}.username`
+                                      )
+                                    : "Link"}
+                                </Button>
+                              </>
+                            )}
+                            {index > 0 && (
+                              <Button
+                                type="button"
+                                variant={"destructive"}
+                                className="self-start md:mt-[27px]"
+                                onClick={() => remove(index)}
+                              >
+                                Remove
+                              </Button>
+                            )}
+                          </div>
+                        </>
+                      ))}
                     </>
-                  ))}
-                </>
-              )}
-              <div className="col-span-1 md:col-span-2">
-                <Button
-                  type="button"
-                  onClick={() => append({ platform: "", username: "" })}
-                  disabled={fields.length >= PLATFORMS.length}
-                >
-                  Add New Social Profile
+                  )}
+                  <div className="col-span-1 md:col-span-2">
+                    <Button
+                      type="button"
+                      onClick={() => append({ platform: "", username: "" })}
+                      disabled={fields.length >= PLATFORMS.length}
+                    >
+                      Add New Social Profile
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <div className="text-right mt-8">
+                <Button disabled={form.formState.isSubmitting}>
+                  Update{" "}
+                  {form.formState.isSubmitting && (
+                    <Loader2 className="ml-2 animate-spin" />
+                  )}
                 </Button>
               </div>
             </div>
-          </div>
-          <div className="text-right mt-8">
-            <Button disabled={form.formState.isSubmitting}>
-              Update{" "}
-              {form.formState.isSubmitting && (
-                <Loader2 className="ml-2 animate-spin" />
-              )}
-            </Button>
-          </div>
-        </div>
-      </form>
-    </Form>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 };
 

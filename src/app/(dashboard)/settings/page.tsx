@@ -1,7 +1,11 @@
-import { getCurrentUserDetails } from "@/data/user";
-import SettingForm from "./setting-form";
-import { redirect } from "next/navigation";
 import InstagramCallback from "@/components/instagram-callback";
+import { AccountNumberForm } from "@/components/settings/account-number-form";
+import { SecurityForm } from "@/components/settings/security-form";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getCurrentUserDetails } from "@/data/user";
+import { CreditCard, Lock, User } from "lucide-react";
+import { redirect } from "next/navigation";
+import SettingForm from "./setting-form";
 
 const Settings = async () => {
   const { user } = await getCurrentUserDetails();
@@ -14,7 +18,32 @@ const Settings = async () => {
       <div>
         <h3 className="text-3xl font-semibold">Settings</h3>
       </div>
-      <SettingForm user={user} />
+      <Tabs defaultValue="account" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 md:w-[400px]">
+          <TabsTrigger value="account">
+            <User className="mr-2 h-4 w-4" />
+            Profile
+          </TabsTrigger>
+          <TabsTrigger value="payment">
+            <CreditCard className="mr-2 h-4 w-4" />
+            Payment
+          </TabsTrigger>
+          <TabsTrigger value="security">
+            <Lock className="mr-2 h-4 w-4" />
+            Security
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="account" className="mt-6">
+          {/* <ProfileForm /> */}
+          <SettingForm user={user} />
+        </TabsContent>
+        <TabsContent value="payment" className="mt-6">
+          <AccountNumberForm />
+        </TabsContent>
+        <TabsContent value="security" className="mt-6">
+          <SecurityForm />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

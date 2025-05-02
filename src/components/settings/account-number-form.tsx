@@ -222,7 +222,7 @@ export function AccountNumberForm() {
                             <Input
                               className="pl-9"
                               placeholder="Enter your account number"
-                              type="password"
+                              type="text"
                               {...field}
                             />
                           </div>

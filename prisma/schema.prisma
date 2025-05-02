@@ -104,28 +104,40 @@ enum Tier {
   TIER3
 }
 
+model PaymentInformation {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  accountNumber String
+  accountName   String
+  bankName      String
+  bankCode      String
+  bankSlug      String
+  vendorId      String @unique @db.ObjectId
+  Vendor        Vendor @relation(references: [id], fields: [vendorId])
+}
+
 model Vendor {
-  id               String                 @id @default(auto()) @map("_id") @db.ObjectId
-  userId           String                 @unique @db.ObjectId
-  User             User                   @relation(fields: [userId], references: [id])
-  businessName     String?
-  businessAbout    String?
-  socialPlatform   VendorSocialPlatform[]
-  tier             Tier?
-  credentials      KYCCredential[]
-  Product          Product[]
-  Review           Review[]
-  codes            Code[]
-  socialAccount    socialAccount[]
-  categories       String[]
-  availableBalance Float                  @default(0)
-  pendingBalance   Float                  @default(0)
-  totalBalance     Float                  @default(0)
-  totalRating      Int                    @default(0)
-  reviewCount      Int                    @default(0)
-  rating           Float                  @default(0) // Stores the average rating
-  createdAt        DateTime               @default(now()) @map("created_at")
-  updatedAt        DateTime               @updatedAt @map("updated_at")
+  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
+  userId             String                 @unique @db.ObjectId
+  User               User                   @relation(fields: [userId], references: [id])
+  businessName       String?
+  businessAbout      String?
+  socialPlatform     VendorSocialPlatform[]
+  tier               Tier?
+  credentials        KYCCredential[]
+  Product            Product[]
+  Review             Review[]
+  codes              Code[]
+  socialAccount      socialAccount[]
+  categories         String[]
+  paymentInformation PaymentInformation?
+  availableBalance   Float                  @default(0)
+  pendingBalance     Float                  @default(0)
+  totalBalance       Float                  @default(0)
+  totalRating        Int                    @default(0)
+  reviewCount        Int                    @default(0)
+  rating             Float                  @default(0) // Stores the average rating
+  createdAt          DateTime               @default(now()) @map("created_at")
+  updatedAt          DateTime               @updatedAt @map("updated_at")
 }
 
 enum OrderStatus {

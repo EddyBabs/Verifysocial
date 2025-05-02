@@ -71,6 +71,8 @@ model Transaction {
   amount    Float
   channel   String?
   currency  String
+  orderId   String            @unique @db.ObjectId
+  order     Order             @relation(references: [id], fields: [orderId])
   status    TransactionStatus @default(PENDING)
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
@@ -198,6 +200,7 @@ model Order {
   vendorOrderExtension vendorOrderExtension[]
   customerSatisfaction SatisFactionData?
   vendorSatisfaction   SatisFactionData?
+  transaction          Transaction?
 
   // Fraudulent Fields
   fraudulent     Boolean   @default(false) // Flag for fraud

@@ -6,6 +6,7 @@ import { getCurrentUserDetails } from "@/data/user";
 import { CreditCard, Lock, User } from "lucide-react";
 import { redirect } from "next/navigation";
 import SettingForm from "./setting-form";
+import { cn } from "@/lib/utils";
 
 const Settings = async () => {
   const { user } = await getCurrentUserDetails();
@@ -19,15 +20,22 @@ const Settings = async () => {
         <h3 className="text-3xl font-semibold">Settings</h3>
       </div>
       <Tabs defaultValue="account" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 md:w-[400px]">
+        <TabsList
+          className={cn("grid w-full grid-cols-2 md:w-[300px]", {
+            "md:w-[400px] grid-cols-3": user.role === "VENDOR",
+          })}
+        >
           <TabsTrigger value="account">
             <User className="mr-2 h-4 w-4" />
             Profile
           </TabsTrigger>
-          <TabsTrigger value="payment">
-            <CreditCard className="mr-2 h-4 w-4" />
-            Payment
-          </TabsTrigger>
+
+          {user.role === "VENDOR" && (
+            <TabsTrigger value="payment">
+              <CreditCard className="mr-2 h-4 w-4" />
+              Payment
+            </TabsTrigger>
+          )}
           <TabsTrigger value="security">
             <Lock className="mr-2 h-4 w-4" />
             Security
@@ -37,9 +45,11 @@ const Settings = async () => {
           {/* <ProfileForm /> */}
           <SettingForm user={user} />
         </TabsContent>
-        <TabsContent value="payment" className="mt-6">
-          <AccountNumberForm />
-        </TabsContent>
+        {user.role === "VENDOR" && (
+          <TabsContent value="payment" className="mt-6">
+            <AccountNumberForm />
+          </TabsContent>
+        )}
         <TabsContent value="security" className="mt-6">
           <SecurityForm />
         </TabsContent>

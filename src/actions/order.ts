@@ -252,19 +252,27 @@ export const fetchUserOrderById = async (orderId: string) => {
       id: orderId,
       ...(userSession.role === "VENDOR"
         ? {
-            vendorId,
+            code: {
+              vendorId,
+            },
           }
         : {
             userId: userSession.id,
           }),
     },
     include: {
+      user: {
+        select: {
+          fullname: true,
+        },
+      },
       code: {
         select: {
           name: true,
           minAmount: true,
           deliveryPeriod: true,
           value: true,
+          quantity: true,
         },
       },
     },

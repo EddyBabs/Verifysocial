@@ -196,6 +196,7 @@ export const verifyTransaction = async (trxRef: string) => {
         data: {
           reference: trxRef,
           userId: user.id,
+          orderId: order.id,
           currency: paystackResponse.currency,
           amount: paystackResponse.amount / 100,
           channel: paystackResponse.channel,

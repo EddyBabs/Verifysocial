@@ -14,6 +14,7 @@ import {
 import { cn, currencyFormat } from "@/lib/utils";
 import { OrderStatus } from "@prisma/client";
 import { formatDate } from "date-fns";
+import Link from "next/link";
 import { SlRefresh } from "react-icons/sl";
 import { TiCancel } from "react-icons/ti";
 
@@ -78,8 +79,12 @@ const VendorOrderTable = async () => {
               </Badge>
             </TableCell>
             <TableCell className="text-right">
-              <Button variant="ghost" size="sm">
+              {/* <Button variant="ghost" size="sm">
                 Mark as Delivered
+              </Button> */}
+
+              <Button variant="ghost" size="sm" asChild>
+                <Link href={`/orders/${order.id}`}>View Details</Link>
               </Button>
             </TableCell>
           </TableRow>

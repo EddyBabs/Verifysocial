@@ -11,8 +11,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { BsInstagram } from "react-icons/bs";
 import { FaFacebookSquare } from "react-icons/fa";
-import OrderForm from "./order-form";
 const VendorReviews = dynamic(() => import("./vendor-reviews"));
+
+const OrderPaymentForm = dynamic(
+  () => import("@/components/orders/order-payment-form")
+);
 
 const VendorId = async ({
   params,
@@ -141,9 +144,7 @@ const VendorId = async ({
           size={size}
         />
       </div>
-      {code?.order && code.order.status === "PENDING" && !code.order.userId && (
-        <OrderForm user={user} order={code.order as any} />
-      )}
+      <OrderPaymentForm user={user} code={code} />
     </div>
   );
 };

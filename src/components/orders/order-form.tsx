@@ -1,6 +1,5 @@
 "use client";
 import { fillOrder } from "@/actions/order";
-import { createChargeSession, verifyTransaction } from "@/actions/paystack";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -32,8 +31,8 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { orderSchema } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import PaystackPop from "@paystack/inline-js";
-import { Prisma } from "@prisma/client";
+
+import { Code, Prisma } from "@prisma/client";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { formatDate } from "date-fns";
 import { CalendarIcon } from "lucide-react";
@@ -46,7 +45,8 @@ type orderSchemaType = z.infer<typeof orderSchema>;
 
 const OrderForm = ({
   user,
-  order,
+  code,
+  handlePayment,
 }: {
   user:
     | Prisma.UserGetPayload<{
@@ -54,64 +54,38 @@ const OrderForm = ({
       }>
     | undefined
     | null;
-  order: Prisma.OrderGetPayload<{
-    include: { code: { select: { value: true } } };
-  }>;
+  code: Code;
+  handlePayment: (code: string) => Promise<void>;
 }) => {
-  const { toast } = useToast();
   const [error, setError] = useState("");
-  const router = useRouter();
   const [open, setOpen] = useState(true);
-
-  const popup = new PaystackPop();
 
   const methods = useForm<orderSchemaType>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
       name: user?.fullname || "",
       email: user?.email || "",
-      code: order.code.value,
+      code: code.value,
       consent: false,
       value: 0,
     },
   });
 
-  const config = {
-    onClose: function () {
-      alert("Window closed.");
-    },
-    callback: function (response: { reference: string }) {
-      const message = "Payment complete! Reference: " + response.reference;
-      alert(message);
-    },
-    onSuccess: async function (response: { trxref: string }) {
-      const serverResponse = await verifyTransaction(response.trxref);
-      if (serverResponse.error) {
-        toast({ description: serverResponse.error, variant: "destructive" });
-      } else {
-        toast({ description: serverResponse.success });
-      }
-      router.refresh();
-      setOpen(false);
-    },
-    onCancel: function () {
-      alert("Cancelled");
-    },
-  };
-
   const onSubmit = async (values: orderSchemaType) => {
     setError("");
     await fillOrder(values).then(async (response) => {
       if (response.success) {
-        console.log("Creating Session");
-        const session = await createChargeSession(values.code);
+        handlePayment(values.code);
+        setOpen(false);
+        // const session = await createChargeSession(values.code);
 
-        if (session.error) {
-          setError(session.error);
-          router.refresh();
-        } else {
-          await popup.resumeTransaction(session.success, config);
-        }
+        // if (session.error) {
+        //   setError(session.error);
+        //   router.refresh();
+        // } else {
+        //   setOpen(false);
+
+        // }
       } else {
         console.log({ error });
         setError(response.error!);

@@ -22,6 +22,7 @@ export const login = async (values: z.infer<typeof signInSchema>) => {
     return { unverified: true };
   }
 
+  console.log("Signing in");
   try {
     await signIn("credentials", {
       email,
@@ -29,7 +30,9 @@ export const login = async (values: z.infer<typeof signInSchema>) => {
       redirectTo: "/",
     });
   } catch (error) {
+    console.log({ error });
     if (error instanceof AuthError) {
+      console.log("It is an Instance");
       switch (error.type) {
         case "CredentialsSignin": {
           return { error: "Invalid Credentials" };

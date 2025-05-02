@@ -3,14 +3,12 @@ import {
   CheckCircle2,
   Clock,
   Download,
-  MapPin,
-  Phone,
   Truck,
   User,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
+import { fetchUserOrderById } from "@/actions/order";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,68 +28,79 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { currencyFormat } from "@/lib/utils";
+import { User as UserType } from "next-auth";
+import OrderCustomerSatisfaction from "./order-customer-satisfaction";
+import OrderVendorCustomerContact from "./order-vendor-customer-contact";
+import { formatDate } from "date-fns";
 
 // This would normally come from a database
-const getOrderData = (id: string) => {
-  return {
-    id: id,
-    customer: {
-      name: "John Smith",
-      email: "john.smith@example.com",
-      phone: "+1 (555) 123-4567",
-      address: "123 Main St, Anytown, CA 12345",
-    },
-    date: "May 1, 2025",
-    status: "pending",
-    total: "$350.00",
-    subtotal: "$320.00",
-    shipping: "$30.00",
-    tax: "$0.00",
-    items: [
-      {
-        id: "1",
-        name: "Premium Headphones",
-        price: "$120.00",
-        quantity: 1,
-        image: "/placeholder.svg",
-      },
-      {
-        id: "2",
-        name: "Wireless Keyboard",
-        price: "$80.00",
-        quantity: 1,
-        image: "/placeholder.svg",
-      },
-      {
-        id: "3",
-        name: "Smart Watch",
-        price: "$120.00",
-        quantity: 1,
-        image: "/placeholder.svg",
-      },
-    ],
-    timeline: [
-      {
-        date: "May 1, 2025 - 10:30 AM",
-        status: "Order Placed",
-        description: "Order was placed by customer",
-      },
-      {
-        date: "May 1, 2025 - 11:45 AM",
-        status: "Payment Confirmed",
-        description: "Payment was confirmed and funds are pending delivery",
-      },
-    ],
-  };
-};
+// const getOrderData = (id: string) => {
+//   return {
+//     id: id,
+//     customer: {
+//       name: "John Smith",
+//       email: "john.smith@example.com",
+//       phone: "+1 (555) 123-4567",
+//       address: "123 Main St, Anytown, CA 12345",
+//     },
+//     date: "May 1, 2025",
+//     status: "pending",
+//     total: "$350.00",
+//     subtotal: "$320.00",
+//     shipping: "$30.00",
+//     tax: "$0.00",
+//     items: [
+//       {
+//         id: "1",
+//         name: "Premium Headphones",
+//         price: "$120.00",
+//         quantity: 1,
+//         image: "/placeholder.svg",
+//       },
+//       {
+//         id: "2",
+//         name: "Wireless Keyboard",
+//         price: "$80.00",
+//         quantity: 1,
+//         image: "/placeholder.svg",
+//       },
+//       {
+//         id: "3",
+//         name: "Smart Watch",
+//         price: "$120.00",
+//         quantity: 1,
+//         image: "/placeholder.svg",
+//       },
+//     ],
+//     timeline: [
+//       {
+//         date: "May 1, 2025 - 10:30 AM",
+//         status: "Order Placed",
+//         description: "Order was placed by customer",
+//       },
+//       {
+//         date: "May 1, 2025 - 11:45 AM",
+//         status: "Payment Confirmed",
+//         description: "Payment was confirmed and funds are pending delivery",
+//       },
+//     ],
+//   };
+// };
 
 export default async function VendorOrderPage({
   params,
+  user,
 }: {
   params: Promise<{ orderId: string }>;
+  user: UserType & {
+    role: "USER" | "ADMIN" | "VENDOR";
+    fullname: string;
+  };
 }) {
   const { orderId } = await params;
-  const order = getOrderData(orderId);
+  // const order = getOrderData(orderId);
+  const order = await fetchUserOrderById(orderId);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -159,7 +168,7 @@ export default async function VendorOrderPage({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[80px]">Image</TableHead>
+                    {/* <TableHead className="w-[80px]">Image</TableHead> */}
                     <TableHead>Product</TableHead>
                     <TableHead>Price</TableHead>
                     <TableHead>Quantity</TableHead>
@@ -167,7 +176,7 @@ export default async function VendorOrderPage({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {order.items.map((item) => (
+                  {/* {order.items.map((item) => (
                     <TableRow key={item.id}>
                       <TableCell>
                         <Image
@@ -183,7 +192,26 @@ export default async function VendorOrderPage({
                       <TableCell>{item.quantity}</TableCell>
                       <TableCell className="text-right">{item.price}</TableCell>
                     </TableRow>
-                  ))}
+                  ))} */}
+                  <TableRow>
+                    {/* <TableCell>
+                        <Image
+                          src={item.image || "/placeholder.svg"}
+                          alt={item.name}
+                          width={50}
+                          height={50}
+                          className="rounded-md object-cover"
+                        />
+                      </TableCell> */}
+                    <TableCell className="font-medium">
+                      {order.code.name}
+                    </TableCell>
+                    <TableCell>{currencyFormat(order.amountValue)}</TableCell>
+                    <TableCell>{order.code.quantity}</TableCell>
+                    <TableCell className="text-right">
+                      {currencyFormat(order.amountValue * order.code.quantity)}
+                    </TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </CardContent>
@@ -198,37 +226,62 @@ export default async function VendorOrderPage({
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {order.timeline.map((event, index) => (
-                  <div key={index} className="flex gap-4">
+                <div className="flex gap-4">
+                  <div className="relative flex h-full w-6 items-center justify-center">
+                    <div className="absolute h-full w-px bg-muted-foreground/20" />
+                    <div className="relative z-10 h-2 w-2 rounded-full bg-primary" />
+                  </div>
+                  <div className="flex-1 pb-4">
+                    <p className="text-sm text-muted-foreground">
+                      {formatDate(order.createdAt, "PPP")}
+                    </p>
+                    <h4 className="font-medium"> Order Placed</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Order was placed by customer
+                    </p>
+                  </div>
+                </div>
+                {order.paymentStatus === "SUCCESS" && (
+                  <div className="flex gap-4">
                     <div className="relative flex h-full w-6 items-center justify-center">
                       <div className="absolute h-full w-px bg-muted-foreground/20" />
                       <div className="relative z-10 h-2 w-2 rounded-full bg-primary" />
                     </div>
                     <div className="flex-1 pb-4">
                       <p className="text-sm text-muted-foreground">
-                        {event.date}
+                        {formatDate(order.createdAt, "PPP")}
                       </p>
-                      <h4 className="font-medium">{event.status}</h4>
+                      <h4 className="font-medium">Payment Confirmed</h4>
                       <p className="text-sm text-muted-foreground">
-                        {event.description}
+                        Payment was confirmed and funds are pending delivery
                       </p>
                     </div>
                   </div>
-                ))}
-                <div className="flex gap-4">
-                  <div className="relative flex h-6 w-6 items-center justify-center">
-                    <div className="h-2 w-2 rounded-full border border-dashed border-muted-foreground/50" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm text-muted-foreground italic">
-                      Awaiting next update
-                    </p>
-                  </div>
-                </div>
+                )}
+
+                {order.status !== "COMPLETED" &&
+                  order.status !== "CANCELLED" && (
+                    <div className="flex gap-4">
+                      <div className="relative flex h-6 w-6 items-center justify-center">
+                        <div className="h-2 w-2 rounded-full border border-dashed border-muted-foreground/50" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground italic">
+                          Awaiting next update
+                        </p>
+                      </div>
+                    </div>
+                  )}
               </div>
             </CardContent>
             <CardFooter>
-              <Button className="w-full">Mark as Delivered</Button>
+              {order.status !== "COMPLETED" && order.status !== "CANCELLED" && (
+                <Button className="w-full">Mark as Delivered</Button>
+              )}
+
+              <OrderVendorCustomerContact orderId={order.id} />
+
+              <OrderCustomerSatisfaction orderId={order.id} user={user} />
             </CardFooter>
           </Card>
         </div>
@@ -242,20 +295,20 @@ export default async function VendorOrderPage({
               <div className="flex items-start gap-3">
                 <User className="h-5 w-5 text-muted-foreground mt-0.5" />
                 <div>
-                  <p className="font-medium">{order.customer.name}</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="font-medium">{order?.user?.fullname}</p>
+                  {/* <p className="text-sm text-muted-foreground">
                     {order.customer.email}
-                  </p>
+                  </p> */}
                 </div>
               </div>
-              <div className="flex items-start gap-3">
+              {/* <div className="flex items-start gap-3">
                 <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
                 <p>{order.customer.phone}</p>
               </div>
               <div className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
                 <p>{order.customer.address}</p>
-              </div>
+              </div> */}
             </CardContent>
           </Card>
 
@@ -266,20 +319,22 @@ export default async function VendorOrderPage({
             <CardContent className="space-y-4">
               <div className="flex justify-between">
                 <p className="text-muted-foreground">Subtotal</p>
-                <p className="font-medium">{order.subtotal}</p>
+                <p className="font-medium">
+                  {currencyFormat(order.amountValue * order.code.quantity)}
+                </p>
               </div>
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <p className="text-muted-foreground">Shipping</p>
                 <p className="font-medium">{order.shipping}</p>
-              </div>
+              </div> */}
               <div className="flex justify-between">
                 <p className="text-muted-foreground">Tax</p>
-                <p className="font-medium">{order.tax}</p>
+                <p className="font-medium">{currencyFormat(0)}</p>
               </div>
               <Separator />
               <div className="flex justify-between font-medium">
                 <p>Total</p>
-                <p>{order.total}</p>
+                <p>{currencyFormat(order.amountValue * order.code.quantity)}</p>
               </div>
             </CardContent>
             <CardFooter>

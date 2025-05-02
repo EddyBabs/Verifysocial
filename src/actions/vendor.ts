@@ -229,6 +229,46 @@ export const getCurrentVendorReviews = async () => {
   return await getVendorReviews(vendor?.id || "");
 };
 
+export async function getVendorWalletOverview() {
+  const user = await getCurrentUser();
+  const vendor = await database.vendor.findUnique({
+    where: {
+      userId: user?.id,
+    },
+  });
+
+  return {
+    totalBalance: vendor?.totalBalance || 0,
+    pendingBalance: vendor?.pendingBalance || 0,
+    availableBalance: vendor?.availableBalance || 0,
+  };
+}
+
+export async function getVendorTransactionHistory() {
+  const user = await getCurrentUser();
+  const vendor = await database.vendor.findUnique({
+    where: {
+      userId: user?.id,
+    },
+  });
+  if (!vendor) {
+    return [];
+  }
+  const orders = await database.order.findMany({
+    where: {
+      transaction: { isNot: null },
+      code: {
+        vendorId: vendor.id,
+      },
+    },
+    include: {
+      user: { select: { fullname: true } },
+      transaction: { select: { reference: true } },
+    },
+  });
+  return orders;
+}
+
 export const getPaginatedVendors = async (category: string | undefined) => {
   const vendors = await database.vendor.findMany({
     where: {

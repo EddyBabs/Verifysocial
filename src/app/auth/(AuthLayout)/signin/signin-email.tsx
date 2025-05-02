@@ -33,18 +33,18 @@ const SignInEmail = ({
   });
   const onSubmit = (values: SignInProps) => {
     startTransition(async () => {
-      await login(values)
-        .then((response) => {
-          if (response?.error) {
-            toast({ variant: "destructive", description: response.error });
-          } else if (response?.unverified) {
-            sessionStorage.setItem("email", values.email);
-            setStep("verify");
-          }
-        })
-        .catch((error) => {
-          toast({ variant: "destructive", description: "An error occured!" });
-        });
+      await login(values).then((response) => {
+        if (response?.error) {
+          toast({ variant: "destructive", description: response.error });
+        } else if (response?.unverified) {
+          sessionStorage.setItem("email", values.email);
+          setStep("verify");
+        }
+      });
+
+      // .catch((error) => {
+      //   toast({ variant: "destructive", description: "An error occured!" });
+      // });
     });
   };
   return (

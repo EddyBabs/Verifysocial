@@ -135,14 +135,17 @@ export const verifyTransaction = async (trxRef: string) => {
         Authorization: `Bearer ${secret}`,
       },
     });
+
     const data = await response.data;
     let transaction = await database.transaction.findUnique({
       where: { reference: trxRef },
     });
+
     if (transaction) {
       return { success: "Transaction verified" };
     }
     const paystackResponse = data.data;
+
     if (paystackResponse.status === "success") {
       const orderId = paystackResponse.metadata?.orderId;
 
@@ -150,17 +153,18 @@ export const verifyTransaction = async (trxRef: string) => {
         return { error: "Could not find Order" };
       }
 
-      let order = await database.order.findUnique({
+      const order = await database.order.findUnique({
         where: { id: orderId },
         include: { code: true },
       });
+
       if (!order || !order.amountValue) {
         return { error: "Could not find plan" };
       }
 
       const totalAmount = order.amountValue;
-
-      if (totalAmount < paystackResponse.amount / 100) {
+      const amountPaid = paystackResponse.amount / 100;
+      if (totalAmount < amountPaid) {
         return { error: "Transaction not complete" };
       }
 
@@ -169,45 +173,49 @@ export const verifyTransaction = async (trxRef: string) => {
       const user = await database.user.findUnique({
         where: { email: email.toLowerCase() },
       });
+
       if (!user) {
         return { error: "Could not find user!" };
       }
 
-      order = await database.order.update({
-        where: { id: order.id, userId: user.id },
+      const neworder = await database.order.update({
+        where: { id: order.id, paymentStatus: "PENDING" },
         data: {
           paymentStatus: "SUCCESS",
+          paymentDate: new Date(),
         },
         include: {
           code: true,
         },
       });
-      await database.vendor.update({
-        where: {
-          id: order.code.vendorId,
-        },
-        data: {
-          availableBalance: { increment: paystackResponse.amount / 100 },
-          totalBalance: { increment: paystackResponse.amount / 100 },
-        },
-      });
 
-      transaction = await database.transaction.create({
-        data: {
-          reference: trxRef,
-          userId: user.id,
-          orderId: order.id,
-          currency: paystackResponse.currency,
-          amount: paystackResponse.amount / 100,
-          channel: paystackResponse.channel,
-        },
-      });
+      if (neworder) {
+        await database.vendor.update({
+          where: {
+            id: order.code.vendorId,
+          },
+          data: {
+            pendingBalance: { increment: amountPaid },
+            totalBalance: { increment: amountPaid },
+          },
+        });
+
+        transaction = await database.transaction.create({
+          data: {
+            reference: trxRef,
+            userId: user.id,
+            orderId: order.id,
+            currency: paystackResponse.currency,
+            amount: paystackResponse.amount / 100,
+            channel: paystackResponse.channel,
+          },
+        });
+      }
 
       return { success: "Transaction Successful" };
     }
     return { error: "Could not verify transaction" };
   } catch (error) {
-    console.log({ error });
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2002"

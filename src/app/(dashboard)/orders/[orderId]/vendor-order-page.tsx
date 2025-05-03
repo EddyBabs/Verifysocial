@@ -33,60 +33,8 @@ import { User as UserType } from "next-auth";
 import OrderCustomerSatisfaction from "./order-customer-satisfaction";
 import OrderVendorCustomerContact from "./order-vendor-customer-contact";
 import { formatDate } from "date-fns";
-
-// This would normally come from a database
-// const getOrderData = (id: string) => {
-//   return {
-//     id: id,
-//     customer: {
-//       name: "John Smith",
-//       email: "john.smith@example.com",
-//       phone: "+1 (555) 123-4567",
-//       address: "123 Main St, Anytown, CA 12345",
-//     },
-//     date: "May 1, 2025",
-//     status: "pending",
-//     total: "$350.00",
-//     subtotal: "$320.00",
-//     shipping: "$30.00",
-//     tax: "$0.00",
-//     items: [
-//       {
-//         id: "1",
-//         name: "Premium Headphones",
-//         price: "$120.00",
-//         quantity: 1,
-//         image: "/placeholder.svg",
-//       },
-//       {
-//         id: "2",
-//         name: "Wireless Keyboard",
-//         price: "$80.00",
-//         quantity: 1,
-//         image: "/placeholder.svg",
-//       },
-//       {
-//         id: "3",
-//         name: "Smart Watch",
-//         price: "$120.00",
-//         quantity: 1,
-//         image: "/placeholder.svg",
-//       },
-//     ],
-//     timeline: [
-//       {
-//         date: "May 1, 2025 - 10:30 AM",
-//         status: "Order Placed",
-//         description: "Order was placed by customer",
-//       },
-//       {
-//         date: "May 1, 2025 - 11:45 AM",
-//         status: "Payment Confirmed",
-//         description: "Payment was confirmed and funds are pending delivery",
-//       },
-//     ],
-//   };
-// };
+import { OrderStatus } from "@prisma/client";
+import { FcCancel } from "react-icons/fc";
 
 export default async function VendorOrderPage({
   params,
@@ -102,9 +50,9 @@ export default async function VendorOrderPage({
   // const order = getOrderData(orderId);
   const order = await fetchUserOrderById(orderId);
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
-      case "pending":
+      case "PENDING":
         return (
           <Badge
             variant="outline"
@@ -114,17 +62,17 @@ export default async function VendorOrderPage({
             Pending
           </Badge>
         );
-      case "in_transit":
+      case "PROCESSING":
         return (
           <Badge
             variant="outline"
             className="flex w-fit items-center gap-1 text-blue-600 border-blue-600"
           >
             <Truck className="h-3 w-3" />
-            In Transit
+            Processing
           </Badge>
         );
-      case "completed":
+      case "COMPLETED":
         return (
           <Badge
             variant="outline"
@@ -132,6 +80,16 @@ export default async function VendorOrderPage({
           >
             <CheckCircle2 className="h-3 w-3" />
             Completed
+          </Badge>
+        );
+      case "CANCELLED":
+        return (
+          <Badge
+            variant="outline"
+            className="flex w-fit items-center gap-1 text-red-600 border-red-600"
+          >
+            <FcCancel className="h-3 w-3" />
+            Cancelled
           </Badge>
         );
       default:
@@ -152,9 +110,13 @@ export default async function VendorOrderPage({
           <h1 className="text-3xl font-bold tracking-tight">
             Order #{orderId}
           </h1>
+          <h6>Code: {order.code.value}</h6>
           <p className="text-muted-foreground">View and manage order details</p>
         </div>
-        <div className="ml-auto">{getStatusBadge(order.status)}</div>
+        <div className="ml-auto flex gap-2 items-center">
+          {getStatusBadge(order.status)}
+          <Badge>Payment Status: {order.paymentStatus.toLowerCase()}</Badge>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">

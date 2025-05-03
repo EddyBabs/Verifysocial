@@ -84,6 +84,22 @@ enum TransactionStatus {
   FAILED
 }
 
+model Withdraw {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  status    WithrawStatus @default(PROCESSING)
+  amount    Float         @default(0)
+  vendorId  String        @db.ObjectId
+  vendor    Vendor        @relation(fields: [vendorId], references: [id])
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+enum WithrawStatus {
+  PROCESSING
+  REJECTED
+  COMPLETED
+}
+
 model socialAccount {
   id           String          @id @default(auto()) @map("_id") @db.ObjectId
   provider     SocialPlatforms
@@ -131,6 +147,7 @@ model Vendor {
   codes              Code[]
   socialAccount      socialAccount[]
   categories         String[]
+  withdrawals        Withdraw[]
   paymentInformation PaymentInformation?
   availableBalance   Float                  @default(0)
   pendingBalance     Float                  @default(0)
@@ -196,6 +213,7 @@ model Order {
 
   orderExtension       OrderExtension[]
   paymentStatus        PaymentStatus          @default(PENDING)
+  paymentDate          DateTime?
   cancelled            OrderCancel?
   vendorOrderExtension vendorOrderExtension[]
   customerSatisfaction SatisFactionData?

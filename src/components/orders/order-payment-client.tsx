@@ -1,4 +1,5 @@
 "use client";
+
 import { createChargeSession, verifyTransaction } from "@/actions/paystack";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 
-const OrderPayment = ({
+const OrderPaymentClient = ({
   order,
   user,
 }: {
@@ -75,4 +76,4 @@ const OrderPayment = ({
   );
 };
 
-export default OrderPayment;
+export default OrderPaymentClient;

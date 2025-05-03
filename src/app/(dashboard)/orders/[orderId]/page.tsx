@@ -10,7 +10,9 @@ import OrderCustomerSatisfaction from "./order-customer-satisfaction";
 import OrderCustomerVendorContact from "./order-customer-vendor-contact";
 import OrderModal from "./order-modal";
 import VendorOrderPage from "./vendor-order-page";
-const OrderPayment = dynamic(() => import("./order-payment"));
+const OrderPayment = dynamic(
+  () => import("../../../../components/orders/order-payment")
+);
 
 const Page = async ({ params }: { params: Promise<{ orderId: string }> }) => {
   const user = await getCurrentUser();

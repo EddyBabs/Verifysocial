@@ -13,7 +13,6 @@ import { auth } from "@/lib/auth";
 import { currencyFormat } from "@/lib/utils";
 import { formatDate } from "date-fns";
 import Link from "next/link";
-import React from "react";
 import { BsEye } from "react-icons/bs";
 import VendorOrders from "./vendor-order";
 

@@ -18,6 +18,7 @@ const Page = async ({ params }: { params: Promise<{ orderId: string }> }) => {
   const user = await getCurrentUser();
   if (user?.role === "VENDOR")
     return <VendorOrderPage params={params} user={user} />;
+
   const { orderId } = await params;
   const order = await fetchUserOrderById(orderId);
 

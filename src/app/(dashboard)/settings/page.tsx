@@ -7,12 +7,14 @@ import { CreditCard, Lock, User } from "lucide-react";
 import { redirect } from "next/navigation";
 import SettingForm from "./setting-form";
 import { cn } from "@/lib/utils";
+import { fetchVendorPaymentInfo } from "@/actions/payment-info";
 
 const Settings = async () => {
   const { user } = await getCurrentUserDetails();
   if (!user) {
     redirect("/auth/signin");
   }
+  const paymentInfo = await fetchVendorPaymentInfo();
   return (
     <div className="container mx-auto space-y-6">
       <InstagramCallback />
@@ -47,7 +49,7 @@ const Settings = async () => {
         </TabsContent>
         {user.role === "VENDOR" && (
           <TabsContent value="payment" className="mt-6">
-            <AccountNumberForm />
+            <AccountNumberForm paymentInfo={paymentInfo.paymentInfo} />
           </TabsContent>
         )}
         <TabsContent value="security" className="mt-6">

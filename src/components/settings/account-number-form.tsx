@@ -4,8 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CreditCard } from "lucide-react";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
 
+import { updateVendorPaymentInfo } from "@/actions/payment-info";
 import { getAccountName, getBanks } from "@/actions/paystack";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,55 +33,36 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/hooks/use-toast";
-import { Bank } from "@/types";
 import useDebounce from "@/hooks/use-debounce";
+import { useToast } from "@/hooks/use-toast";
+import { accountFormSchema, AccountFormValues } from "@/schemas/account-info";
+import { Bank } from "@/types";
+import { PaymentInformation } from "@prisma/client";
 
-const accountFormSchema = z.object({
-  accountNumber: z
-    .string()
-    .min(8, {
-      message: "Account number must be at least 8 characters.",
-    })
-    .max(20, {
-      message: "Account number must not be longer than 20 characters.",
-    }),
-  // bankName: z.string().min(2, {
-  //   message: "Bank name must be at least 2 characters.",
-  // }),
-  bank: z.object({
-    slug: z.string(),
-    code: z.string(),
-    name: z.string(),
-  }),
-  bankCode: z.string().min(1, { message: "Bank Code required" }),
-  // accountType: z.string({
-  //   required_error: "Please select an account type.",
-  // }),
-  accountName: z.string().min(9, {
-    message: "Account name is required",
-  }),
-});
-
-type AccountFormValues = z.infer<typeof accountFormSchema>;
-
-const defaultValues: Partial<AccountFormValues> = {
-  accountNumber: "",
-  // bankName: "",
-  bankCode: "",
-  accountName: "",
-};
-
-export function AccountNumberForm() {
+export function AccountNumberForm({
+  paymentInfo,
+}: {
+  paymentInfo?: PaymentInformation | undefined | null;
+}) {
   const { toast } = useToast();
   const [banks, setBanks] = useState<Bank[]>([]);
   const [isPending, startTransition] = useTransition();
-  const [accountName, setAccountName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
-    defaultValues,
+    defaultValues: {
+      bank: paymentInfo
+        ? {
+            code: paymentInfo.bankCode,
+            slug: paymentInfo.bankSlug,
+            name: paymentInfo.bankName,
+          }
+        : undefined,
+      accountNumber: paymentInfo?.accountNumber || "",
+      bankCode: paymentInfo?.bankCode || "",
+      accountName: paymentInfo?.accountName || "",
+    },
   });
 
   const fetchBanks = useCallback(() => {
@@ -95,18 +76,24 @@ export function AccountNumberForm() {
     });
   }, [toast]);
 
-  function onSubmit(data: AccountFormValues) {
+  async function onSubmit(data: AccountFormValues) {
     setIsLoading(true);
 
     // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    const response = await updateVendorPaymentInfo(data);
+    if (response.success) {
       toast({
-        title: "Account information updated",
+        title: "Account information",
         description: "Your payment details have been saved successfully.",
       });
-      console.log(data);
-    }, 1000);
+    } else {
+      toast({
+        title: "Account information error",
+        description: response.error,
+        variant: "destructive",
+      });
+    }
+    setIsLoading(false);
   }
 
   const bank = form.watch("bank");
@@ -115,7 +102,6 @@ export function AccountNumberForm() {
   const handleAccountName = async () => {
     const response = await getAccountName(bank, account);
     if (response.success) {
-      // setAccountName(response.success);
       form.setValue("accountName", response.success);
     } else {
       toast({ description: response.error, variant: "destructive" });
@@ -182,11 +168,13 @@ export function AccountNumberForm() {
                       <FormLabel>Bank Name</FormLabel>
                       <Select
                         // onValueChange={field.onChange}
+
                         onValueChange={(value) => {
-                          console.log({ value });
-                          field.onChange(JSON.parse(value));
+                          const parsedValue = JSON.parse(value);
+                          form.setValue("bankCode", parsedValue.code);
+                          field.onChange(parsedValue);
                         }}
-                        defaultValue={field.value?.slug}
+                        defaultValue={JSON.stringify(field.value)}
                       >
                         <FormControl>
                           <SelectTrigger>

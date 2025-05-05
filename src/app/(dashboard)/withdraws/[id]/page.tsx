@@ -18,13 +18,13 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
-export default function WithdrawalDetailsPage({
+export default async function WithdrawalDetailsPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   // This would normally fetch the withdrawal details based on the ID
-  const withdrawalId = params.id;
+  const withdrawalId = (await params).id;
 
   // Mock data for the example
   const withdrawal = {

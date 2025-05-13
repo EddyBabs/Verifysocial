@@ -35,6 +35,7 @@ import OrderVendorCustomerContact from "./order-vendor-customer-contact";
 import { formatDate } from "date-fns";
 import { OrderStatus } from "@prisma/client";
 import { FcCancel } from "react-icons/fc";
+import OrderDelay from "./order-delay";
 
 export default async function VendorOrderPage({
   params,
@@ -308,6 +309,11 @@ export default async function VendorOrderPage({
           </Card>
         </div>
       </div>
+      <OrderDelay orderId={orderId} />
+      <OrderVendorCustomerContact orderId={orderId} />
+      {!order.vendorSatisfaction && (
+        <OrderCustomerSatisfaction orderId={orderId} user={user} />
+      )}
     </div>
   );
 }

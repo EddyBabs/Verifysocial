@@ -16,6 +16,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "../ui/sidebar";
+import { SheetClose } from "../ui/sheet";
 
 const MobileSidebar = ({ user }: { user: any }) => {
   const pathname = usePathname();
@@ -40,14 +41,19 @@ const MobileSidebar = ({ user }: { user: any }) => {
                   <SidebarMenuSub className="space-y-2">
                     {item.children.map((subitem: any) => (
                       <SidebarMenuSubItem key={subitem.value}>
-                        <SidebarMenuSubButton
-                          className="h-fit hover:cursor-pointer"
-                          asChild
-                        >
-                          <Link href={`/vendors?category=${subitem.value}`}>
-                            {subitem.label}
+                        <SheetClose asChild>
+                          <Link
+                            href={`/vendors?category=${subitem.value}`}
+                            passHref
+                          >
+                            <SidebarMenuSubButton
+                              className="h-fit hover:cursor-pointer"
+                              asChild
+                            >
+                              {subitem.label}
+                            </SidebarMenuSubButton>
                           </Link>
-                        </SidebarMenuSubButton>
+                        </SheetClose>
                       </SidebarMenuSubItem>
                     ))}
                   </SidebarMenuSub>
@@ -58,18 +64,19 @@ const MobileSidebar = ({ user }: { user: any }) => {
         }
 
         return (
-          <Link
-            href={item.href}
-            className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50",
-              { "bg-gray-100": pathname === item.href }
-            )}
-            prefetch={false}
-            key={item.href}
-          >
-            <Icon className="h-5 w-5" />
-            {item.value}
-          </Link>
+          <SheetClose asChild key={item.href}>
+            <Link
+              href={item.href}
+              className={cn(
+                "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50",
+                { "bg-gray-100": pathname === item.href }
+              )}
+              prefetch={false}
+            >
+              <Icon className="h-5 w-5" />
+              {item.value}
+            </Link>
+          </SheetClose>
         );
       })}
       <div className="mt-auto p-4 mb-4">

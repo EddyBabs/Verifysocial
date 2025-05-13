@@ -130,14 +130,17 @@ enum Tier {
 }
 
 model PaymentInformation {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
   accountNumber String
   accountName   String
   bankName      String
   bankCode      String
   bankSlug      String
-  vendorId      String @unique @db.ObjectId
-  Vendor        Vendor @relation(references: [id], fields: [vendorId])
+  vendorId      String  @unique @db.ObjectId
+  recipient     String?
+  currency      String  @default("NGN")
+  type          String  @default("nuban")
+  Vendor        Vendor  @relation(references: [id], fields: [vendorId])
 }
 
 model Vendor {

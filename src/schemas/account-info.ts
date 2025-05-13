@@ -13,6 +13,8 @@ export const accountFormSchema = z.object({
   bank: z.object({
     slug: z.string(),
     code: z.string(),
+    type: z.enum(["nuban"]),
+    currency: z.enum(["NGN"]),
     name: z.string(),
   }),
   bankCode: z.string().min(1, { message: "Bank Code required" }),

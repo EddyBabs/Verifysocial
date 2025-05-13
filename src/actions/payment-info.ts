@@ -47,6 +47,7 @@ export const updateVendorPaymentInfo = async (values: AccountFormValues) => {
   //   } else {
 
   //   }
+
   const paymentInfo = await database.paymentInformation.upsert({
     where: {
       vendorId: vendor.id,
@@ -58,6 +59,8 @@ export const updateVendorPaymentInfo = async (values: AccountFormValues) => {
       bankCode: bank.code,
       bankSlug: bank.slug,
       bankName: bank.name,
+      currency: bank.currency,
+      type: bank.type,
     },
     update: {
       accountNumber,
@@ -65,6 +68,8 @@ export const updateVendorPaymentInfo = async (values: AccountFormValues) => {
       bankCode: bank.code,
       bankSlug: bank.slug,
       bankName: bank.name,
+      currency: bank.currency,
+      type: bank.type,
     },
   });
 

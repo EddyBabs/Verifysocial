@@ -3,7 +3,7 @@
 import { getCurrentUser } from "@/data/user";
 import { database } from "@/lib/database";
 import { Bank } from "@/types";
-import { Prisma } from "@prisma/client";
+import { PaymentInformation, Prisma } from "@prisma/client";
 import axios from "axios";
 
 const secret = process.env.PAYSTACK_SECRET_KEY;
@@ -21,10 +21,18 @@ export const getBanks = async () => {
     if (data.status && data.data.length) {
       return {
         success: data.data.map(
-          (bank: { name: string; code: string; slug: string }) => ({
+          (bank: {
+            name: string;
+            code: string;
+            slug: string;
+            currency: string;
+            type: string;
+          }) => ({
             name: bank.name,
             code: bank.code,
             slug: bank.slug,
+            currency: bank.currency,
+            type: bank.type,
           })
         ),
       };
@@ -225,4 +233,52 @@ export const verifyTransaction = async (trxRef: string) => {
 
     return { error: "An error occured!" };
   }
+};
+
+export const createTransferRecipient = async (
+  paymentInfo: PaymentInformation
+) => {
+  const response = await axios.post(
+    "https://api.paystack.co/transferrecipient",
+    {
+      type: paymentInfo.type,
+      name: paymentInfo.accountName,
+      account_number: paymentInfo.accountNumber,
+      bank_code: paymentInfo.bankCode,
+      currency: paymentInfo.currency,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${secret}`,
+      },
+    }
+  );
+  const responseData = response.data;
+  if (responseData.status === true && responseData.data.active) {
+    return responseData.data.recipient_code;
+  }
+  throw Error("Unable to create recipient");
+};
+
+export const createTransfer = async (
+  recipient: string,
+  amount: number,
+  reason: string
+) => {
+  const response = await axios.post(
+    "https://api.paystack.co/transfer",
+    {
+      source: "balance",
+      reason,
+      amount,
+      recipient,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${secret}`,
+      },
+    }
+  );
+  const responseData = response.data;
+  return responseData;
 };

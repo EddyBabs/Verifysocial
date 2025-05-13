@@ -2,6 +2,7 @@
 
 import { getCurrentUser } from "@/data/user";
 import { database } from "@/lib/database";
+import { createTransfer, createTransferRecipient } from "./paystack";
 
 export async function getWithdrawalOverview() {
   const user = await getCurrentUser();
@@ -81,10 +82,11 @@ export const createWithdrawal = async (
   paymentMethod: string
 ) => {
   const user = await getCurrentUser();
-  const vendor = await database.vendor.findUnique({
+  let vendor = await database.vendor.findUnique({
     where: {
       userId: user?.id,
     },
+    include: { paymentInformation: true },
   });
 
   if (!vendor) {
@@ -95,6 +97,36 @@ export const createWithdrawal = async (
   }
   const fee = amount * 0.01; // 1% fee
   const total = amount - fee;
+  if (!vendor.paymentInformation) {
+    throw new Error("No payment information added");
+  }
+  if (!vendor.paymentInformation?.recipient) {
+    const recipient = await createTransferRecipient(vendor.paymentInformation);
+    vendor = await database.vendor.update({
+      where: {
+        id: vendor.id,
+      },
+      data: {
+        paymentInformation: {
+          update: {
+            recipient,
+          },
+        },
+      },
+      include: {
+        paymentInformation: true,
+      },
+    });
+  }
+
+  const transfer = await createTransfer(
+    vendor.paymentInformation?.recipient || "",
+    total,
+    `Payment on ${new Date().toLocaleString()}`
+  );
+
+  console.log({ transfer });
+
   await database.withdraw.create({
     data: {
       vendorId: vendor.id,

@@ -85,13 +85,20 @@ enum TransactionStatus {
 }
 
 model Withdraw {
-  id        String        @id @default(auto()) @map("_id") @db.ObjectId
-  status    WithrawStatus @default(PROCESSING)
-  amount    Float         @default(0)
-  vendorId  String        @db.ObjectId
-  vendor    Vendor        @relation(fields: [vendorId], references: [id])
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id            String                @id @default(auto()) @map("_id") @db.ObjectId
+  status        WithrawStatus         @default(PROCESSING)
+  paymentMethod WithdrawPaymentMethod @default(TRANSFER)
+  amount        Float                 @default(0)
+  vendorId      String                @db.ObjectId
+  fee           Float                 @default(0)
+  revenue       Float                 @default(0)
+  vendor        Vendor                @relation(fields: [vendorId], references: [id])
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+}
+
+enum WithdrawPaymentMethod {
+  TRANSFER
 }
 
 enum WithrawStatus {

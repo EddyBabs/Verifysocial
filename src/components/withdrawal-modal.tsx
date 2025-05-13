@@ -32,6 +32,8 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { cn, currencyFormat } from "@/lib/utils";
+import { createWithdrawal } from "@/actions/withdraw";
+import { toast } from "@/hooks/use-toast";
 
 const paymentMethods = [
   { label: "Bank Transfer", value: "bank" },
@@ -55,16 +57,19 @@ export function WithdrawalModal({
   const [paymentMethod, setPaymentMethod] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      onClose();
-      router.push("/withdrawals");
-    }, 1500);
+    const response = await createWithdrawal(Number(amount), paymentMethod);
+    if (response.error) {
+      toast({ variant: "destructive", description: response.error });
+    } else {
+      toast({ description: response.success });
+    }
+    setIsSubmitting(false);
+    onClose();
+    router.push("/withdraws");
   };
 
   const fee = Number.parseFloat(amount) * 0.01; // 1% fee
@@ -195,15 +200,15 @@ export function WithdrawalModal({
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>Withdrawal Amount</span>
-                  <span>${Number.parseFloat(amount).toFixed(2)}</span>
+                  <span>{currencyFormat(Number.parseFloat(amount))}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Processing Fee (1%)</span>
-                  <span>${fee.toFixed(2)}</span>
+                  <span>{currencyFormat(fee)}</span>
                 </div>
                 <div className="flex justify-between font-medium">
                   <span>Total to Receive</span>
-                  <span>${isNaN(total) ? "0.00" : total.toFixed(2)}</span>
+                  <span>{currencyFormat(isNaN(total) ? 0 : total)}</span>
                 </div>
               </div>
             </>

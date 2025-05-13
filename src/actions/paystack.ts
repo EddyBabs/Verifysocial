@@ -265,20 +265,38 @@ export const createTransfer = async (
   amount: number,
   reason: string
 ) => {
-  const response = await axios.post(
-    "https://api.paystack.co/transfer",
-    {
-      source: "balance",
-      reason,
-      amount,
-      recipient,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${secret}`,
+  try {
+    const response = await axios.post(
+      "https://api.paystack.co/transfer",
+      {
+        source: "balance",
+        reason,
+        amount,
+        recipient,
       },
+      {
+        headers: {
+          Authorization: `Bearer ${secret}`,
+        },
+      }
+    );
+    const responseData = response.data;
+    return responseData;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.dir(error.response?.data, { depth: null });
+
+      // {
+      //   status: false,
+      //   message: 'You cannot initiate third party payouts as a starter business',
+      //   meta: {
+      //     nextStep: "You'll need to upgrade your business to a Registered Business."
+      //   },
+      //   type: 'api_error',
+      //   code: 'transfer_unavailable'
+      // }
+    } else {
+      console.log({ error });
     }
-  );
-  const responseData = response.data;
-  return responseData;
+  }
 };

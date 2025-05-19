@@ -46,13 +46,9 @@ function CodeTable({
           <TableRow>
             <TableHead className="w-[200px]">Codes</TableHead>
             <TableHead className="w-[200px]">Status</TableHead>
-            <TableHead>Delivery Date</TableHead>
-            <TableHead className="text-right min-w-[50px]">
-              Min Amount
-            </TableHead>
-            <TableHead className="text-right min-w-[50px]">
-              Max Amount
-            </TableHead>
+            <TableHead className="min-w-[150px]">Delivery Date</TableHead>
+            <TableHead className="text-left min-w-[100px]">Amount</TableHead>
+
             <TableHead className="text-right w-[100px]">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -64,15 +60,12 @@ function CodeTable({
               <TableCell>
                 {code.deliveryPeriod && formatDate(code.deliveryPeriod, "PPP")}
               </TableCell>
-              <TableCell className="text-right">
-                {currencyFormat(code.minAmount)}
+              <TableCell className="text-left">
+                {currencyFormat(code.amountValue)}
               </TableCell>
-              <TableCell className="text-right">
-                {currencyFormat(code.maxAmount)}
-              </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-right flex gap-1">
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
                   onClick={() => handleViewCode(code)}
                 >

@@ -229,7 +229,7 @@ const RenderTableContent = ({ tab }: { tab: WithdrawTab }) => {
     fetchWithdrawTable();
   }, [fetchWithdrawTable]);
   return (
-    <TabsContent value={tab}>
+    <TabsContent value={tab} className="overflow-hidden w-full">
       <Table>
         <TableHeader>
           <TableRow>
@@ -276,7 +276,7 @@ const RenderTableContent = ({ tab }: { tab: WithdrawTab }) => {
               </TableCell>
               <TableCell className="text-right">
                 <Button variant="ghost" size="sm" asChild>
-                  <Link href={`/withdrawals/${withdraw.id}`}>View</Link>
+                  <Link href={`/wallet/${withdraw.id}`}>View</Link>
                 </Button>
               </TableCell>
             </TableRow>

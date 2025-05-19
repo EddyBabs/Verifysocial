@@ -27,8 +27,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
+// import { useToast } from "@/hooks/use-toast";
+import { cn, currencyFormat } from "@/lib/utils";
 import { orderSchema } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -36,12 +36,29 @@ import { Code, Prisma } from "@prisma/client";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { formatDate } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 type orderSchemaType = z.infer<typeof orderSchema>;
+
+const AMOUNT_RANGES = [
+  { min: 1000, max: 4999 },
+  { min: 5000, max: 9999 },
+  { min: 10000, max: 49999 },
+  { min: 50000, max: 99999 },
+  { min: 100000, max: 499999 },
+  { min: 500000, max: 999999 },
+  { min: 1000000, max: 1000000000 },
+];
 
 const OrderForm = ({
   user,
@@ -67,7 +84,11 @@ const OrderForm = ({
       email: user?.email || "",
       code: code.value,
       consent: false,
-      value: 0,
+      // value: 0,
+      amount: {
+        min: 2000,
+        max: 1000000,
+      },
     },
   });
 
@@ -138,7 +159,7 @@ const OrderForm = ({
                 <Input id="email" {...register("email")} disabled readOnly />
               </div>
 
-              <div className="flex flex-col gap-2">
+              {/* <div className="flex flex-col gap-2">
                 <Label htmlFor="value">Order Value</Label>
                 <Input
                   id="value"
@@ -149,7 +170,51 @@ const OrderForm = ({
                 <p className={cn("text-[0.8rem] text-muted-foreground -mt-1")}>
                   Amount of product
                 </p>
-              </div>
+              </div> */}
+
+              <FormField
+                control={control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Amount</FormLabel>
+                    <Select
+                      onValueChange={(value: string) => {
+                        const amount = JSON.parse(value);
+                        setValue("amount.min", amount.min);
+                        setValue("amount.max", amount.max);
+                      }}
+                      defaultValue={JSON.stringify({
+                        min: field.value.min,
+                        max: field.value.max,
+                      })}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a an amount range" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {AMOUNT_RANGES.map((range) => (
+                          <SelectItem
+                            value={JSON.stringify(range)}
+                            key={range.min}
+                          >
+                            <span>{currencyFormat(range.min)}</span>{" "}
+                            <span className="mx-2">-</span>{" "}
+                            <span>
+                              {range.max < 10000000
+                                ? currencyFormat(range.max)
+                                : "Above"}
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <div className="flex flex-col gap-2">
                 <FormField

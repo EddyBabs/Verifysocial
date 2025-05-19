@@ -73,9 +73,9 @@ export const fillOrder = async (values: orderSchemaType) => {
     return { error: "This order has already been filled by you" };
   }
 
-  const { value, date } = validatedData;
+  const { amount, date } = validatedData;
 
-  if (value < code.minAmount || value > code.maxAmount) {
+  if (code.amountValue < amount.min || code.amountValue > amount.max) {
     return { error: "Order value does not correlate with the vendor" };
   }
 
@@ -85,7 +85,9 @@ export const fillOrder = async (values: orderSchemaType) => {
 
   const order = await database.order.create({
     data: {
-      amountValue: value,
+      amountValue: code.amountValue,
+      minAmount: amount.min,
+      maxAmount: amount.max,
       userId: userSession.id,
       status: OrderStatus.PROCESSING,
       codeId: code.id,

@@ -27,7 +27,7 @@ const DashboardLayout: React.FC<PropsWithChildren> = async ({ children }) => {
   return (
     <div
       className={cn(
-        "grid h-screen min-h-screen w-full gap-4 lg:gap-0 lg:grid-cols-[17rem_1fr]",
+        "block lg:grid h-screen min-h-screen w-full gap-4 lg:gap-0 lg:grid-cols-[17rem_1fr]",
         { "lg:grid-cols-none": hideSidebar }
       )}
     >

@@ -2,11 +2,11 @@ import categories from "@/data/categories";
 import { UserRole } from "@prisma/client";
 import { CiSettings } from "react-icons/ci";
 import { FaBarcode } from "react-icons/fa";
-import { IoMdAnalytics } from "react-icons/io";
-import { MdOutlineCategory, MdHistory } from "react-icons/md";
-import { VscHome, VscPreview } from "react-icons/vsc";
 import { FaWallet } from "react-icons/fa6";
-import { PiHandWithdraw, PiPackageDuotone } from "react-icons/pi";
+import { IoMdAnalytics } from "react-icons/io";
+import { MdHistory, MdOutlineCategory } from "react-icons/md";
+import { PiPackageDuotone } from "react-icons/pi";
+import { VscHome, VscPreview } from "react-icons/vsc";
 
 type getSidebarType = { role: UserRole };
 export const getSideBar = (user: getSidebarType) => {
@@ -28,11 +28,11 @@ export const getSideBar = (user: getSidebarType) => {
             href: "/wallet",
             value: "Wallet",
           },
-          {
-            icon: PiHandWithdraw,
-            href: "/withdraws",
-            value: "Withdraws",
-          },
+          // {
+          //   icon: PiHandWithdraw,
+          //   href: "/withdraws",
+          //   value: "Withdraws",
+          // },
           {
             icon: IoMdAnalytics,
             href: "#",

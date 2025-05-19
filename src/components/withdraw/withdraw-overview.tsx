@@ -5,18 +5,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
-import { currencyFormat } from "@/lib/utils";
 import { getWithdrawalOverview } from "@/actions/withdraw";
+import { currencyFormat } from "@/lib/utils";
 
 const WithdrawOverview = async () => {
-  const { availableWithdrawals, pendingWithdrawals, totalWithdrawals } =
+  const { pendingWithdrawals, totalWithdrawals } =
     await getWithdrawalOverview();
   return (
-    <div className="grid gap-6 md:grid-cols-3">
-      <Card>
+    <div className="grid gap-3 md:gap-6 md:grid-cols-2">
+      {/* <Card>
         <CardHeader>
           <CardTitle>Available Balance</CardTitle>
           <CardDescription>Funds available for withdrawal</CardDescription>
@@ -29,7 +27,7 @@ const WithdrawOverview = async () => {
             <Button className="w-full mt-4">Withdraw Funds</Button>
           </Link>
         </CardContent>
-      </Card>
+      </Card> */}
       <Card>
         <CardHeader>
           <CardTitle>Pending Withdrawals</CardTitle>

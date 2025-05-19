@@ -26,15 +26,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { cn, currencyFormat } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { createOrderShema, createOrderShemaType } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Code } from "@prisma/client";
@@ -45,15 +38,15 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import ViewCodeSection from "./view-code-section";
 
-const AMOUNT_RANGES = [
-  { min: 1000, max: 4999 },
-  { min: 5000, max: 9999 },
-  { min: 10000, max: 49999 },
-  { min: 50000, max: 99999 },
-  { min: 100000, max: 499999 },
-  { min: 500000, max: 999999 },
-  { min: 1000000, max: 1000000000 },
-];
+// const AMOUNT_RANGES = [
+//   { min: 1000, max: 4999 },
+//   { min: 5000, max: 9999 },
+//   { min: 10000, max: 49999 },
+//   { min: 50000, max: 99999 },
+//   { min: 100000, max: 499999 },
+//   { min: 500000, max: 999999 },
+//   { min: 1000000, max: 1000000000 },
+// ];
 
 const NewCode = () => {
   const router = useRouter();
@@ -65,10 +58,7 @@ const NewCode = () => {
       name: "",
       quantity: 1,
       returnPeriod: 2,
-      amount: {
-        min: 2000,
-        max: 1000000,
-      },
+      value: 0,
     },
   });
   const {
@@ -175,7 +165,7 @@ const NewCode = () => {
                   )}
                 </div> */}
 
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="amount"
                   render={({ field }) => (
@@ -217,7 +207,22 @@ const NewCode = () => {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
+
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="value">Order Value</Label>
+                  <Input
+                    id="value"
+                    placeholder="1000"
+                    {...form.register("value", { valueAsNumber: true })}
+                    error={errors.value?.message}
+                  />
+                  <p
+                    className={cn("text-[0.8rem] text-muted-foreground -mt-1")}
+                  >
+                    Amount of product
+                  </p>
+                </div>
 
                 <FormField
                   control={form.control}

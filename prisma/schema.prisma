@@ -183,8 +183,9 @@ model Code {
   name         String
   returnPeriod Int
   quantity     Int
-  minAmount    Float
-  maxAmount    Float
+  minAmount    Float?
+  maxAmount    Float?
+  amountValue  Float
 
   order          Order?
   vendorId       String   @db.ObjectId
@@ -212,6 +213,8 @@ model Order {
   userId                     String?     @db.ObjectId
   user                       User?       @relation(references: [id], fields: [userId])
   amountValue                Float       @default(0)
+  minAmount                  Float?
+  maxAmount                  Float?
   review                     Review?
   resolved                   Boolean     @default(false)
   userDeliveryConfirmation   Boolean     @default(false)

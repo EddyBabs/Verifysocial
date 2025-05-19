@@ -24,8 +24,8 @@ const WalletOverviewClient = ({
   const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false);
   return (
     <>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
+      <div className="grid gap-3 md:gap-6 grid-cols-2 md:grid-cols-3">
+        <Card className="col-span-2 sm:col-span-1">
           <CardHeader>
             <CardTitle>Available Balance</CardTitle>
             <CardDescription>Funds available for withdrawal</CardDescription>
@@ -44,7 +44,7 @@ const WalletOverviewClient = ({
             </Button>
           </CardFooter>
         </Card>
-        <Card>
+        <Card className="col-span-2 sm:col-span-1">
           <CardHeader>
             <CardTitle>Pending Balance</CardTitle>
             <CardDescription>
@@ -62,7 +62,7 @@ const WalletOverviewClient = ({
           </Button>
         </CardFooter> */}
         </Card>
-        <Card>
+        <Card className="col-span-2 md:col-span-1">
           <CardHeader>
             <CardTitle>Total Earnings</CardTitle>
             <CardDescription>Lifetime earnings on platform</CardDescription>

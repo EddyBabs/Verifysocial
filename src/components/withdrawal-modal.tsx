@@ -69,7 +69,7 @@ export function WithdrawalModal({
     }
     setIsSubmitting(false);
     onClose();
-    router.push("/withdraws");
+    router.push("/wallet");
   };
 
   const fee = Number.parseFloat(amount) * 0.01; // 1% fee

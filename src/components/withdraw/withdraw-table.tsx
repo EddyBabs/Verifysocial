@@ -25,7 +25,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { getWalletHistory } from "@/actions/withdraw";
 import { Withdraw } from "@prisma/client";
-import { currencyFormat } from "@/lib/utils";
+import { cn, currencyFormat } from "@/lib/utils";
 import { formatDate } from "date-fns";
 
 type WithdrawTab = "all" | "pending" | "completed";
@@ -260,9 +260,13 @@ const RenderTableContent = ({ tab }: { tab: WithdrawTab }) => {
               <TableCell>
                 <Badge
                   variant="outline"
-                  className={
-                    "flex w-fit items-center gap-1 text-amber-600 border-amber-600"
-                  }
+                  className={cn(
+                    "flex w-fit items-center gap-1 text-amber-600 border-amber-600",
+                    {
+                      "text-green-600 border-green-600":
+                        withdraw.status === "COMPLETED",
+                    }
+                  )}
                 >
                   {withdraw.status === "PROCESSING" ? (
                     <Clock className="h-3 w-3" />

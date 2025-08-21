@@ -17,6 +17,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { getWithdraw } from "@/actions/withdraw";
+import { notFound } from "next/navigation";
+import { addMinutes, formatDate } from "date-fns";
+import { currencyFormat } from "@/lib/utils";
 
 export default async function WithdrawalDetailsPage({
   params,
@@ -26,37 +30,16 @@ export default async function WithdrawalDetailsPage({
   // This would normally fetch the withdrawal details based on the ID
   const withdrawalId = (await params).id;
 
-  // Mock data for the example
-  const withdrawal = {
-    id: withdrawalId,
-    reference: `#WD-${withdrawalId}`,
-    amount:
-      withdrawalId === "1245" ? 500 : withdrawalId === "1244" ? 780 : 1200,
-    method: "Bank Transfer",
-    accountName: "Vendor Store",
-    accountNumber: "****6789",
-    bankName: "First National Bank",
-    date:
-      withdrawalId === "1245"
-        ? "May 2, 2025"
-        : withdrawalId === "1244"
-        ? "April 28, 2025"
-        : "April 15, 2025",
-    status: withdrawalId === "1245" ? "processing" : "completed",
-    completionDate:
-      withdrawalId === "1245"
-        ? "Expected May 5, 2025"
-        : withdrawalId === "1244"
-        ? "April 30, 2025"
-        : "April 17, 2025",
-    fee: withdrawalId === "1245" ? 5 : withdrawalId === "1244" ? 7.8 : 12,
-  };
+  const withdrawal = await getWithdraw(withdrawalId);
+  if (!withdrawal) {
+    return notFound();
+  }
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" asChild>
-          <Link href="/withdrawals">
+          <Link href="/wallet">
             <ArrowLeft className="h-5 w-5" />
           </Link>
         </Button>
@@ -88,22 +71,24 @@ export default async function WithdrawalDetailsPage({
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Amount</span>
               <div className="flex items-center gap-1 text-red-600 font-medium">
-                <ArrowDownIcon className="h-4 w-4" />$
-                {withdrawal.amount.toFixed(2)}
+                <ArrowDownIcon className="h-4 w-4" />
+                {currencyFormat(withdrawal.amount)}
               </div>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Fee</span>
-              <span className="font-medium">${withdrawal.fee.toFixed(2)}</span>
+              <span className="font-medium">
+                {currencyFormat(withdrawal.fee)}
+              </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Total</span>
               <span className="font-medium">
-                ${(withdrawal.amount - withdrawal.fee).toFixed(2)}
+                {currencyFormat(withdrawal.amount - withdrawal.fee)}
               </span>
             </div>
             <Separator />
-            <div className="flex justify-between items-center">
+            {/* <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">
                 Payment Method
               </span>
@@ -125,22 +110,28 @@ export default async function WithdrawalDetailsPage({
               <span className="text-sm text-muted-foreground">Bank Name</span>
               <span className="font-medium">{withdrawal.bankName}</span>
             </div>
-            <Separator />
+            <Separator /> */}
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">
                 Request Date
               </span>
-              <span className="font-medium">{withdrawal.date}</span>
+              <span className="font-medium">
+                {formatDate(withdrawal.createdAt, "dd/MM/yyyy")}
+              </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">
                 Completion Date
               </span>
-              <span className="font-medium">{withdrawal.completionDate}</span>
+              <span className="font-medium">
+                {withdrawal.completedAt
+                  ? formatDate(withdrawal.completedAt, "dd/MM/yyyy")
+                  : "NIL"}
+              </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Status</span>
-              {withdrawal.status === "processing" ? (
+              {withdrawal.status === "PROCESSING" ? (
                 <Badge
                   variant="outline"
                   className="flex items-center gap-1 text-amber-600 border-amber-600"
@@ -178,7 +169,7 @@ export default async function WithdrawalDetailsPage({
                   Withdrawal Requested
                 </h3>
                 <time className="block mb-2 text-xs font-normal leading-none text-muted-foreground">
-                  {withdrawal.date}
+                  {formatDate(withdrawal.createdAt, "dd/MM/yyyy")}
                 </time>
                 <p className="text-sm">
                   Your withdrawal request has been received and is being
@@ -186,7 +177,7 @@ export default async function WithdrawalDetailsPage({
                 </p>
               </li>
 
-              {withdrawal.status === "processing" ? (
+              {withdrawal.status === "PROCESSING" ? (
                 <>
                   <li className="mb-6 ml-6">
                     <span className="absolute flex items-center justify-center w-6 h-6 bg-amber-100 rounded-full -left-3 ring-8 ring-background">
@@ -199,7 +190,7 @@ export default async function WithdrawalDetailsPage({
                       </span>
                     </h3>
                     <time className="block mb-2 text-xs font-normal leading-none text-muted-foreground">
-                      Started {withdrawal.date}
+                      Started {formatDate(withdrawal.createdAt, "dd/MM/yyyy")}
                     </time>
                     <p className="text-sm">
                       Your withdrawal is being processed by our finance team.
@@ -213,7 +204,12 @@ export default async function WithdrawalDetailsPage({
                       Funds Transferred
                     </h3>
                     <time className="block mb-2 text-xs font-normal leading-none text-muted-foreground">
-                      Expected {withdrawal.completionDate}
+                      Expected{" "}
+                      {formatDate(
+                        addMinutes(withdrawal.createdAt, 30),
+                        "dd/MM/yyyy HH:mm:ss"
+                      )}
+                      {/* {withdrawal.completionDate} */}
                     </time>
                     <p className="text-sm">
                       Funds will be transferred to your bank account.
@@ -230,7 +226,8 @@ export default async function WithdrawalDetailsPage({
                       Processing
                     </h3>
                     <time className="block mb-2 text-xs font-normal leading-none text-muted-foreground">
-                      Started {withdrawal.date}
+                      Started{" "}
+                      {formatDate(withdrawal.createdAt, "dd/MM/yyyy HH:mm:ss")}
                     </time>
                     <p className="text-sm">
                       Your withdrawal was processed by our finance team.
@@ -247,7 +244,9 @@ export default async function WithdrawalDetailsPage({
                       </span>
                     </h3>
                     <time className="block mb-2 text-xs font-normal leading-none text-muted-foreground">
-                      {withdrawal.completionDate}
+                      {withdrawal.completedAt
+                        ? formatDate(withdrawal.completedAt, "dd/MM/yyyy")
+                        : "NIL"}
                     </time>
                     <p className="text-sm">
                       Funds have been successfully transferred to your bank

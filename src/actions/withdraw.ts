@@ -77,6 +77,20 @@ export const getWalletHistory = async (
   return withdraws;
 };
 
+export const getWithdraw = async (id: string) => {
+  const user = await getCurrentUser();
+  const vendor = await database.vendor.findUnique({
+    where: {
+      userId: user?.id,
+    },
+  });
+  if (!vendor) {
+    return null;
+  }
+  const withdraw = await database.withdraw.findUnique({ where: { id } });
+  return withdraw;
+};
+
 export const createWithdrawal = async (
   amount: number,
   paymentMethod: string
@@ -100,6 +114,7 @@ export const createWithdrawal = async (
   if (!vendor.paymentInformation) {
     throw new Error("No payment information added");
   }
+
   if (!vendor.paymentInformation?.recipient) {
     const recipient = await createTransferRecipient(vendor.paymentInformation);
     vendor = await database.vendor.update({
@@ -125,26 +140,57 @@ export const createWithdrawal = async (
     `Payment on ${new Date().toLocaleString()}`
   );
 
-  console.log({ transfer });
+  if (transfer.data.status === "otp") {
+    // handle Otp
+  } else {
+    // Transaction: create withdrawal + update balance
+    await database.$transaction(async (tx) => {
+      if (amount > vendor.availableBalance) {
+        return { error: "Insufficient amount" };
+      }
+      await tx.withdraw.create({
+        data: {
+          vendorId: vendor.id,
+          reference: transfer.data.reference,
+          paymentMethod: "TRANSFER",
+          revenue: total,
+          status:
+            transfer.data.status === "success" ? "COMPLETED" : "PROCESSING",
+          amount,
+          fee,
+          ...(transfer.data.status === "success"
+            ? {
+                completedAt: new Date(),
+              }
+            : {}),
+        },
+      });
+      await tx.vendor.update({
+        where: { id: vendor.id },
+        data: { availableBalance: { decrement: amount } },
+      });
+    });
 
-  await database.withdraw.create({
-    data: {
-      vendorId: vendor.id,
-      paymentMethod: paymentMethod === "transfer" ? "TRANSFER" : "TRANSFER",
-      revenue: total,
-      amount,
-      fee,
-    },
-  });
+    // await database.withdraw.create({
+    //   data: {
+    //     vendorId: vendor.id,
+    //     reference: transfer.data.reference,
+    //     paymentMethod: paymentMethod === "transfer" ? "TRANSFER" : "TRANSFER",
+    //     revenue: total,
+    //     amount,
+    //     fee,
+    //   },
+    // });
 
-  const newAmount = vendor.availableBalance - amount;
-  await database.vendor.update({
-    where: {
-      id: vendor.id,
-    },
-    data: {
-      availableBalance: newAmount,
-    },
-  });
+    // const newAmount = vendor.availableBalance - amount;
+    // await database.vendor.update({
+    //   where: {
+    //     id: vendor.id,
+    //   },
+    //   data: {
+    //     availableBalance: newAmount,
+    //   },
+    // });
+  }
   return { success: "Processing withdrawal" };
 };

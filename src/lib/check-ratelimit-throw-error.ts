@@ -7,14 +7,12 @@ export async function checkRateLimitAndThrowError({
   onRateLimiterResponse,
   opts,
 }: RateLimitHelper) {
-  console.log("Checking Rate Limiter");
   const response = await rateLimiter()({ rateLimitingType, identifier, opts });
   const { success, reset } = response;
 
   if (onRateLimiterResponse) onRateLimiterResponse(response);
 
   if (!success) {
-    console.log("Not success");
     const convertToSeconds = (ms: number) => Math.floor(ms / 1000);
     const secondsToWait = convertToSeconds(reset - Date.now());
     throw new Error(

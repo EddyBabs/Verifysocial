@@ -271,7 +271,7 @@ export const createTransfer = async (
       {
         source: "balance",
         reason,
-        amount,
+        amount: amount * 1000,
         recipient,
       },
       {
@@ -281,6 +281,7 @@ export const createTransfer = async (
       }
     );
     const responseData = response.data;
+    console.log({ responseData });
     return responseData;
   } catch (error) {
     if (axios.isAxiosError(error)) {

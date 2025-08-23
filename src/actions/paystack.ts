@@ -271,7 +271,7 @@ export const createTransfer = async (
       {
         source: "balance",
         reason,
-        amount: amount * 1000,
+        amount: amount * 100,
         recipient,
       },
       {

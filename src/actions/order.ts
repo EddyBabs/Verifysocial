@@ -503,10 +503,28 @@ export const userOrderConfirmation = async (
   } = validatedData.data;
 
   if (received === "yes") {
-    const order = await database.order.update({
+    let order = await database.order.findUnique({
+      where: { id: orderId },
+      include: {
+        code: {
+          include: {
+            vendor: {
+              select: {
+                User: true,
+                id: true,
+                rating: true,
+                reviewCount: true,
+              },
+            },
+          },
+        },
+        user: true,
+      },
+    });
+    order = await database.order.update({
       where: { id: orderId, userId: userSession.id },
       data: {
-        status: "COMPLETED",
+        status: order?.vendorDeliveryConfirmation ? "COMPLETED" : "PROCESSING",
         userDeliveryConfirmation: true,
         resolved: true,
       },

@@ -1,7 +1,7 @@
 import { fetchUserOrderById } from "@/actions/order";
 import { Badge } from "@/components/ui/badge";
 import { getCurrentUser } from "@/data/user";
-import { cn } from "@/lib/utils";
+import { cn, currencyFormat } from "@/lib/utils";
 import { OrderStatus } from "@prisma/client";
 import { formatDate } from "date-fns";
 import dynamic from "next/dynamic";
@@ -46,10 +46,16 @@ const Page = async ({ params }: { params: Promise<{ orderId: string }> }) => {
           <h2>Order Code:</h2>
           <h4 className="text-lg font-bold uppercase">{order.code.value}</h4>
         </div>
-        <h2>Amount:</h2>
-        <h4>{order.amountValue}</h4>
-        <h2>Delivery Period</h2>
-        <h4>{formatDate(order.code.deliveryPeriod, "PPP")}</h4>
+        <div className="flex items-center gap-1">
+          <h2>Amount:</h2>
+          <h4 className="font-bold">{currencyFormat(order.amountValue)}</h4>
+        </div>
+        <div className="flex items-center gap-1">
+          <h2>Delivery Period: </h2>
+          <h4 className="font-bold">
+            {formatDate(order.code.deliveryPeriod, "PPP")}
+          </h4>
+        </div>
 
         <div className="block md:hidden my-4">
           <OrderPayment order={order} user={user} />

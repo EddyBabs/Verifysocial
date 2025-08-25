@@ -40,25 +40,8 @@ import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 
 type orderSchemaType = z.infer<typeof orderSchema>;
-
-const AMOUNT_RANGES = [
-  { min: 1000, max: 4999 },
-  { min: 5000, max: 9999 },
-  { min: 10000, max: 49999 },
-  { min: 50000, max: 99999 },
-  { min: 100000, max: 499999 },
-  { min: 500000, max: 999999 },
-  { min: 1000000, max: 1000000000 },
-];
 
 const OrderForm = ({
   user,
@@ -129,14 +112,13 @@ const OrderForm = ({
           <form noValidate onSubmit={handleSubmit((data) => onSubmit(data))}>
             <DialogHeader>
               <DialogTitle>Order Form</DialogTitle>
-              <DialogDescription>
-                <div className="flex items-center justify-between">
-                  <div>Fill the form to help us track your order</div>
-                  <div className="font-semibold text-xl">
-                    {currencyFormat(4500)}
-                  </div>
+
+              <div className="flex items-center justify-between text-muted-foreground gap-3">
+                <div>Fill the form to help us track your order</div>
+                <div className="font-semibold text-xl">
+                  {currencyFormat(4500)}
                 </div>
-              </DialogDescription>
+              </div>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               {error && (
@@ -214,7 +196,11 @@ const OrderForm = ({
                   <FormItem>
                     <FormLabel>Quantity</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(+e.target.value)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

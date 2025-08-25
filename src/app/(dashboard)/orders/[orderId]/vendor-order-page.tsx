@@ -29,13 +29,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { currencyFormat } from "@/lib/utils";
-import { User as UserType } from "next-auth";
-import OrderCustomerSatisfaction from "./order-customer-satisfaction";
-import OrderVendorCustomerContact from "./order-vendor-customer-contact";
-import { formatDate } from "date-fns";
 import { OrderStatus } from "@prisma/client";
+import { formatDate } from "date-fns";
+import { User as UserType } from "next-auth";
 import { FcCancel } from "react-icons/fc";
+import OrderCustomerSatisfaction from "./order-customer-satisfaction";
 import OrderDelay from "./order-delay";
+import OrderVendorCustomerContact from "./order-vendor-customer-contact";
+import VendorOrderConfirmed from "./vendor-order-confirmed-button";
 
 export default async function VendorOrderPage({
   params,
@@ -100,7 +101,7 @@ export default async function VendorOrderPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center gap-4">
         <Button variant="outline" size="icon" asChild>
           <Link href="/orders">
             <ArrowLeft className="h-4 w-4" />
@@ -108,7 +109,7 @@ export default async function VendorOrderPage({
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="text-xl md:text-3xl font-bold tracking-tight truncate w-full">
             Order #{orderId}
           </h1>
           <h6>Code: {order.code.value}</h6>
@@ -238,10 +239,7 @@ export default async function VendorOrderPage({
               </div>
             </CardContent>
             <CardFooter>
-              {order.status !== "COMPLETED" && order.status !== "CANCELLED" && (
-                <Button className="w-full">Mark as Delivered</Button>
-              )}
-
+              <VendorOrderConfirmed order={order} />
               <OrderVendorCustomerContact orderId={order.id} />
 
               <OrderCustomerSatisfaction orderId={order.id} user={user} />

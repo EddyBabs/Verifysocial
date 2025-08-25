@@ -11,6 +11,7 @@ import {
   compileSatisfactionEmail,
   compileVendorCancellationCustomer,
   compileVendorCancellationVendor,
+  compileVendorConfirmationEmail,
   compileVendorExtensionCustomer,
   compileVendorExtensionVendor,
   compileVendorRequestCancelled,
@@ -73,11 +74,7 @@ export const fillOrder = async (values: orderSchemaType) => {
     return { error: "This order has already been filled by you" };
   }
 
-  const { amount, date } = validatedData;
-
-  if (code.amountValue < amount.min || code.amountValue > amount.max) {
-    return { error: "Order value does not correlate with the vendor" };
-  }
+  const { date } = validatedData;
 
   if (new Date(date).getTime() != new Date(code.deliveryPeriod).getTime()) {
     return { error: "Delivery date does not correlate with the vendor" };
@@ -86,8 +83,6 @@ export const fillOrder = async (values: orderSchemaType) => {
   const order = await database.order.create({
     data: {
       amountValue: code.amountValue,
-      minAmount: amount.min,
-      maxAmount: amount.max,
       userId: userSession.id,
       status: OrderStatus.PROCESSING,
       codeId: code.id,
@@ -196,6 +191,9 @@ export const fetchVendorOrders = async () => {
         vendorId: vendor.id,
       },
     },
+    orderBy: {
+      createdAt: "desc",
+    },
     include: {
       user: {
         select: {
@@ -271,7 +269,6 @@ export const fetchUserOrderById = async (orderId: string) => {
       code: {
         select: {
           name: true,
-          minAmount: true,
           deliveryPeriod: true,
           value: true,
           quantity: true,
@@ -355,8 +352,8 @@ export const cancelOrder = async (values: orderCancelFormSchemaType) => {
       if (hasPaid) {
         await Promise.all([
           sendMail({
-            // to: order.user?.email || "",
-            to: "emeroleikenna123@gmail.com",
+            // to: "emeroleikenna123@gmail.com",
+            to: order.user?.email || "emeroleikenna123@gmail.com",
             subject: "Order has been flagged",
             body: compileOrderDelayFlagged(
               order.user?.fullname || "",
@@ -402,6 +399,80 @@ export const cancelOrder = async (values: orderCancelFormSchemaType) => {
   } catch {
     return { error: "An error occured. Please try again later" };
   }
+};
+
+export const vendorOrderConfirmationAction = async (orderId: string) => {
+  const userSession = await getCurrentUser();
+  if (!userSession?.id) {
+    redirect("/auth/signin");
+  }
+  if (userSession.role !== "VENDOR") {
+    return { error: "Access Denied" };
+  }
+  const order = await database.order.findUnique({
+    where: { id: orderId },
+    include: {
+      user: true,
+      code: { include: { vendor: { include: { User: true } } } },
+    },
+  });
+  if (!order) return { error: "Order does not exist" };
+  const surveyLink = `${process.env.NEXT_PUBLIC_SITE_URL}/orders/${order.id}?satisfactoryFeedback=true`;
+  const orderLink = `${process.env.NEXT_PUBLIC_SITE_URL}/orders/${order.id}?satisfactoryFeedback=true`;
+  await database.order.update({
+    where: { id: order.id },
+    data: {
+      vendorDeliveryConfirmation: true,
+      ...(order.userDeliveryConfirmation ? {} : {}),
+    },
+  });
+
+  await Promise.all([
+    ...[
+      order.userDeliveryConfirmation
+        ? [
+            // Send Email to User
+            sendMail({
+              to: order.user?.email || "",
+              subject: "Order Satisfaction",
+              body: compileSatisfactionEmail(
+                order.user?.fullname || "",
+                surveyLink
+              ),
+            }),
+            // Send Email to Vendor
+            sendMail({
+              to: order.code.vendor.User.email,
+              subject: "Order Completed",
+              body: compileVendorRequestReceived(
+                order.code.vendor.User.fullname,
+                order.code.name
+              ),
+            }),
+          ]
+        : [
+            // Send Email to User
+            sendMail({
+              to: order.user?.email || "",
+              subject: "Vendor Confirmation",
+              body: compileVendorConfirmationEmail(
+                order.user?.fullname || "",
+                order.id,
+                orderLink
+              ),
+            }),
+            // Send Email to Vendor
+            sendMail({
+              to: order.code.vendor.User.email,
+              subject: "Order Completed",
+              body: compileVendorRequestReceived(
+                order.code.vendor.User.fullname,
+                order.code.name
+              ),
+            }),
+          ],
+    ],
+  ]);
 };
 
 // Customer Cancellation

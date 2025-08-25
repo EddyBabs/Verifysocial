@@ -20,6 +20,7 @@ import { vendorRequestCancelledTemplate } from "./templates/vendor-request-cance
 import { vendorRequestReceived } from "./templates/vendor-request-received";
 import { verifyEmailTemplate } from "./templates/verify-email";
 import { SatisfactionEmailTemplate } from "./templates/satisfaction";
+import { VendorConfirmationUserEmail } from "./templates/vendor-confirmation-user-email";
 // import { welcomeTemplate } from "./templates/welcome";
 
 export async function sendMail({
@@ -310,10 +311,23 @@ export function compileVendorPaymentReversalCustomer(
 
 export function compileSatisfactionEmail(name: string, surveyLink: string) {
   const template = handlebars.compile(SatisfactionEmailTemplate);
-  console.log({ name, surveyLink });
   const htmlBody = template({
     name,
     surveyLink,
+  });
+  return htmlBody;
+}
+
+export function compileVendorConfirmationEmail(
+  name: string,
+  orderId: string,
+  orderLink: string
+) {
+  const template = handlebars.compile(VendorConfirmationUserEmail);
+  const htmlBody = template({
+    name,
+    orderId,
+    orderLink,
   });
   return htmlBody;
 }

@@ -70,10 +70,11 @@ export const orderSchema = z.object({
   email: z.string().email("Invalid email"),
   code: z.string(),
   // value: z.number().min(1),
-  amount: z.object({
-    min: z.number().min(1000, "Amount cannot be less than 1000"),
-    max: z.number().min(1000, "Amount cannot be less than 1000"),
-  }),
+  // amount: z.object({
+  //   min: z.number().min(1000, "Amount cannot be less than 1000"),
+  //   max: z.number().min(1000, "Amount cannot be less than 1000"),
+  // }),
+  quantity: z.number(),
   date: z.date(),
   consent: z.boolean().refine((value) => value === true, {
     message: "Consent is needed to track product",

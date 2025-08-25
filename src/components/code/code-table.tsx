@@ -82,18 +82,6 @@ function CodeTable({
             </TableRow>
           ))}
         </TableBody>
-        {/* <TableFooter>
-          <TableRow>
-            <TableCell colSpan={3}>Total</TableCell>
-            <TableCell className="text-right">
-              {currencyFormat(
-                orders.reduce((sum, order) => {
-                  return sum + Number(order.minAmount);
-                }, 0)
-              )}
-            </TableCell>
-          </TableRow>
-        </TableFooter> */}
       </Table>
       {selectedCode && (
         <CodeDetailsModal

@@ -83,12 +83,9 @@ const OrderForm = ({
       name: user?.fullname || "",
       email: user?.email || "",
       code: code.value,
+      quantity: 0,
       consent: false,
       // value: 0,
-      amount: {
-        min: 2000,
-        max: 1000000,
-      },
     },
   });
 
@@ -133,7 +130,12 @@ const OrderForm = ({
             <DialogHeader>
               <DialogTitle>Order Form</DialogTitle>
               <DialogDescription>
-                Fill the form to help us track your order
+                <div className="flex items-center justify-between">
+                  <div>Fill the form to help us track your order</div>
+                  <div className="font-semibold text-xl">
+                    {currencyFormat(4500)}
+                  </div>
+                </div>
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -171,46 +173,49 @@ const OrderForm = ({
                   Amount of product
                 </p>
               </div> */}
+              {/* <Select
+  onValueChange={(value: string) => {
+    const amount = JSON.parse(value);
+    setValue("amount.min", amount.min);
+    setValue("amount.max", amount.max);
+  }}
+  defaultValue={JSON.stringify({
+    min: field.value.min,
+    max: field.value.max,
+  })}
+>
+  <FormControl>
+    <SelectTrigger>
+      <SelectValue placeholder="Select a an amount range" />
+    </SelectTrigger>
+  </FormControl>
+  <SelectContent>
+    {AMOUNT_RANGES.map((range) => (
+      <SelectItem
+        value={JSON.stringify(range)}
+        key={range.min}
+      >
+        <span>{currencyFormat(range.min)}</span>{" "}
+        <span className="mx-2">-</span>{" "}
+        <span>
+          {range.max < 10000000
+            ? currencyFormat(range.max)
+            : "Above"}
+        </span>
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select> */}
 
               <FormField
                 control={control}
-                name="amount"
+                name="quantity"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Amount</FormLabel>
-                    <Select
-                      onValueChange={(value: string) => {
-                        const amount = JSON.parse(value);
-                        setValue("amount.min", amount.min);
-                        setValue("amount.max", amount.max);
-                      }}
-                      defaultValue={JSON.stringify({
-                        min: field.value.min,
-                        max: field.value.max,
-                      })}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a an amount range" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {AMOUNT_RANGES.map((range) => (
-                          <SelectItem
-                            value={JSON.stringify(range)}
-                            key={range.min}
-                          >
-                            <span>{currencyFormat(range.min)}</span>{" "}
-                            <span className="mx-2">-</span>{" "}
-                            <span>
-                              {range.max < 10000000
-                                ? currencyFormat(range.max)
-                                : "Above"}
-                            </span>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Quantity</FormLabel>
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

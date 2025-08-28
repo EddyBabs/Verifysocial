@@ -31,6 +31,7 @@ import { addDays, formatDate } from "date-fns";
 import { notFound, redirect } from "next/navigation";
 
 import * as z from "zod";
+import { createAccountTransaction } from "./transaction";
 
 type orderSchemaType = z.infer<typeof orderSchema>;
 
@@ -473,6 +474,10 @@ export const vendorOrderConfirmationAction = async (orderId: string) => {
           ],
     ],
   ]);
+
+  if (order?.userDeliveryConfirmation) {
+    await createAccountTransaction(order.code.vendorId, order);
+  }
 };
 
 // Customer Cancellation
@@ -546,6 +551,9 @@ export const userOrderConfirmation = async (
     });
     if (!order) {
       return { error: "Invalid Order" };
+    }
+    if (order?.vendorDeliveryConfirmation) {
+      await createAccountTransaction(order.code.vendorId, order);
     }
     const existingReview = await database.review.findUnique({
       where: { orderId: order.id },

@@ -50,9 +50,10 @@ model User {
   address       Address?
   orders        Order[]
   transactions  Transaction[]
-  reviews       Review[]
-  createdAt     DateTime      @default(now()) @map("created_at")
-  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  reviews   Review[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 }
 
 enum SocialPlatforms {
@@ -82,6 +83,16 @@ enum TransactionStatus {
   PENDING
   SUCCESS
   FAILED
+}
+
+model AccountTransaction {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  vendorId  String   @db.ObjectId
+  account   Vendor   @relation(references: [id], fields: [vendorId])
+  orderId   String   @unique @db.ObjectId
+  order     Order    @relation(references: [id], fields: [orderId])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Withdraw {
@@ -162,6 +173,7 @@ model Vendor {
   categories         String[]
   withdrawals        Withdraw[]
   paymentInformation PaymentInformation?
+  transactions       AccountTransaction[]
   availableBalance   Float                  @default(0)
   pendingBalance     Float                  @default(0)
   totalBalance       Float                  @default(0)
@@ -231,6 +243,7 @@ model Order {
   customerSatisfaction SatisFactionData?
   vendorSatisfaction   SatisFactionData?
   transaction          Transaction?
+  accountTransaction   AccountTransaction?
 
   // Fraudulent Fields
   fraudulent     Boolean   @default(false) // Flag for fraud

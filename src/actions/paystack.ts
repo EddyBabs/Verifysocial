@@ -281,7 +281,7 @@ export const createTransfer = async (
       }
     );
     const responseData = response.data;
-    console.log({ responseData });
+
     return responseData;
   } catch (error) {
     if (axios.isAxiosError(error)) {

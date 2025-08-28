@@ -44,7 +44,6 @@ export async function sendMail({
   try {
     await transport.verify();
   } catch (error) {
-    console.log({ error });
     return;
   }
 

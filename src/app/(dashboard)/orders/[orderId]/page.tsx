@@ -10,6 +10,9 @@ import OrderCustomerSatisfaction from "./order-customer-satisfaction";
 import OrderCustomerVendorContact from "./order-customer-vendor-contact";
 import OrderModal from "./order-modal";
 import VendorOrderPage from "./vendor-order-page";
+import { Button } from "@/components/ui/button";
+import { useCustomerOrderConfirmationModal } from "@/components/modals/customer-confirmation-order.modal";
+import OrderConfirm from "./order-confirm";
 const OrderPayment = dynamic(
   () => import("../../../../components/orders/order-payment")
 );
@@ -73,6 +76,7 @@ const Page = async ({ params }: { params: Promise<{ orderId: string }> }) => {
           {user?.role === "USER" && ["PROCESSING"].includes(order.status) && (
             <OrderCancel orderId={order.id} />
           )}
+          {order.status === "PROCESSING" && <OrderConfirm order={order} />}
           {/* {user?.role === "VENDOR" && <OrderDelay orderId={order.id} />}
           {user?.role === "VENDOR" && (
             <OrderVendorCustomerContact orderId={order.id} />
@@ -82,7 +86,7 @@ const Page = async ({ params }: { params: Promise<{ orderId: string }> }) => {
           )} */}
         </div>
       </div>
-
+      {/* 
       {user?.role === "USER" && (
         <OrderModal
           isOpen={
@@ -91,7 +95,7 @@ const Page = async ({ params }: { params: Promise<{ orderId: string }> }) => {
           }
           orderId={order.id}
         />
-      )}
+      )} */}
 
       {user?.role === "USER" && (
         <OrderCustomerVendorContact orderId={order.id} />

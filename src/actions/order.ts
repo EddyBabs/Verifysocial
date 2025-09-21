@@ -109,7 +109,7 @@ export const fillOrder = async (values: orderSchemaType) => {
           body: compileRequestReceived(
             userSession.fullname,
             order.code.name,
-            `${process.env.NEXTAUTH_URL}/vendor/${order.code.vendorId}?vendorCode=${order.code}`
+            `${process.env.NEXTAUTH_URL}/vendor/${order.code.vendorId}?vendorCode=${order.code.value}`
           ),
         }),
 

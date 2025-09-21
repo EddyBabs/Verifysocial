@@ -8,6 +8,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import SignInEmail from "./signin-email";
+import FacebookLogin from "@greatsumini/react-facebook-login";
 
 type SignUpFormProps = {
   setStep: Dispatch<SetStateAction<"signup" | "verify">>;
@@ -38,6 +39,7 @@ const SignInForm: React.FC<SignUpFormProps> = ({ setStep }) => {
             <FcGoogle size={18} className="mr-2" />
             Google
           </Button>
+          {/* <FacebookLogin  render={({onclick}) => ()} /> */}
           <Button
             variant={"outline"}
             className="w-full"

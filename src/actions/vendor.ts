@@ -194,6 +194,8 @@ export const getVendorReviews = async (
   page: number = 1,
   size: number = 6
 ) => {
+  if (!vendorId) return { totalReviews: 0, reviews: [] };
+  console.log({ vendorId });
   const reviews = await database.review.findMany({
     where: {
       vendorId,

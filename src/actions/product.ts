@@ -44,3 +44,19 @@ export const getCurrentVendorProducts = async () => {
   });
   return products;
 };
+
+export const deleteVendorProduct = async (productId: string) => {
+  const user = await getCurrentUser();
+  if (user) {
+    const product = await database.product.delete({
+      where: {
+        id: productId,
+        vendor: {
+          userId: user.id,
+        },
+      },
+    });
+    return product;
+  }
+  throw new Error("Not logged in");
+};

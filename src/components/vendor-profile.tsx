@@ -1,4 +1,7 @@
-import { getCurrentVendorProducts } from "@/actions/product";
+import {
+  deleteVendorProduct,
+  getCurrentVendorProducts,
+} from "@/actions/product";
 import { getCurrentVendorReviews } from "@/actions/vendor";
 import { Button } from "@/components/ui/button";
 import VendorAvatar from "@/components/vendor-avatar";
@@ -9,6 +12,10 @@ import { FiAward } from "react-icons/fi";
 import ReviewCard from "./reveiw-card";
 import { Card, CardContent } from "./ui/card";
 import UploadProductForm from "./upload-product-form";
+import { Trash2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
+import VendorProductCard from "./vendor-product-card";
 
 export interface VendorProfileProps {
   user: Prisma.UserGetPayload<{
@@ -39,6 +46,7 @@ export interface VendorProfileProps {
 }
 
 const VendorProfile: React.FC<VendorProfileProps> = async ({ user }) => {
+  // const router = useRouter();
   const products = await getCurrentVendorProducts();
   const { reviews } = await getCurrentVendorReviews();
 
@@ -89,22 +97,7 @@ const VendorProfile: React.FC<VendorProfileProps> = async ({ user }) => {
           <div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {products.map((product) => (
-                <div key={product.id}>
-                  <Card>
-                    <Image
-                      src={product.image}
-                      width={250}
-                      height={250}
-                      alt=""
-                      className="aspect-video object-contain w-full h-full max-h-64"
-                    />
-                    {product.name && (
-                      <CardContent className="pt-8">
-                        <h2 className="text-lg font-medium">{product.name}</h2>
-                      </CardContent>
-                    )}
-                  </Card>
-                </div>
+                <VendorProductCard key={product.id} product={product} />
               ))}
             </div>
             <div className="mt-8">

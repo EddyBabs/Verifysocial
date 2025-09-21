@@ -116,7 +116,7 @@ const OrderForm = ({
               <div className="flex items-center justify-between text-muted-foreground gap-3">
                 <div>Fill the form to help us track your order</div>
                 <div className="font-semibold text-xl">
-                  {currencyFormat(4500)}
+                  {currencyFormat(code.amountValue || 0)}
                 </div>
               </div>
             </DialogHeader>

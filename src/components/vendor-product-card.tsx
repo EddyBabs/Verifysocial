@@ -26,7 +26,7 @@ const VendorProductCard = ({
     <div className="relative">
       <div className="absolute top-1 right-1 ">
         <Button
-          variant={"ghost"}
+          variant={"secondary"}
           className="rounded-full text-destructive w-8 h-8"
           onClick={() =>
             startTransition(async () => {

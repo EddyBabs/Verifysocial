@@ -32,6 +32,16 @@ export default {
     FacebookProvider({
       clientId: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
+      allowDangerousEmailAccountLinking: true,
+      async profile(profile) {
+        console.dir({ profile }, { depth: null });
+        return {
+          id: profile.sub,
+          email: profile.email,
+          fullname: profile.name,
+          image: profile?.picture?.data?.url || "",
+        };
+      },
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,

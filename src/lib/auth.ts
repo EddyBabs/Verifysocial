@@ -21,9 +21,9 @@ export const {
   },
   callbacks: {
     async signIn({ user, account }) {
-      const existingUser = await getUserById(user.id || "");
-
       if (account?.provider !== "credentials") return true;
+
+      const existingUser = await getUserById(user.id || "");
       if (existingUser?.anonymous) {
         await database.user.update({
           where: { id: existingUser.id },
@@ -46,6 +46,7 @@ export const {
     async jwt({ token }) {
       if (!token.sub) return token;
       const existingUser = await getUserById(token.sub);
+
       if (!existingUser) return token;
       token.role = existingUser.role;
       return token;

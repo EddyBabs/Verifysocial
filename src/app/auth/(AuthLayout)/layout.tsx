@@ -1,9 +1,15 @@
 import Amico from "@/assets/amico.png";
 import AuthCart from "@/assets/AuthCart.png";
+import { getCurrentUser } from "@/data/user";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 import React, { PropsWithChildren } from "react";
 
-const AuthLayout: React.FC<PropsWithChildren> = ({ children }) => {
+const AuthLayout: React.FC<PropsWithChildren> = async ({ children }) => {
+  const user = await getCurrentUser();
+  if (user) {
+    redirect("/");
+  }
   return (
     <div className="min-h-screen w-screen relative">
       <div className="grid w-full grid-cols-1 md:grid-cols-2">

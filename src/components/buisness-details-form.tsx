@@ -51,7 +51,7 @@ const BuisnessDetailsForm = () => {
     });
   };
 
-  const DEVELOPMENT = true;
+  const DEVELOPMENT = false;
 
   return (
     <>

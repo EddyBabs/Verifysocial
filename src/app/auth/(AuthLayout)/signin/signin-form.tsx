@@ -8,7 +8,6 @@ import React, { Dispatch, SetStateAction } from "react";
 import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import SignInEmail from "./signin-email";
-import FacebookLogin from "@greatsumini/react-facebook-login";
 
 type SignUpFormProps = {
   setStep: Dispatch<SetStateAction<"signup" | "verify">>;

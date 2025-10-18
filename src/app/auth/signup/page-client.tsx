@@ -39,7 +39,6 @@ export default function SignupPageClient() {
             selectedRole={selectedRole}
             setSelectedRole={setSelectedRole}
           />
-          ;
         </div>
         <div className="hidden text-primary col-span-1 md:flex flex-col relative  items-center justify-center h-full w-full">
           <div className="absolute top-20 text-center z-20">

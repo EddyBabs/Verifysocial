@@ -7,6 +7,8 @@ import { BsArrowLeft } from "react-icons/bs";
 import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import SignUpEmail from "./signup-email";
+import { signIn } from "next-auth/react";
+import { setCookie } from "cookies-next";
 
 type SignUpFormProps = {
   selectedRole: "user" | "vendor";
@@ -47,7 +49,16 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
             <FcGoogle size={18} className="mr-2" />
             Google
           </Button>
-          <Button variant={"outline"} className="w-full">
+          <Button
+            variant={"outline"}
+            className="w-full"
+            onClick={() => {
+              setCookie("signup-role", selectedRole, {
+                maxAge: 60 * 60 * 1,
+              });
+              signIn("facebook");
+            }}
+          >
             <FaFacebook size={18} className="mr-2 text-blue-600" />
             Facebook
           </Button>

@@ -6,6 +6,8 @@ import FacebookProvider from "next-auth/providers/facebook";
 import InstagramProvider from "next-auth/providers/instagram";
 import { signInSchema } from "@/schemas/auth";
 import { getUserByEmail } from "@/data/user";
+import { cookies } from "next/headers";
+import { UserRole } from "@prisma/client";
 // import { sendVerification } from "@/actions/send-verification";
 
 class InvalidLoginError extends AuthError {
@@ -24,8 +26,6 @@ export default {
       clientId: process.env.INSTAGRAM_APP_ID,
       clientSecret: process.env.INSTAGRAM_APP_SECRET,
       async profile(profile) {
-        console.log("Instagram");
-        console.log({ profile });
         return profile;
       },
     }),
@@ -34,12 +34,15 @@ export default {
       clientSecret: process.env.FACEBOOK_APP_SECRET,
       allowDangerousEmailAccountLinking: true,
       async profile(profile) {
-        console.dir({ profile }, { depth: null });
+        const cookieStore = await cookies();
+        const role = cookieStore.get("signup-role")?.value;
+
         return {
           id: profile.sub,
           email: profile.email,
           fullname: profile.name,
           image: profile?.picture?.data?.url || "",
+          role: role === "vendor" ? UserRole.VENDOR : UserRole.USER,
         };
       },
     }),

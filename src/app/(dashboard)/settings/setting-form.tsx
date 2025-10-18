@@ -99,7 +99,7 @@ const SettingForm: React.FC<SettingFormProps> = ({ user }) => {
     }
   };
 
-  const DEVELOPMENT = true;
+  const DEVELOPMENT = false;
   return (
     <Card>
       <CardHeader>

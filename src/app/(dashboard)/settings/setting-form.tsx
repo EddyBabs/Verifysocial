@@ -242,6 +242,17 @@ const SettingForm: React.FC<SettingFormProps> = ({ user }) => {
                                       `socialPlatform.${index}.username`
                                     ) || isPending
                                   }
+                                  onClick={async () => {
+                                    if (
+                                      !form.watch(
+                                        `socialPlatform.${index}.username`
+                                      )
+                                    ) {
+                                      if (field.platform == "instagram") {
+                                        await instagramLogin();
+                                      }
+                                    }
+                                  }}
                                 >
                                   {form.watch(
                                     `socialPlatform.${index}.username`

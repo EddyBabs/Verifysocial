@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { useTransition } from "react";
+import React, { useTransition } from "react";
 import { cn } from "@/lib/utils";
 import { facebookLogin } from "@/actions/instagram";
 
@@ -163,7 +163,7 @@ const BuisnessDetailsForm = () => {
         </div>
 
         {fields.map((field, index) => (
-          <>
+          <React.Fragment key={index}>
             <div className="col-span-1">
               <Label>Select social platform</Label>
 
@@ -245,7 +245,7 @@ const BuisnessDetailsForm = () => {
                 </Button>
               )}
             </div>
-          </>
+          </React.Fragment>
         ))}
 
         <div className="col-span-2">

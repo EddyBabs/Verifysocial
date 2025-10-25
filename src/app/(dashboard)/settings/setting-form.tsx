@@ -27,8 +27,13 @@ import { settingFormSchema, settingFormSchemaType } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Prisma } from "@prisma/client";
 import { Loader2 } from "lucide-react";
-import React, { useTransition } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import React, { useState, useTransition } from "react";
+import {
+  FieldArrayWithId,
+  useFieldArray,
+  UseFieldArrayRemove,
+  useForm,
+} from "react-hook-form";
 import { z } from "zod";
 
 const PLATFORMS = [
@@ -56,6 +61,7 @@ interface SettingFormProps {
 
 const SettingForm: React.FC<SettingFormProps> = ({ user }) => {
   const [isPending, startTransition] = useTransition();
+  const [isLinking, setIsLinking] = useState<string | null>(null);
   const form = useForm<z.infer<typeof settingFormSchema>>({
     resolver: zodResolver(settingFormSchema),
     defaultValues: {
@@ -99,7 +105,6 @@ const SettingForm: React.FC<SettingFormProps> = ({ user }) => {
     }
   };
 
-  const DEVELOPMENT = false;
   return (
     <Card>
       <CardHeader>
@@ -168,115 +173,18 @@ const SettingForm: React.FC<SettingFormProps> = ({ user }) => {
                       </div>
 
                       {fields.map((field, index) => (
-                        <>
-                          <div className="col-span-1">
-                            <Label>Select social platform</Label>
-
-                            <Select
-                              value={form.watch(
-                                `socialPlatform.${index}.platform`
-                              )}
-                              onValueChange={(value) =>
-                                form.setValue(
-                                  `socialPlatform.${index}.platform`,
-                                  value
-                                )
-                              }
-                            >
-                              <SelectTrigger className="py-5">
-                                <SelectValue />{" "}
-                              </SelectTrigger>
-                              <SelectContent>
-                                {PLATFORMS.filter((platform) => {
-                                  // Ensure the platform is not in the fields array or matches the currently selected value
-                                  const isAlreadySelected = fields.some(
-                                    (field) => field.platform === platform.value
-                                  );
-                                  const isCurrentlySelected =
-                                    field.platform === platform.value; // Replace 'selectedPlatform' with your actual state or logic for the current selection
-                                  return (
-                                    !isAlreadySelected || isCurrentlySelected
-                                  );
-                                }).map((platform) => (
-                                  <SelectItem
-                                    value={platform.value}
-                                    key={platform.value}
-                                    disabled={platform?.disabled}
-                                  >
-                                    {platform.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-
-                          <div
-                            className={cn(
-                              "h-full items-center w-full col-span-1 gap-4",
-                              { "flex ": !DEVELOPMENT }
-                            )}
-                          >
-                            {DEVELOPMENT ? (
-                              <>
-                                <Input
-                                  inputClassName=""
-                                  className="self-start md:mt-[24px] w-full min-w-32 max-w-44 flex-1"
-                                  placeholder="Insert profile name here"
-                                  {...form.register(
-                                    `socialPlatform.${index}.username`
-                                  )}
-                                />
-                              </>
-                            ) : (
-                              <>
-                                <Button
-                                  type="button"
-                                  className={cn(
-                                    "md:mt-[26px]",
-                                    form.watch(
-                                      `socialPlatform.${index}.username`
-                                    ) && "bg-destructive"
-                                  )}
-                                  disabled={
-                                    !!form.watch(
-                                      `socialPlatform.${index}.username`
-                                    ) || isPending
-                                  }
-                                  onClick={async () => {
-                                    if (
-                                      !form.watch(
-                                        `socialPlatform.${index}.username`
-                                      )
-                                    ) {
-                                      if (field.platform == "instagram") {
-                                        await instagramLogin();
-                                      }
-                                    }
-                                  }}
-                                >
-                                  {form.watch(
-                                    `socialPlatform.${index}.username`
-                                  )
-                                    ? "Linked: " +
-                                      form.watch(
-                                        `socialPlatform.${index}.username`
-                                      )
-                                    : "Link"}
-                                </Button>
-                              </>
-                            )}
-                            {index > 0 && (
-                              <Button
-                                type="button"
-                                variant={"destructive"}
-                                className="self-start md:mt-[27px]"
-                                onClick={() => remove(index)}
-                              >
-                                Remove
-                              </Button>
-                            )}
-                          </div>
-                        </>
+                        <SocialPlatformField
+                          key={field.id}
+                          field={field}
+                          index={index}
+                          form={form}
+                          isPending={isPending}
+                          isLinking={isLinking}
+                          onRemove={remove}
+                          fields={fields as any}
+                          onInstagramLogin={instagramLogin}
+                          setIsLinking={setIsLinking}
+                        />
                       ))}
                     </>
                   )}
@@ -304,6 +212,196 @@ const SettingForm: React.FC<SettingFormProps> = ({ user }) => {
         </Form>
       </CardContent>
     </Card>
+  );
+};
+
+const SocialPlatformField = ({
+  field,
+  index,
+  form,
+  isPending,
+  isLinking,
+  onRemove,
+  onInstagramLogin,
+  setIsLinking,
+  fields,
+}: {
+  field: any;
+  index: number;
+  form: any;
+  isPending: boolean;
+  isLinking: string | null;
+  onRemove: UseFieldArrayRemove;
+  onInstagramLogin: () => Promise<never>;
+  setIsLinking: React.Dispatch<React.SetStateAction<string | null>>;
+  fields: FieldArrayWithId<settingFormSchemaType>;
+}) => {
+  const platformValue = form.watch(`socialPlatform.${index}.platform`);
+  const usernameValue = form.watch(`socialPlatform.${index}.username`);
+
+  const handlePlatformChange = (value: string) => {
+    form.setValue(`socialPlatform.${index}.platform`, value);
+  };
+
+  const handleLinkAccount = async () => {
+    console.log("Clicked");
+
+    try {
+      if (usernameValue) return; // Already linked
+
+      if (platformValue.toLowerCase() === "instagram") {
+        console.log("Instagram");
+        setIsLinking(platformValue.toLowerCase());
+        await onInstagramLogin();
+      }
+
+      console.log({ platform: field.platform });
+    } catch (error) {
+      console.log({ error });
+    } finally {
+      setIsLinking(null);
+    }
+  };
+
+  const getButtonText = () => {
+    return usernameValue ? `Linked: ${usernameValue}` : "Link";
+  };
+
+  const getButtonVariant = () => {
+    return usernameValue ? "destructive" : "default";
+  };
+
+  const isButtonDisabled =
+    usernameValue || isPending || isLinking === platformValue?.toLowerCase();
+
+  return (
+    <>
+      <PlatformSelect
+        index={index}
+        value={platformValue}
+        onValueChange={handlePlatformChange}
+        fields={fields}
+        currentField={field}
+      />
+
+      <UsernameSection
+        index={index}
+        usernameValue={usernameValue}
+        isButtonDisabled={isButtonDisabled}
+        buttonText={getButtonText()}
+        buttonVariant={getButtonVariant()}
+        onLinkAccount={handleLinkAccount}
+        onRemove={onRemove}
+        form={form}
+      />
+    </>
+  );
+};
+
+const PlatformSelect = ({
+  index,
+  value,
+  onValueChange,
+  fields,
+  currentField,
+}: {
+  index: number;
+  value: string;
+  onValueChange: (value: string) => void;
+  fields: any;
+  currentField: any;
+}) => {
+  const filteredPlatforms = PLATFORMS.filter((platform) => {
+    const isAlreadySelected = fields.some(
+      (field: any) => field.platform === platform.value
+    );
+    const isCurrentlySelected = currentField.platform === platform.value;
+    return !isAlreadySelected || isCurrentlySelected;
+  });
+
+  return (
+    <div className="col-span-1">
+      <Label>Select social platform</Label>
+      <Select value={value} onValueChange={onValueChange}>
+        <SelectTrigger className="py-5">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {filteredPlatforms.map((platform) => (
+            <SelectItem
+              value={platform.value}
+              key={platform.value}
+              disabled={platform?.disabled}
+            >
+              {platform.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+};
+
+const UsernameSection = ({
+  index,
+  usernameValue,
+  isButtonDisabled,
+  buttonText,
+  buttonVariant,
+  onLinkAccount,
+  onRemove,
+  form,
+}: {
+  index: number;
+  usernameValue: string;
+  isButtonDisabled: boolean;
+  buttonText: string;
+  buttonVariant: "destructive" | "default";
+  onRemove: (index: number) => void;
+  onLinkAccount: () => Promise<void>;
+  form: any;
+}) => {
+  const DEVELOPMENT = false;
+  const sectionClass = cn("h-full items-center w-full col-span-1 gap-4", {
+    flex: !DEVELOPMENT,
+  });
+
+  if (DEVELOPMENT) {
+    return (
+      <div className={sectionClass}>
+        <Input
+          inputClassName=""
+          className="self-start md:mt-[24px] w-full min-w-32 max-w-44 flex-1"
+          placeholder="Insert profile name here"
+          {...form.register(`socialPlatform.${index}.username`)}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className={sectionClass}>
+      <Button
+        type="button"
+        className={cn("md:mt-[26px]", usernameValue && "bg-destructive")}
+        disabled={isButtonDisabled}
+        onClick={onLinkAccount}
+        variant={buttonVariant}
+      >
+        {buttonText}
+      </Button>
+
+      {index > 0 && (
+        <Button
+          type="button"
+          variant="destructive"
+          className="self-start md:mt-[27px]"
+          onClick={() => onRemove(index)}
+        >
+          Remove
+        </Button>
+      )}
+    </div>
   );
 };
 

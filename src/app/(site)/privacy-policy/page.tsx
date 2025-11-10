@@ -225,6 +225,56 @@ const Page = () => {
             </section>
 
             <section>
+              <h2 className="text-2xl font-semibold mb-4">8. Your Rights</h2>
+              <p className="text-muted-foreground mb-4">
+                Depending on your location, you may have the right to:
+              </p>
+
+              <ul className="list-disc list-inside text-muted-foreground space-y-2">
+                <li>Access and receive a copy of your data</li>
+                <li>Request correction or deletion of your data</li>
+                <li>Withdraw consent at any time</li>
+                <li>
+                  Object to or restrict certain data processing activities
+                </li>
+              </ul>
+
+              <p className="mt-2 text-muted-foreground">
+                To exercise these rights, contact us at info@verifysocial.com.ng
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-semibold mb-4">9. Data Retention</h2>
+              <p className="text-muted-foreground mb-4">
+                We retain your information only as long as necessary to:
+              </p>
+
+              <ul className="list-disc list-inside text-muted-foreground space-y-2">
+                <li>Provide our services</li>
+                <li>Comply with legal obligations</li>
+                <li>Resolve disputes or enforce agreements</li>
+              </ul>
+
+              <p className="mt-2 text-muted-foreground">
+                Once data is no longer required, it will be securely deleted or
+                anonymized.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-semibold mb-4">
+                10. Updates to This Policy
+              </h2>
+              <p className="text-muted-foreground mb-4">
+                We may update this Privacy Policy periodically to reflect
+                changes in our practices or legal obligations. Any updates will
+                be posted on this page with a new “Last Updated” date. We
+                encourage you to review it regularly.
+              </p>
+            </section>
+
+            <section>
               <h2 className="text-2xl font-semibold mb-4">11. Contact Us</h2>
               <p className="text-muted-foreground mb-4">
                 If you have any questions or concerns about this Privacy Policy

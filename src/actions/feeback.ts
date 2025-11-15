@@ -41,8 +41,7 @@ export const vendorCustomerFeedback = async (
       },
     });
     await sendMail({
-      //   to: order.user?.email || "",
-      to: "holuwadanzy@gmail.com",
+      to: order.user?.email || "",
       subject: "Order Resolved",
       body: compileVendorPaymentReversalCustomer(
         order.user?.fullname || "",

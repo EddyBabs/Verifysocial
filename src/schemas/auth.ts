@@ -54,6 +54,12 @@ export const signInSchema = z.object({
   password: z.string().min(1, "Password is a required field"),
 });
 
+export const contactSchema = z.object({
+  email: emailSchema,
+  name: z.string().min(1, "Name is required"),
+  message: z.string().min(30, "Min of 30 characters"),
+});
+
 export const requestPasswordResetSchema = z.object({
   email: emailSchema,
 });

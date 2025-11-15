@@ -21,6 +21,7 @@ import { vendorRequestReceived } from "./templates/vendor-request-received";
 import { verifyEmailTemplate } from "./templates/verify-email";
 import { SatisfactionEmailTemplate } from "./templates/satisfaction";
 import { VendorConfirmationUserEmail } from "./templates/vendor-confirmation-user-email";
+import { contactMessageTemplate } from "./templates/contact-message";
 // import { welcomeTemplate } from "./templates/welcome";
 
 export async function sendMail({
@@ -304,6 +305,20 @@ export function compileVendorPaymentReversalCustomer(
   const htmlBody = template({
     name,
     code,
+  });
+  return htmlBody;
+}
+
+export function compileContactMessage(
+  email: string,
+  message: string,
+  name: string
+) {
+  const template = handlebars.compile(contactMessageTemplate);
+  const htmlBody = template({
+    name,
+    email,
+    message,
   });
   return htmlBody;
 }

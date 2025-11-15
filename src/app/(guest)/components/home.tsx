@@ -1,12 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import AmicoSvg from "@/assets/amico.svg";
 import noImagePlacehoder from "@/assets/images/no-image-placehoder.webp";
 import VerifySocialVideo from "@/assets/verify social video.gif";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import VendorSearchInput from "@/components/vendor-search-input";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
@@ -16,6 +12,7 @@ import { Lock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaShieldHalved } from "react-icons/fa6";
+import ContactForm from "./contact-form";
 
 const offers = [
   {
@@ -168,20 +165,18 @@ export default async function Home() {
               <div className="container mx-auto text-center">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:border-l-0 border-primary ">
                   {offers.map((offer, index) => (
-                  
-                      <div
-                        key={`${offer.title}-${index}`}
-                        className="border max-w-[280px] md:max-w-none mx-auto rounded-xl md:border-l-4 hover:bg-primary hover:text-secondary md:before:w-6 md:before:h-6 md:before:absolute md:before:-left-3.5 md:before:-top-2 md:before:bg-primary before:rounded-full relative md:border-primary p-5 pb-10"
-                      >
-                        <div className="flex items-center justify-center mb-4">
-                          <offer.icon className="h-10 w-10" />
-                        </div>
-                        <h1 className="font-semibold text-xl mb-4">
-                          {offer.title}
-                        </h1>
-                        <p>{offer.description}</p>
+                    <div
+                      key={`${offer.title}-${index}`}
+                      className="border max-w-[280px] md:max-w-none mx-auto rounded-xl md:border-l-4 hover:bg-primary hover:text-secondary md:before:w-6 md:before:h-6 md:before:absolute md:before:-left-3.5 md:before:-top-2 md:before:bg-primary before:rounded-full relative md:border-primary p-5 pb-10"
+                    >
+                      <div className="flex items-center justify-center mb-4">
+                        <offer.icon className="h-10 w-10" />
                       </div>
-                    
+                      <h1 className="font-semibold text-xl mb-4">
+                        {offer.title}
+                      </h1>
+                      <p>{offer.description}</p>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -192,50 +187,7 @@ export default async function Home() {
 
       <div className="py-20 px-4">
         <div className="container mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
-            <div className="flex flex-col gap-4 justify-center items-center">
-              <h2 className="text-3xl font-semibold">Get in touch with us.</h2>
-
-              <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="name">Name</Label>
-
-                <Input
-                  placeholder="Enter your name"
-                  id="name"
-                  name="name"
-                  autoComplete="name"
-                />
-              </div>
-
-              <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  placeholder="xyzzz@gmail.com"
-                  name="email"
-                  id="email"
-                  autoComplete="email"
-                />
-              </div>
-
-              <div className="grid w-full gap-1.5">
-                <Label htmlFor="message">Your message</Label>
-                <Textarea
-                  placeholder="Type your message here."
-                  id="message"
-                  autoComplete="off"
-                  rows={5}
-                />
-              </div>
-              <Button className="bg-gradient-to-r w-full from-[#003399] to-[#2C64D4]">
-                Send
-              </Button>
-            </div>
-            <div>
-              <div className="flex items-center w-full justify-center">
-                <Image src={AmicoSvg} alt="" />
-              </div>
-            </div>
-          </div>
+          <ContactForm />
         </div>
       </div>
     </div>

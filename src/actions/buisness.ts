@@ -15,7 +15,7 @@ import {
 } from "@/schemas/become-a-vendor";
 import { AxiosError } from "axios";
 
-const DEVELOPMENT = true;
+const DEVELOPMENT = false;
 
 export const verifyNIN = async (nin: string) => {
   const vendor = await getCurrentUser();
@@ -74,7 +74,7 @@ export const verifyNIN = async (nin: string) => {
     !vendor?.name?.includes(kyc_data.verifiedLastname)
   ) {
     // Enable to test
-    // return { error: "NIN not valid" };
+    return { error: "NIN not valid" };
   }
 
   return { success: "NIN Verified" };

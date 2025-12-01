@@ -42,11 +42,16 @@ export const verifyNIN = async (nin: string) => {
     return { success: "NIN Verified" };
   }
 
+  console.log("Checking dojah");
+
   const doja = new DojahService({
     appId: process.env.DOJAH_APP_ID as string,
-    environment: "sandbox",
+    // environment: "sandbox",
+    environment: "live",
     secretKey: process.env.DOJAH_PRIVATE_KEY as string,
   });
+
+  console.log({ doja });
 
   const kyc_data = {
     document_type: "",
@@ -57,7 +62,9 @@ export const verifyNIN = async (nin: string) => {
   let response;
   try {
     response = await doja.lookupNIN(nin);
+    console.log({ response });
   } catch (error) {
+    console.log({ error });
     if (error instanceof AxiosError) {
       if (error.response?.data) {
         return error.response.data;

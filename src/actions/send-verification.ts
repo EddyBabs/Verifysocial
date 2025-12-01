@@ -10,10 +10,13 @@ export const sendVerification = async (user: {
 }) => {
   const { email, fullname } = user;
 
+  console.log({ email, fullname });
   await customCheckRateLimitAndThrowError(email);
+  console.log("Rate limit passed");
   const existingToken = await database.verificationToken.findUnique({
     where: { identifier: email },
   });
+  console.log({ existingToken });
 
   if (existingToken) {
     await database.verificationToken.delete({
@@ -22,6 +25,7 @@ export const sendVerification = async (user: {
   }
 
   const token = uuidv4();
+  console.log({ token });
   await database.verificationToken.create({
     data: {
       identifier: email,
@@ -35,4 +39,5 @@ export const sendVerification = async (user: {
     subject: "Verify Email Address",
     body: compileVerifyEmailTemplate(fullname, confirmLink),
   });
+  console.log("Verification email sent");
 };

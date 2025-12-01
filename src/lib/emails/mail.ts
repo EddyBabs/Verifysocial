@@ -48,16 +48,18 @@ export async function sendMail({
   try {
     await transport.verify();
   } catch (error) {
+    console.log("Error with email transport: ", error);
     return;
   }
 
   try {
-    await transport.sendMail({
+    const response = await transport.sendMail({
       from: `Verify Social <${SMTP_EMAIL}>`,
       to,
       subject,
       html: body,
     });
+    console.log("Email sent: ", response.messageId);
   } catch (error) {
     console.log(error);
   }

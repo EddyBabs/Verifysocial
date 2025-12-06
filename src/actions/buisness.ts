@@ -18,20 +18,41 @@ import { AxiosError } from "axios";
 const DEVELOPMENT = false;
 
 export const verifyNIN = async (nin: string) => {
-  const vendor = await getCurrentUser();
+  const currentUser = await getCurrentUser();
 
-  if (!vendor || !vendor.id) {
+  if (!currentUser || !currentUser.id) {
     return { error: "Access Denied" };
   }
 
+  console.log({ currentUser });
+
+  const user = await database.user.findUnique({
+    where: { id: currentUser.id },
+    include: { vendor: true },
+  });
+
+  console.log({ user });
+  if (!user) {
+    return { error: "Access Denied" };
+  }
+
+  await customCheckRateLimitAndThrowError(user.email || "");
   if (DEVELOPMENT) {
+    if (!user.vendor) {
+      const vendor = await database.vendor.create({
+        data: {
+          userId: user.id,
+        },
+      });
+      user.vendor = vendor;
+    }
     const approvedCredentials = await database.kYCCredential.count({
-      where: { vendorId: vendor.id, status: "APPROVED" },
+      where: { vendorId: user.vendor.id, status: "APPROVED" },
     });
     if (approvedCredentials < 1) {
       await database.kYCCredential.create({
         data: {
-          vendorId: vendor.id,
+          vendorId: user.vendor.id,
           type: "NIN",
           status: "APPROVED",
           verifiedAt: new Date(),
@@ -51,8 +72,6 @@ export const verifyNIN = async (nin: string) => {
     secretKey: process.env.DOJAH_PRIVATE_KEY as string,
   });
 
-  console.log({ doja });
-
   const kyc_data = {
     document_type: "",
     verifiedFirstname: "",
@@ -62,7 +81,6 @@ export const verifyNIN = async (nin: string) => {
   let response;
   try {
     response = await doja.lookupNIN(nin);
-    console.log({ response });
   } catch (error) {
     console.log({ error });
     if (error instanceof AxiosError) {
@@ -76,13 +94,27 @@ export const verifyNIN = async (nin: string) => {
   kyc_data.verifiedFirstname = response.entity.first_name;
   kyc_data.verifiedLastname = response.entity.last_name;
 
+  console.log({ kyc_data, fullname: user.fullname });
+
+  // Check if kyc is correct
   if (
-    !vendor?.name?.includes(kyc_data.verifiedFirstname) &&
-    !vendor?.name?.includes(kyc_data.verifiedLastname)
+    !user.fullname
+      ?.toLowerCase()
+      .includes(kyc_data.verifiedFirstname.toLowerCase()) ||
+    !user.fullname
+      ?.toLowerCase()
+      .includes(kyc_data.verifiedLastname.toLowerCase())
   ) {
-    // Enable to test
-    return { error: "NIN not valid" };
+    return { error: "NIN does not match user details" };
   }
+
+  // if (
+  //   !user.name?.includes(kyc_data.verifiedFirstname) &&
+  //   !user.vendor?.name?.includes(kyc_data.verifiedLastname)
+  // ) {
+  //   // Enable to test
+  //   return { error: "NIN not valid" };
+  // }
 
   return { success: "NIN Verified" };
 };

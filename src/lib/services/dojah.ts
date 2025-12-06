@@ -67,6 +67,7 @@ export class DojahService {
   }
 
   public async lookupNIN(nin: string): Promise<any> {
+    console.log({ nin });
     const response = await this.axiosInstance.get("/kyc/nin", {
       params: {
         nin: nin,

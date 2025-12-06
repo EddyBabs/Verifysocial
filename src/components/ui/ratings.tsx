@@ -63,7 +63,7 @@ const Ratings = ({ ...props }: RatingsProps) => {
       {[...Array(fullStars)].map((_, i) =>
         React.cloneElement(Icon, {
           key: i,
-          size,
+          size: size,
           className: cn(
             fill ? "fill-current" : "fill-transparent",
             ratingVariants[variant].star,
@@ -71,13 +71,13 @@ const Ratings = ({ ...props }: RatingsProps) => {
           ),
           role: props.asInput && "input",
           onClick: () => onValueChange && onValueChange(i + 1),
-        })
+        } as any)
       )}
       {partialStar}
       {[...Array(totalStars - fullStars - (partialStar ? 1 : 0))].map((_, i) =>
         React.cloneElement(Icon, {
           key: i + fullStars + 1,
-          size,
+          size: size,
           className: cn(
             ratingVariants[variant].emptyStar,
             asInput ? "cursor-pointer" : ""
@@ -86,7 +86,7 @@ const Ratings = ({ ...props }: RatingsProps) => {
           onClick: () =>
             onValueChange &&
             onValueChange(fullStars + i + 1 + (partialStar ? 1 : 0)),
-        })
+        } as any)
       )}
     </div>
   );
@@ -112,9 +112,9 @@ const PartialStar = ({ ...props }: PartialStarProps) => {
       className={cn("relative inline-block", asInput && "cursor-pointer")}
     >
       {React.cloneElement(Icon, {
-        size,
+        size: size,
         className: cn("fill-transparent", className),
-      })}
+      } as any)}
       <div
         style={{
           position: "absolute",
@@ -124,9 +124,9 @@ const PartialStar = ({ ...props }: PartialStarProps) => {
         }}
       >
         {React.cloneElement(Icon, {
-          size,
+          size: size,
           className: cn("fill-current", className),
-        })}
+        } as any)}
       </div>
     </div>
   );

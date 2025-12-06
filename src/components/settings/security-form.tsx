@@ -66,7 +66,7 @@ export function SecurityForm() {
     },
   });
 
-  const securityForm = useForm<SecurityFormValues>({
+  const securityForm = useForm({
     resolver: zodResolver(securityFormSchema),
     defaultValues: {
       twoFactorAuth: false,

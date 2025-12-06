@@ -5,9 +5,7 @@ export const becomeAVendorForm1 = z.object({
   lastname: z.string().min(1),
   phone: z.string().min(9, "Invalid phone number"),
   gender: z.enum(["male", "female"], {
-    errorMap: () => ({
-      message: "Gender must be either 'male' or 'female'",
-    }),
+    message: "Gender must be either 'male' or 'female'",
   }),
   email: z.string().email(),
   nin: z.string().min(4, "Invalid Nin number"),

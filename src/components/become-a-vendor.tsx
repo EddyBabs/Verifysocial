@@ -230,7 +230,7 @@ const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user, ninVerified }) => {
             </div>
             <div className="mt-8">
               {getStepContent(activeStep)}
-              <div className="flex justify-end space-x-[20px] mt-10">
+              <div className="flex justify-end space-x-5 mt-10">
                 <Button
                   type="button"
                   className="w-[100px]"

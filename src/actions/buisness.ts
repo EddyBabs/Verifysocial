@@ -2,7 +2,7 @@
 import { getBuisnessVerificationTokenByToken } from "@/data/buisness-token";
 import { getCurrentUser } from "@/data/user";
 import { customCheckRateLimitAndThrowError } from "@/lib/check-ratelimit-throw-error";
-import { database, GenderType, Tier } from "@/lib/database";
+import { database } from "@/lib/database";
 import {
   compileBuisnessVerificationTemplate,
   sendMail,
@@ -13,6 +13,7 @@ import {
   BecomeAVendorSchemaType,
   becomeAVendorShcema,
 } from "@/schemas/become-a-vendor";
+import { GenderType, Tier } from "@prisma/client";
 import { AxiosError } from "axios";
 
 const DEVELOPMENT = false;

@@ -1,7 +1,4 @@
-import {
-  deleteVendorProduct,
-  getCurrentVendorProducts,
-} from "@/actions/product";
+import { getCurrentVendorProducts } from "@/actions/product";
 import { getCurrentVendorReviews } from "@/actions/vendor";
 import { Button } from "@/components/ui/button";
 import VendorAvatar from "@/components/vendor-avatar";
@@ -10,11 +7,7 @@ import Image from "next/image";
 import React from "react";
 import { FiAward } from "react-icons/fi";
 import ReviewCard from "./reveiw-card";
-import { Card, CardContent } from "./ui/card";
 import UploadProductForm from "./upload-product-form";
-import { Trash2Icon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { toast } from "@/hooks/use-toast";
 import VendorProductCard from "./vendor-product-card";
 
 export interface VendorProfileProps {

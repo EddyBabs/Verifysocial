@@ -15,6 +15,57 @@ export const instagramLogin = async () => {
   redirect(authUrl);
 };
 
+export const instagramLogin2 = async (
+  values: z.infer<typeof businessDetails>
+) => {
+  const validatedField = businessDetails.safeParse(values);
+  if (validatedField.error) {
+    return { error: "Invalid Fields" };
+  }
+
+  const currentUser = await getCurrentUser();
+  if (!currentUser || !currentUser.id) {
+    return { error: "Access Denied" };
+  }
+  const vendor = await database.vendor.findUnique({
+    where: {
+      userId: currentUser?.id,
+    },
+  });
+  if (!vendor) {
+    const { businessAbout, businessName, categories, address } =
+      validatedField.data;
+    await database.address.upsert({
+      where: {
+        userId: currentUser.id,
+      },
+      create: {
+        userId: currentUser.id,
+        city: address.city,
+        country: address.country,
+        state: address.state,
+        street: address.street,
+      },
+      update: {
+        city: address.city,
+        state: address.state,
+        country: address.country,
+        street: address.street,
+      },
+    });
+    await database.vendor.create({
+      data: {
+        userId: currentUser.id,
+        businessName,
+        businessAbout,
+        categories,
+      },
+    });
+  }
+  const authUrl = `https://www.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish`;
+  redirect(authUrl);
+};
+
 export const facebookLogin = async (
   values: z.infer<typeof businessDetails>
 ) => {

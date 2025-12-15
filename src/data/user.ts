@@ -28,13 +28,15 @@ export const getCurrentUser = async () => {
 
 export const getCurrentUserDetails = async () => {
   const currentUser = await getCurrentUser();
-
   if (!currentUser?.id) {
     return redirect("/auth/signin");
   }
+  const vendor = await database.vendor.findUnique({
+    where: { userId: currentUser.id },
+  });
   const credentials = await database.kYCCredential.count({
     where: {
-      vendorId: currentUser.id,
+      vendorId: vendor?.id,
       status: "APPROVED",
     },
   });
@@ -73,6 +75,7 @@ export const getCurrentUserDetails = async () => {
   if (!user) {
     return redirect("/auth/signin");
   }
+  console.log({ credentials });
   const ninVerified = !!credentials;
   return { user, ninVerified };
 };

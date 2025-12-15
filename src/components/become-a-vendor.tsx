@@ -4,6 +4,7 @@ import {
   sendBusinessVerification,
   verifyNIN,
 } from "@/actions/buisness";
+import { updateUser } from "@/actions/user";
 import BuisnessDetailsForm from "@/components/buisness-details-form";
 import PersonalDetailsForm from "@/components/personal-details-form";
 import StepperIndicator from "@/components/stepper-indicator";
@@ -129,6 +130,13 @@ const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user, ninVerified }) => {
 
       if (activeStep === 1 && isValid) {
         const ninValue = getValues("step1.nin");
+        await updateUser({
+          phone: getValues("step1.phone"),
+          fullname: `${getValues("step1.firstname")} ${getValues(
+            "step1.lastname"
+          )}`,
+          gender: getValues("step1.gender"),
+        });
         const ninResponse = await verifyNIN(ninValue);
         if (ninResponse?.error) {
           toast({
@@ -137,6 +145,8 @@ const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user, ninVerified }) => {
           });
           return;
         } else {
+          // update user details like phone
+
           toast({
             description: ninResponse.success,
           });
@@ -236,7 +246,9 @@ const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user, ninVerified }) => {
                   className="w-[100px]"
                   variant="secondary"
                   onClick={handleBack}
-                  disabled={activeStep === 1}
+                  disabled={
+                    activeStep === 1 || (ninVerified && activeStep <= 2)
+                  }
                 >
                   Prev
                 </Button>

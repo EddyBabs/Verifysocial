@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { facebookLogin } from "@/actions/instagram";
 
 const PLATFORMS = [
+  { value: "facebook", label: "Facebook" },
   { value: "instagram", label: "Instagram" },
   { value: "twitter", label: "Twitter", disabled: false },
 ];
@@ -47,6 +48,8 @@ const BuisnessDetailsForm = () => {
       const values = getValues("step2");
       if (platform === "instagram") {
         await facebookLogin(values);
+      } else if (platform === "facebook") {
+        // await facebookLogin(values);
       }
     });
   };

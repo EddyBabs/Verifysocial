@@ -25,19 +25,19 @@ export const verifyNIN = async (nin: string) => {
     return { error: "Access Denied" };
   }
 
-  console.log({ currentUser });
-
   const user = await database.user.findUnique({
     where: { id: currentUser.id },
     include: { vendor: true },
   });
 
-  console.log({ user });
   if (!user) {
     return { error: "Access Denied" };
   }
-
-  await customCheckRateLimitAndThrowError(user.email || "");
+  try {
+    await customCheckRateLimitAndThrowError(user.email || "");
+  } catch (error) {
+    return { error: "Too many requests. Please try again later." };
+  }
   if (DEVELOPMENT) {
     if (!user.vendor) {
       const vendor = await database.vendor.create({
@@ -64,8 +64,6 @@ export const verifyNIN = async (nin: string) => {
     return { success: "NIN Verified" };
   }
 
-  console.log("Checking dojah");
-
   const doja = new DojahService({
     appId: process.env.DOJAH_APP_ID as string,
     // environment: "sandbox",
@@ -90,10 +88,13 @@ export const verifyNIN = async (nin: string) => {
       }
     }
   }
-
+  console.log({ response });
+  if (!response || !response?.entity) {
+    return { error: "NIN not valid" };
+  }
   kyc_data.document_type = "nin";
-  kyc_data.verifiedFirstname = response.entity.first_name;
-  kyc_data.verifiedLastname = response.entity.last_name;
+  kyc_data.verifiedFirstname = response?.entity?.first_name;
+  kyc_data.verifiedLastname = response?.entity?.last_name;
 
   console.log({ kyc_data, fullname: user.fullname });
 
@@ -101,10 +102,10 @@ export const verifyNIN = async (nin: string) => {
   if (
     !user.fullname
       ?.toLowerCase()
-      .includes(kyc_data.verifiedFirstname.toLowerCase()) ||
+      .includes(kyc_data.verifiedFirstname?.toLowerCase()) ||
     !user.fullname
       ?.toLowerCase()
-      .includes(kyc_data.verifiedLastname.toLowerCase())
+      .includes(kyc_data.verifiedLastname?.toLowerCase())
   ) {
     return { error: "NIN does not match user details" };
   }
@@ -116,6 +117,17 @@ export const verifyNIN = async (nin: string) => {
   //   // Enable to test
   //   return { error: "NIN not valid" };
   // }
+  if (user.vendor === null) {
+    return { error: "Vendor not found" };
+  }
+  await database.kYCCredential.create({
+    data: {
+      vendorId: user.vendor.id,
+      type: "NIN",
+      status: "APPROVED",
+      verifiedAt: new Date(),
+    },
+  });
 
   return { success: "NIN Verified" };
 };
@@ -125,7 +137,11 @@ export const sendBusinessVerification = async (name: string) => {
   if (!vendor || !vendor.email) {
     return { error: "Access Denied" };
   }
-  await customCheckRateLimitAndThrowError(vendor.email);
+  try {
+    await customCheckRateLimitAndThrowError(vendor.email);
+  } catch (error) {
+    return { error: "Too many requests. Please try again later." };
+  }
 
   const businessVerificationToken = await generateBusinessVerificationToken(
     vendor.email

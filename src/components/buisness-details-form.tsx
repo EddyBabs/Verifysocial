@@ -1,7 +1,10 @@
-import { useFieldArray, useFormContext } from "react-hook-form";
+import { facebookLink, instagramLogin2, getFacebookProfile } from "@/actions/instagram";
 import categories from "@/data/categories";
-import { City, State } from "country-state-city";
+import { cn } from "@/lib/utils";
 import { BecomeAVendorSchemaType } from "@/schemas/become-a-vendor";
+import { City, State } from "country-state-city";
+import React, { useEffect, useTransition, useState } from "react";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -13,9 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import React, { useTransition } from "react";
-import { cn } from "@/lib/utils";
-import { facebookLogin } from "@/actions/instagram";
 
 const PLATFORMS = [
   { value: "facebook", label: "Facebook" },
@@ -33,11 +33,36 @@ const BuisnessDetailsForm = () => {
     formState: { errors },
   } = useFormContext<BecomeAVendorSchemaType>();
   const [isPending, startTransition] = useTransition();
+  const [facebookProfile, setFacebookProfile] = useState<{ username: string | null; userId: string | null } | null>(null);
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "step2.socialPlatform",
   });
+
+  // Fetch Facebook profile on mount
+  useEffect(() => {
+    const fetchFacebookProfile = async () => {
+      const result = await getFacebookProfile();
+      if (result && "success" in result && result.success) {
+        setFacebookProfile({ username: result.username, userId: result.userId });
+        // Update form with Facebook username if available
+        if (result.username) {
+          const currentSocialPlatforms = getValues("step2.socialPlatform") || [];
+          const facebookIndex = currentSocialPlatforms.findIndex(
+            (p) => p.platform === "facebook"
+          );
+          if (facebookIndex === -1) {
+            setValue("step2.socialPlatform", [
+              ...currentSocialPlatforms,
+              { platform: "facebook", username: result.username },
+            ]);
+          }
+        }
+      }
+    };
+    fetchFacebookProfile();
+  }, []);
 
   const handleSelectCategories = (value: string[]) => {
     setValue("step2.categories", value);
@@ -47,9 +72,14 @@ const BuisnessDetailsForm = () => {
     startTransition(async () => {
       const values = getValues("step2");
       if (platform === "instagram") {
-        await facebookLogin(values);
+        await instagramLogin2(values);
       } else if (platform === "facebook") {
-        // await facebookLogin(values);
+        await facebookLink(values);
+        // Refresh Facebook profile after linking
+        const result = await getFacebookProfile();
+        if (result && "success" in result && result.success) {
+          setFacebookProfile({ username: result.username, userId: result.userId });
+        }
       }
     });
   };
@@ -206,7 +236,7 @@ const BuisnessDetailsForm = () => {
                 <>
                   <Input
                     placeholder="Insert your username"
-                    className="self-start md:mt-[24px]"
+                    className="self-start md:mt-6"
                     {...register(`step2.socialPlatform.${index}.username`)}
                   />
                 </>
@@ -230,10 +260,18 @@ const BuisnessDetailsForm = () => {
                       )
                     }
                   >
-                    {watch(`step2.socialPlatform.${index}.username`)
-                      ? "Linked: " +
-                        watch(`step2.socialPlatform.${index}.username`)
-                      : "Link"}
+                    {(() => {
+                      const username = watch(`step2.socialPlatform.${index}.username`);
+                      const platform = watch(`step2.socialPlatform.${index}.platform`);
+                      
+                      // Show Facebook profile if platform is Facebook and profile exists
+                      if (platform === "facebook" && facebookProfile?.username && !username) {
+                        return `Linked: ${facebookProfile.username}`;
+                      }
+                      
+                      // Default behavior
+                      return username ? `Linked: ${username}` : "Link";
+                    })()}
                   </Button>
                 </>
               )}

@@ -23,6 +23,7 @@ import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { FacebookCallbackHandler } from "./facebook-callback-handler";
 
 function getStepContent(step: number) {
   switch (step) {
@@ -226,6 +227,7 @@ const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user, ninVerified }) => {
   };
   return (
     <div>
+      <FacebookCallbackHandler />
       <div className="container mx-auto">
         <div className="space-y-2">
           <h4 className="text-2xl font-bold">Become a Vendor</h4>

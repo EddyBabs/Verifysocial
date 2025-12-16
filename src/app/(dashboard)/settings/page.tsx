@@ -1,4 +1,5 @@
 import InstagramCallback from "@/components/instagram-callback";
+import { FacebookCallbackHandler } from "@/components/facebook-callback-handler";
 import { AccountNumberForm } from "@/components/settings/account-number-form";
 import { SecurityForm } from "@/components/settings/security-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,6 +19,7 @@ const Settings = async () => {
   return (
     <div className="container mx-auto space-y-6">
       <InstagramCallback />
+      <FacebookCallbackHandler />
       <div>
         <h3 className="text-3xl font-semibold">Settings</h3>
       </div>

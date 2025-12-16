@@ -86,7 +86,12 @@ export const facebookLink = async () => {
   // const authUrl = `https://www.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish`;
   // redirect(authUrl);
   // Get facebook username and redirect to facebook auth url
-  const facebookAuthUrl = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${process.env.NEXT_PUBLIC_FACEBOOK_APP_ID}&redirect_uri=${process.env.NEXT_PUBLIC_REDIRECT_URI}&scope=pages_show_list,instagram_basic,instagram_manage_insights,instagram_manage_comments,pages_read_engagement,pages_read_user_content`;
+  const facebookAuthUrl = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${
+    process.env.NEXT_PUBLIC_FACEBOOK_APP_ID
+  }&redirect_uri=${
+    process.env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI ??
+    "https://verifysocial.com.ng/api/social/facebook/callback"
+  }&scope=pages_show_list,instagram_basic,instagram_manage_insights,instagram_manage_comments,pages_read_engagement,pages_read_user_content`;
   redirect(facebookAuthUrl);
 };
 

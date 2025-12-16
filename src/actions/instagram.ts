@@ -66,12 +66,7 @@ export const instagramLogin2 = async (
   redirect(authUrl);
 };
 
-export const facebookLink = async (values: z.infer<typeof businessDetails>) => {
-  const validatedField = businessDetails.safeParse(values);
-  if (validatedField.error) {
-    return { error: "Invalid Fields" };
-  }
-
+export const facebookLink = async () => {
   const currentUser = await getCurrentUser();
   if (!currentUser || !currentUser.id) {
     return { error: "Access Denied" };
@@ -82,39 +77,16 @@ export const facebookLink = async (values: z.infer<typeof businessDetails>) => {
     },
   });
   if (!vendor) {
-    const { businessAbout, businessName, categories, address } =
-      validatedField.data;
-    await database.address.upsert({
-      where: {
-        userId: currentUser.id,
-      },
-      create: {
-        userId: currentUser.id,
-        city: address.city,
-        country: address.country,
-        state: address.state,
-        street: address.street,
-      },
-      update: {
-        city: address.city,
-        state: address.state,
-        country: address.country,
-        street: address.street,
-      },
-    });
     await database.vendor.create({
       data: {
         userId: currentUser.id,
-        businessName,
-        businessAbout,
-        categories,
       },
     });
   }
   // const authUrl = `https://www.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish`;
   // redirect(authUrl);
   // Get facebook username and redirect to facebook auth url
-  const facebookAuthUrl = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${process.env.NEXT_PUBLIC_FACEBOOK_APP_ID}&redirect_uri=${process.env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI}&scope=pages_show_list,instagram_basic,instagram_manage_insights,instagram_manage_comments,pages_read_engagement,pages_read_user_content`;
+  const facebookAuthUrl = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${process.env.NEXT_PUBLIC_FACEBOOK_APP_ID}&redirect_uri=${process.env.NEXT_PUBLIC_REDIRECT_URI}&scope=pages_show_list,instagram_basic,instagram_manage_insights,instagram_manage_comments,pages_read_engagement,pages_read_user_content`;
   redirect(facebookAuthUrl);
 };
 

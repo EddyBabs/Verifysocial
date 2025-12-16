@@ -85,7 +85,7 @@ const BuisnessDetailsForm = () => {
       if (platform === "instagram") {
         await instagramLogin2(values);
       } else if (platform === "facebook") {
-        await facebookLink(values);
+        await facebookLink();
         // Refresh Facebook profile after linking
         const result = await getFacebookProfile();
         if (result && "success" in result && result.success) {

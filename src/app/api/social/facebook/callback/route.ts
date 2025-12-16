@@ -64,9 +64,7 @@ export async function GET(request: NextRequest) {
     if (!facebookAppId || !facebookAppSecret || !facebookRedirectUri) {
       return NextResponse.redirect(
         new URL(
-          `/settings?error=${encodeURIComponent(
-            "Facebook configuration error"
-          )}`,
+          `/?error=${encodeURIComponent("Facebook configuration error")}`,
           request.url
         )
       );
@@ -103,9 +101,7 @@ export async function GET(request: NextRequest) {
     if (!profileResponse.ok || profileData.error) {
       return NextResponse.redirect(
         new URL(
-          `/settings?error=${encodeURIComponent(
-            "Failed to fetch Facebook profile"
-          )}`,
+          `/?error=${encodeURIComponent("Failed to fetch Facebook profile")}`,
           request.url
         )
       );

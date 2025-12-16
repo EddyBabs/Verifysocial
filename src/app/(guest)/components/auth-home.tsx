@@ -14,6 +14,7 @@ import Link from "next/link";
 
 const AuthHome = async () => {
   const { user, ninVerified } = await getCurrentUserDetails();
+
   const latestReviews = await getLatestReviews();
   if (user?.role === UserRole.VENDOR) {
     if (user.vendor?.tier === "TIER1") {

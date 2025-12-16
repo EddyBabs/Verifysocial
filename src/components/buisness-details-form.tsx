@@ -1,4 +1,8 @@
-import { facebookLink, instagramLogin2, getFacebookProfile } from "@/actions/instagram";
+import {
+  facebookLink,
+  instagramLogin2,
+  getFacebookProfile,
+} from "@/actions/instagram";
 import categories from "@/data/categories";
 import { cn } from "@/lib/utils";
 import { BecomeAVendorSchemaType } from "@/schemas/become-a-vendor";
@@ -33,7 +37,10 @@ const BuisnessDetailsForm = () => {
     formState: { errors },
   } = useFormContext<BecomeAVendorSchemaType>();
   const [isPending, startTransition] = useTransition();
-  const [facebookProfile, setFacebookProfile] = useState<{ username: string | null; userId: string | null } | null>(null);
+  const [facebookProfile, setFacebookProfile] = useState<{
+    username: string | null;
+    userId: string | null;
+  } | null>(null);
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -45,10 +52,14 @@ const BuisnessDetailsForm = () => {
     const fetchFacebookProfile = async () => {
       const result = await getFacebookProfile();
       if (result && "success" in result && result.success) {
-        setFacebookProfile({ username: result.username, userId: result.userId });
+        setFacebookProfile({
+          username: result.username,
+          userId: result.userId,
+        });
         // Update form with Facebook username if available
         if (result.username) {
-          const currentSocialPlatforms = getValues("step2.socialPlatform") || [];
+          const currentSocialPlatforms =
+            getValues("step2.socialPlatform") || [];
           const facebookIndex = currentSocialPlatforms.findIndex(
             (p) => p.platform === "facebook"
           );
@@ -78,7 +89,10 @@ const BuisnessDetailsForm = () => {
         // Refresh Facebook profile after linking
         const result = await getFacebookProfile();
         if (result && "success" in result && result.success) {
-          setFacebookProfile({ username: result.username, userId: result.userId });
+          setFacebookProfile({
+            username: result.username,
+            userId: result.userId,
+          });
         }
       }
     });
@@ -261,14 +275,22 @@ const BuisnessDetailsForm = () => {
                     }
                   >
                     {(() => {
-                      const username = watch(`step2.socialPlatform.${index}.username`);
-                      const platform = watch(`step2.socialPlatform.${index}.platform`);
-                      
+                      const username = watch(
+                        `step2.socialPlatform.${index}.username`
+                      );
+                      const platform = watch(
+                        `step2.socialPlatform.${index}.platform`
+                      );
+
                       // Show Facebook profile if platform is Facebook and profile exists
-                      if (platform === "facebook" && facebookProfile?.username && !username) {
+                      if (
+                        platform === "facebook" &&
+                        facebookProfile?.username &&
+                        !username
+                      ) {
                         return `Linked: ${facebookProfile.username}`;
                       }
-                      
+
                       // Default behavior
                       return username ? `Linked: ${username}` : "Link";
                     })()}

@@ -84,9 +84,11 @@ export const verifyNIN = async (nin: string) => {
     console.log({ error });
     if (error instanceof AxiosError) {
       if (error.response?.data) {
-        return error.response.data;
+        // return error.response.data;
+        return { error: "NIN not valid" };
       }
     }
+    return { error: "An error occured while verifying NIN" };
   }
   console.log({ response });
   if (!response || !response?.entity) {
@@ -117,8 +119,13 @@ export const verifyNIN = async (nin: string) => {
   //   // Enable to test
   //   return { error: "NIN not valid" };
   // }
-  if (user.vendor === null) {
-    return { error: "Vendor not found" };
+  if (!user.vendor || !user.vendor.id) {
+    const vendor = await database.vendor.create({
+      data: {
+        userId: user.id,
+      },
+    });
+    user.vendor = vendor;
   }
   await database.kYCCredential.create({
     data: {

@@ -92,6 +92,7 @@ export const facebookLink = async () => {
     process.env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI ??
     "https://verifysocial.com.ng/api/social/facebook/callback"
   }&scope=pages_show_list,instagram_basic,instagram_manage_insights,instagram_manage_comments`;
+  // pages_read_engagement,pages_read_user_content`;
   redirect(facebookAuthUrl);
 };
 

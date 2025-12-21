@@ -140,7 +140,15 @@ export const verifyNIN = async (nin: string) => {
 };
 
 export const sendBusinessVerification = async (name: string) => {
-  const vendor = await getCurrentUser();
+  const currentUser = await getCurrentUser();
+  if (!currentUser || !currentUser.id) {
+    return { error: "Access Denied" };
+  }
+
+  const vendor = await database.user.findUnique({
+    where: { id: currentUser.id },
+    select: { email: true },
+  });
   if (!vendor || !vendor.email) {
     return { error: "Access Denied" };
   }
@@ -166,7 +174,16 @@ export const sendBusinessVerification = async (name: string) => {
 };
 
 export const addBuisness = async (values: BecomeAVendorSchemaType) => {
-  const vendor = await getCurrentUser();
+  const currentUser = await getCurrentUser();
+  if (!currentUser || !currentUser.id) {
+    return { error: "Access Denied" };
+  }
+
+  const vendor = await database.user.findUnique({
+    where: { id: currentUser.id },
+    select: { email: true, id: true },
+  });
+
   if (!vendor || !vendor?.id) {
     return { error: "Access Denied" };
   }

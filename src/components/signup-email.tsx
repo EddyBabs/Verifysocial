@@ -118,11 +118,19 @@ const SignUpEmail = ({
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               I agree to the{" "}
-              <Link href="#" className="text-primary font-semibold">
+              <Link
+                href="/terms"
+                target="_blank"
+                className="text-primary font-semibold"
+              >
                 terms of service
               </Link>{" "}
               and{" "}
-              <Link href="#" className="text-primary font-semibold">
+              <Link
+                href="/privacy-policy"
+                target="_blank"
+                className="text-primary font-semibold"
+              >
                 privacy policy
               </Link>
             </label>

@@ -11,7 +11,8 @@ const redirectUri = process.env.NEXT_PUBLIC_REDIRECT_URI;
 const appSecret = process.env.INSTAGRAM_APP_SECRET;
 
 export const instagramLogin = async () => {
-  const authUrl = `https://www.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish`;
+  // const authUrl = `https://www.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish`;
+  const authUrl = `https://www.instagram.com/accounts/login/?force_authentication&platform_app_id=1101112148712141&enable_fb_login&next=https://www.instagram.com/oauth/authorize/third_party/?redirect_uri=https://verifysocial.com.ng/&response_type=code&scope=instagram_business_basic,instagram_business_content_publish&state=eyJyZXR1cm5VcmwiOiJodHRwczovL3d3dy5mYWNlbGVzc3JlZWxzLmNvbS9kYXNoYm9hcmQvY3JlYXRlIn0=&client_id=646218147886725&force_reauth=0&logger_id=31bcd77d-af82-459b-8039-f42ab368f4a1`;
   redirect(authUrl);
 };
 
@@ -86,7 +87,7 @@ export const facebookLink = async () => {
   // const authUrl = `https://www.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish`;
   // redirect(authUrl);
   // Get facebook username and redirect to facebook auth url
-  const facebookAuthUrl = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${
+  const facebookAuthUrl = `https://www.facebook.com/v23.0/dialog/oauth?client_id=${
     process.env.NEXT_PUBLIC_FACEBOOK_APP_ID
   }&redirect_uri=${
     process.env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI ??

@@ -73,9 +73,8 @@ export async function GET(request: NextRequest) {
     const tokenUrl = `https://graph.facebook.com/v21.0/oauth/access_token?client_id=${facebookAppId}&redirect_uri=${facebookRedirectUri}&client_secret=${facebookAppSecret}&code=${code}`;
     console.log({ tokenUrl });
     const tokenResponse = await fetch(tokenUrl);
-    console.log({ tokenResponse });
+
     const tokenData = await tokenResponse.json();
-    console.log({ tokenData });
 
     if (!tokenResponse.ok || tokenData.error) {
       console.log({ error: tokenData.error });
@@ -90,7 +89,6 @@ export async function GET(request: NextRequest) {
     }
 
     const accessToken = tokenData.access_token;
-    console.log({ accessToken });
 
     // Fetch user profile from Facebook
     const profileResponse = await fetch(

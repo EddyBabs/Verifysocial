@@ -159,7 +159,7 @@ export const sendBusinessVerification = async (name: string) => {
   }
 
   const businessVerificationToken = await generateBusinessVerificationToken(
-    vendor.email
+    vendor.email,
   );
 
   await sendMail({
@@ -167,7 +167,7 @@ export const sendBusinessVerification = async (name: string) => {
     subject: "Verify Business",
     body: compileBuisnessVerificationTemplate(
       name,
-      businessVerificationToken.token
+      businessVerificationToken.token,
     ),
   });
   return { success: "OTP Sent" };
@@ -179,9 +179,8 @@ export const addBuisness = async (values: BecomeAVendorSchemaType) => {
     return { error: "Access Denied" };
   }
 
-  const vendor = await database.user.findUnique({
-    where: { id: currentUser.id },
-    select: { email: true, id: true },
+  const vendor = await database.vendor.findUnique({
+    where: { userId: currentUser.id },
   });
 
   if (!vendor || !vendor?.id) {
@@ -202,7 +201,7 @@ export const addBuisness = async (values: BecomeAVendorSchemaType) => {
   const validatedData = validatedField.data;
 
   const existingToken = await getBuisnessVerificationTokenByToken(
-    validatedData.step3.otp
+    validatedData.step3.otp,
   );
 
   if (!existingToken) {

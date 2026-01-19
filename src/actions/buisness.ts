@@ -81,7 +81,6 @@ export const verifyNIN = async (nin: string) => {
   try {
     response = await doja.lookupNIN(nin);
   } catch (error) {
-    console.log({ error });
     if (error instanceof AxiosError) {
       if (error.response?.data) {
         // return error.response.data;
@@ -90,15 +89,13 @@ export const verifyNIN = async (nin: string) => {
     }
     return { error: "An error occured while verifying NIN" };
   }
-  console.log({ response });
+
   if (!response || !response?.entity) {
     return { error: "NIN not valid" };
   }
   kyc_data.document_type = "nin";
   kyc_data.verifiedFirstname = response?.entity?.first_name;
   kyc_data.verifiedLastname = response?.entity?.last_name;
-
-  console.log({ kyc_data, fullname: user.fullname });
 
   // Check if kyc is correct
   if (
@@ -220,7 +217,7 @@ export const addBuisness = async (values: BecomeAVendorSchemaType) => {
 
   await database.vendor.upsert({
     where: {
-      userId: vendor.id,
+      id: vendor.id,
     },
     update: {
       businessName: validatedData.step2.businessName,
@@ -239,14 +236,14 @@ export const addBuisness = async (values: BecomeAVendorSchemaType) => {
 
   await database.user.update({
     where: {
-      id: vendor.id,
+      id: vendor.User.id,
     },
     data: {
       fullname: `${validatedData.step1.firstname} ${validatedData.step1.lastname}`,
       address: {
         upsert: {
           where: {
-            userId: vendor.id,
+            userId: vendor.User.id,
           },
           create: {
             country: validatedData.step2.address.country,

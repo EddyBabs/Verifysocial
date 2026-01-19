@@ -134,7 +134,7 @@ const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user, ninVerified }) => {
         await updateUser({
           phone: getValues("step1.phone"),
           fullname: `${getValues("step1.firstname")} ${getValues(
-            "step1.lastname"
+            "step1.lastname",
           )}`,
           gender: getValues("step1.gender"),
         });
@@ -157,7 +157,7 @@ const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user, ninVerified }) => {
         try {
           sessionStorage.removeItem("STEP2");
           const response = await sendBusinessVerification(
-            `${getValues("step1.firstname")} ${getValues("step1.lastname")}`
+            `${getValues("step1.firstname")} ${getValues("step1.lastname")}`,
           );
 
           if (response.success) {
@@ -260,7 +260,7 @@ const BecomeAVendor: React.FC<BecomeAVendorProps> = ({ user, ninVerified }) => {
                     type="submit"
                     disabled={isSubmitting}
                   >
-                    Submit
+                    {isSubmitting ? "Submitting..." : "Submit"}
                   </Button>
                 ) : (
                   <Button

@@ -181,6 +181,7 @@ export const addBuisness = async (values: BecomeAVendorSchemaType) => {
 
   const vendor = await database.vendor.findUnique({
     where: { userId: currentUser.id },
+    include: { User: true },
   });
 
   if (!vendor || !vendor?.id) {
@@ -213,7 +214,7 @@ export const addBuisness = async (values: BecomeAVendorSchemaType) => {
     return { error: "Token has expired" };
   }
 
-  if (existingToken.email !== vendor.email) {
+  if (existingToken.email !== vendor.User.email) {
     return { error: "Token has expired" };
   }
 
